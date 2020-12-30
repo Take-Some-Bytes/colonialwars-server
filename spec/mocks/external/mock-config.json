@@ -1,0 +1,12 @@
+{
+  "This": "config file",
+  "is": "only a",
+  "mock": [
+    "Did you get that?",
+    {
+      "yes": "no"
+    },
+    "Well, bye now"
+  ],
+  "...": "BOO-YA!"
+}
