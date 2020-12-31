@@ -3,7 +3,7 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
-## [v0.1.0] - 2020-12-??
+## [v0.1.0] - 2020-12-30
 - Initial (pre-)release.
 
 [1]: https://keepachangelog.com/
