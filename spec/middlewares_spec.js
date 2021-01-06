@@ -7,7 +7,6 @@ const Middlewares = require('../lib/controllers/middlewares')
 
 const MockServerUtils = require('./mocks/internal/mock-server-utils')
 const MockHttpRequest = require('./mocks/external/mock-http-request')
-const MockHttpResponse = require('./mocks/external/mock-http-response')
 
 describe('The Middlewares class,', () => {
   const mockServerUtils = new MockServerUtils()
@@ -182,57 +181,6 @@ describe('The Middlewares class,', () => {
     expect(mockServerUtils.numErrorsSent).toBe(3)
     expect(mockServerUtils.errors['Error-4']).toBe(undefined)
     expect(mockServerUtils.errors['Error-5']).toBe(undefined)
-  })
-
-  it('should handle requests that use OPTIONS method', () => {
-    const mockReq = new MockHttpRequest({
-      url: '/null',
-      method: 'OPTIONS'
-    })
-    const mockRes = new MockHttpResponse()
-    let passed = false
-
-    if (middlewares instanceof Middlewares) {
-      console.log()
-      middlewares.handleOptions(
-        ['GET', 'HEAD', 'OPTIONS']
-      )(mockReq, mockRes, err => {
-        if (err) throw err
-
-        console.log('HANDLEOPTIONS 1 passed.')
-        passed = true
-      })
-    }
-
-    expect(passed).toBe(false)
-    expect(mockRes.statusCode).toBe(204)
-    expect(mockRes.writableEnded).toBe(true)
-    expect(mockRes.headers.Allow).toBe('GET, HEAD, OPTIONS')
-  })
-
-  it('should let requests that don\'t use OPTIONS method pass', () => {
-    const mockReq = new MockHttpRequest({
-      url: '/nullish',
-      method: 'GET'
-    })
-    const mockRes = new MockHttpResponse()
-    let passed = false
-
-    if (middlewares instanceof Middlewares) {
-      console.log()
-      middlewares.handleOptions(
-        ['GET', 'HEAD', 'OPTIONS']
-      )(mockReq, mockRes, err => {
-        if (err) throw err
-
-        console.log('HANDLEOPTIONS2 passed.')
-        passed = true
-      })
-    }
-
-    expect(passed).toBe(true)
-    expect(mockRes.statusCode).toBe(200)
-    expect(mockRes.writableEnded).toBe(false)
   })
 })
 
