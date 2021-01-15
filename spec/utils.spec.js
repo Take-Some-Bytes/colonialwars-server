@@ -5,7 +5,7 @@
 
 const utils = require('../lib/utils/utils')
 
-describe('The Colonial Wars AppServer utility object,', () => {
+describe('The Colonial Wars basic utility object,', () => {
   it('should have four properties', () => {
     const utilsLength = Object.keys(utils).length
 
