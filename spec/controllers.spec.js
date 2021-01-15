@@ -77,6 +77,7 @@ describe('The Controllers class,', () => {
 
   it('should send an error for non-existent routes', async () => {
     controllers.handleUnhandled(router)
+    console.log()
     const serverRes = await fetch('http://localhost:7777/i-dont-exist-still')
 
     expect(serverRes.meta).toBeInstanceOf(http.IncomingMessage)
