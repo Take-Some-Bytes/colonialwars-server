@@ -34,7 +34,6 @@ describe('The GameServer class,', () => {
 
   it('should have the proper configuration object', () => {
     let configurationObj = null
-    console.log()
     if (gameServer instanceof GameServer) {
       configurationObj = gameServer.config
     }
@@ -43,7 +42,6 @@ describe('The GameServer class,', () => {
 
   it('should have the proper helper classes', () => {
     const obj = {}
-    console.log()
     if (gameServer instanceof GameServer) {
       obj.loggers = gameServer.loggers
       obj.serverUtils = gameServer.serverUtils
@@ -76,6 +74,7 @@ describe('The GameServer class, when handling requests,', () => {
     // Set the process title... just because.
     process.title = 'colonialwars-gameserver'
     gameServer = await GameServer.create()
+    console.log()
     await gameServer.start()
   })
   afterAll(async () => {
@@ -87,7 +86,6 @@ describe('The GameServer class, when handling requests,', () => {
   })
 
   it('should respond to requests at /testing', async () => {
-    console.log()
     const serverRes = await fetch('http://localhost:1487/testing')
 
     expect(serverRes.meta).toBeInstanceOf(http.IncomingMessage)
