@@ -32,20 +32,18 @@ describe('The Configurations class, when used without a file input,', () => {
 
   it('should get existing properties and return them', () => {
     let val = null
-    console.log()
+
     if (configurations instanceof Configurations) {
       val = configurations.get('crud')
-      console.log(val)
     }
     expect(val).not.toBe(null)
   })
 
   it('should return null for non-existing properties', () => {
     let val = null
-    console.log()
+
     if (configurations instanceof Configurations) {
       val = configurations.get('i', "don't", 'exist')
-      console.log(val)
     }
     expect(val).toBe(null)
   })
@@ -69,13 +67,12 @@ describe('The Configurations class, when used with a file input,', () => {
 
   it('should get existing properties and return them', () => {
     let vals = null
-    console.log()
+
     if (configurations instanceof Configurations) {
       vals = []
       vals.push(configurations.get('This'))
-      console.dir(vals)
+
       vals.push(configurations.get('mock'))
-      console.dir(vals)
     }
     expect(vals).not.toBe(null)
     expect(vals).toHaveSize(2)
@@ -83,10 +80,9 @@ describe('The Configurations class, when used with a file input,', () => {
 
   it('should return null for non-existing properties', () => {
     let val = null
-    console.log()
+
     if (configurations instanceof Configurations) {
       val = configurations.get('i', 'still', "don't", 'exist')
-      console.log(val)
     }
     expect(val).toBe(null)
   })
@@ -111,13 +107,12 @@ describe('The Configurations class, when used with fallbacks,', () => {
 
   it('should get existing properties and return them', () => {
     let vals = null
-    console.log()
+
     if (configurations instanceof Configurations) {
       vals = []
       vals.push(configurations.get('That'))
-      console.dir(vals)
+
       vals.push(configurations.get('fellback'))
-      console.dir(vals)
     }
     expect(vals).not.toBe(null)
     expect(vals).toHaveSize(2)
@@ -125,10 +120,9 @@ describe('The Configurations class, when used with fallbacks,', () => {
 
   it('should return null for non-existing properties', () => {
     let val = null
-    console.log()
+
     if (configurations instanceof Configurations) {
       val = configurations.get('i', 'am', 'a', 'teapot')
-      console.log(val)
     }
     expect(val).toBe(null)
   })
