@@ -39,11 +39,10 @@ describe('The Middlewares class,', () => {
     let passed = false
 
     if (middlewares instanceof Middlewares) {
-      console.log()
       middlewares.forwardedParser()(
         mockReq, null, err => {
           if (err) { throw err }
-          console.log('FORWARDEDPARSER passed.')
+
           passed = true
         }
       )
@@ -67,13 +66,11 @@ describe('The Middlewares class,', () => {
     let passed = false
 
     if (middlewares instanceof Middlewares) {
-      console.log()
       middlewares.sysCheckpoint(
         ['GET', 'HEAD']
       )(mockReq, null, err => {
         if (err) throw err
 
-        console.log('SYSCHECKPOINT 1 passed.')
         passed = true
       }
       )
@@ -93,13 +90,11 @@ describe('The Middlewares class,', () => {
     let passed = false
 
     if (middlewares instanceof Middlewares) {
-      console.log()
       middlewares.sysCheckpoint(
         ['GET', 'HEAD']
       )(mockReq, null, err => {
         if (err) throw err
 
-        console.log('SYSCHECKPOINT 2 passed.')
         passed = true
       })
     }
@@ -118,13 +113,11 @@ describe('The Middlewares class,', () => {
     let passed = false
 
     if (middlewares instanceof Middlewares) {
-      console.log()
       middlewares.sysCheckpoint(
         ['GET', 'HEAD']
       )(mockReq, null, err => {
         if (err) throw err
 
-        console.log('SYSCHECKPOINT 3 passed.')
         passed = true
       })
     }
@@ -144,11 +137,9 @@ describe('The Middlewares class,', () => {
     let passed = false
 
     if (middlewares instanceof Middlewares) {
-      console.log()
       middlewares.acceptCheckpoint()(mockReq, null, err => {
         if (err) throw err
 
-        console.log('ACCEPTCHECKPOINT 1 passed.')
         passed = true
       })
     }
@@ -167,11 +158,9 @@ describe('The Middlewares class,', () => {
 
     mockReqs.forEach((req, i) => {
       if (middlewares instanceof Middlewares) {
-        console.log()
         middlewares.acceptCheckpoint()(req, null, err => {
           if (err) throw err
 
-          console.log(`ACCEPTCHECkPOINT ${i + 2} passed`)
           passes++
         })
       }
@@ -208,13 +197,11 @@ describe('The Middlewares class\'s getClientIP method,', () => {
     let passed = false
 
     if (middlewares instanceof Middlewares) {
-      console.log()
       middlewares.getClientIP({
         behindProxy: false
       })(mockReq, null, err => {
         if (err) throw err
 
-        console.log('GETCLIENTIP 1 passed.')
         passed = true
       })
     }
@@ -239,14 +226,12 @@ describe('The Middlewares class\'s getClientIP method,', () => {
     let passed = false
 
     if (middlewares instanceof Middlewares) {
-      console.log()
       middlewares.getClientIP({
         behindProxy: true,
         trustedIPs: ['93.145.22.0']
       })(mockReq, null, err => {
         if (err) throw err
 
-        console.log('GETCLIENTIP 2 passed.')
         passed = true
       })
     }
@@ -271,14 +256,12 @@ describe('The Middlewares class\'s getClientIP method,', () => {
     let passed = false
 
     if (middlewares instanceof Middlewares) {
-      console.log()
       middlewares.getClientIP({
         behindProxy: true,
         trustedIPs: ['93.145.22.0', '203.0.113.60']
       })(mockReq, null, err => {
         if (err) throw err
 
-        console.log('GETCLIENTIP 3 passed.')
         passed = true
       })
     }
@@ -298,14 +281,12 @@ describe('The Middlewares class\'s getClientIP method,', () => {
       let passed = false
 
       if (middlewares instanceof Middlewares) {
-        console.log()
         middlewares.getClientIP({
           behindProxy: true,
           trustedIPs: ['203.0.113.60']
         })(mockReq, null, err => {
           if (err) throw err
 
-          console.log('GETCLIENTIP 4 passed.')
           passed = true
         })
 
