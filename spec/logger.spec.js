@@ -32,7 +32,9 @@ describe('The Loggers class, when used without a Syslog server,', () => {
       console.log()
       loggers = new Loggers({
         isProd: false,
-        debug: console.log,
+        debug: (...args) => {
+          console.log(`DEBUG: ${args.join(' ')}`)
+        },
         loggerInfos: [
           {
             id: 'Server-logger',
