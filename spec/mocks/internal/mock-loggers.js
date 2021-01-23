@@ -14,7 +14,7 @@ const winstonConfig = require('winston/lib/winston/config')
 class MockLoggers {
   constructor () {
     this.log = function (...args) {
-      console.log(`Logger: ${args.join(' ')}`)
+      console.log(`LOGGER: ${args.join(' ')}`)
     }
   }
 
@@ -23,7 +23,7 @@ class MockLoggers {
    * @returns {Logger}
    */
   get () {
-    const logger = []
+    const logger = {}
     Object.keys(winstonConfig.syslog.levels).forEach(level => {
       logger[level] = this.log
     })
