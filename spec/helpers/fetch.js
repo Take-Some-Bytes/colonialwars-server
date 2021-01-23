@@ -1,5 +1,5 @@
 /**
- * @fileoverview Promisified `http.get`.
+ * @fileoverview Promisified `http.request`.
  */
 
 const http = require('http')
@@ -11,14 +11,14 @@ const http = require('http')
  */
 
 /**
- * Basic `http.get` promisified version.
+ * Basic `http.request` promisified version.
  * @param {string|URL|http.RequestOptions} opts Request options.
  * @param {string|Buffer} body Request body.
  * @returns {Promise<HTTPResponse>}
  */
 function fetch (opts, body) {
   return new Promise((resolve, reject) => {
-    const req = http.get(opts, res => {
+    const req = http.request(opts, res => {
       const chunks = []
       res.on('data', data => {
         chunks.push(data)
@@ -39,8 +39,8 @@ function fetch (opts, body) {
     })
     if (opts && typeof opts === 'object' && opts.method === 'POST') {
       req.write(body)
-      req.end()
     }
+    req.end()
   })
 }
 
