@@ -3,6 +3,25 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
+## [v0.3.1] - 2020-01-23
+### Added:
+- Added a ``GameLoader`` class to load games from configuration files.
+- Added a ``Manager`` class to manage the amount of games that are running on this server.
+- Added compatibility data in ``README.md``.
+- Added an NPM ``check`` script that runs ``npm audit``, ``npm outdated``, and ``npm test``.
+### Changed:
+- Renamed the ``BoundObject`` class to the ``BoundEntity`` class.
+- Updated the ``BaseGame`` class to inherit from the ``events.EventEmitter`` class.
+- Updated some game-related files to take required parameters inside a ``config`` object instead
+of passing them one by one.
+- Updated the ``fetch`` function in ``fetch.js`` to use ``http.request`` instead of ``http.get``.
+### Fixed:
+- Fixed the ``RegExp`` used to check if the ``Accept`` header has the correct values. Before,
+users could enter values like ``application/plain``, and it will pass. Now, ``application/plain``
+will not pass.
+- Fixed the ``deepFreeze`` method; before, if there was a ``NO_FREEZE`` symbol on the passed-in object's
+properties, the entire function would exit.
+
 ## [v0.3.0] - 2020-01-14
 ### Added:
 - Added utility functions to mess around with math in ``/lib/utils/math-utils.js``.
@@ -39,4 +58,5 @@ handled by the ``cors`` NPM package.
 
 [v0.1.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/4faa6df4e70ab7239b6d7edf29d22feb026657f3
 [v0.2.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/db96ffa372e8791d2a1cdbf47d4b69550b0cb3d4
-[v0.3.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
+[v0.3.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/b4038be257524ea868baaf4cdd04893918946f8e
+[v0.3.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
