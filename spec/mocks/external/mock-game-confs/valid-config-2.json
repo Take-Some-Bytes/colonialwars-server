@@ -1,0 +1,17 @@
+{
+  "configType": "game-config",
+  "meta": {
+    "name": "Mock Game 2",
+    "mode": "Teams",
+    "maxPlayers": 4,
+    "worldLimits": {
+      "WORLD_MIN": 0,
+      "WORLD_MAX": 1000
+    },
+    "startPositions": {
+      "one": { "x": 0, "y": 0 },
+      "two": { "x": 500, "y": 500 },
+      "three": { "x": 1000, "y": 1000 }
+    }
+  }
+}
