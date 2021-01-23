@@ -1,12 +1,13 @@
 {
   "name": "colonialwars-server",
   "description": "Colonial Wars backend server.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "index.js",
   "bin": "./bin/bin.js",
   "scripts": {
     "test": "jasmine",
-    "dev": "DEBUG=colonialwars-* INSTANCE_NUM=1 node ./bin/bin.js"
+    "dev": "DEBUG=colonialwars-* INSTANCE_NUM=1 node ./bin/bin.js",
+    "check": "npm audit&&npm outdated&&npm test"
   },
   "homepage": "https://github.com/Take-Some-Bytes/colonialwars-server#colonial-wars-server",
   "bugs": {
@@ -24,7 +25,7 @@
     "node": ">=12"
   },
   "devDependencies": {
-    "jasmine": "^3.6.3",
+    "jasmine": "^3.6.4",
     "standard": "*"
   },
   "dependencies": {
