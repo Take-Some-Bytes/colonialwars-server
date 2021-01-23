@@ -28,19 +28,21 @@ describe('The BaseGame class,', () => {
   it('should construct without error', () => {
     let err = null
     try {
-      baseGame = new BaseGame(
-        'V3RY-UN1QU3-1D', 'Base game 1', 'Teams',
-        4, { WORLD_MAX: 200, WORLD_MIN: 200 },
-        { one: new Vector2D(0, 0), two: new Vector2D(200, 200) }, {
-          debug: (...args) => {
-            console.log(`DEBUG: ${args.join(' ')}`)
-          },
-          communications: communications,
-          playerStats: {
-            PLAYER_SPEED: 0.4
-          }
+      baseGame = new BaseGame({
+        id: 'V3RY-UN1QU3-1D',
+        name: 'Base game 1',
+        mode: 'Teams',
+        maxPlayers: 4,
+        worldLimits: { WORLD_MAX: 200, WORLD_MIN: 0 },
+        startPositions: { one: new Vector2D(0, 0), two: new Vector2D(200, 200) },
+        debug: (...args) => {
+          console.log(`DEBUG: ${args.join(' ')}`)
+        },
+        communications: communications,
+        playerStats: {
+          PLAYER_SPEED: 0.4
         }
-      )
+      })
       baseGame.init()
     } catch (ex) {
       err = ex
