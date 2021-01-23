@@ -8,12 +8,13 @@
 
 const Player = require('../lib/game/player')
 const Vector2D = require('../lib/game/physics/vector-2d')
-const BoundObject = require('../lib/game/physics/bound-object')
+const BoundEntity = require('../lib/game/physics/bound-entity')
 
 const playerStats = {
   name: 'THISISTHEFBI',
   team: 'Britash',
   socketID: '1jkMZ0tuM0Eahm2aHAPqbQ==',
+  position: new Vector2D(),
   playerConf: {
     PLAYER_SPEED: 0.4,
     WORLD_BOUNDS: {
@@ -30,17 +31,21 @@ describe('The Player class,', () => {
     let err = null
 
     try {
-      player = new Player(
-        playerStats.name, playerStats.team, playerStats.socketID,
-        new Vector2D(), playerStats.playerConf
-      )
+      player = new Player({
+        name: playerStats.name,
+        team: playerStats.team,
+        socketID: playerStats.socketID,
+        position: playerStats.position,
+        PLAYER_SPEED: playerStats.playerConf.PLAYER_SPEED,
+        WORLD_BOUNDS: playerStats.playerConf.WORLD_BOUNDS
+      })
     } catch (ex) {
       err = ex
     }
 
     expect(err).toBe(null)
     expect(player).toBeInstanceOf(Player)
-    expect(player).toBeInstanceOf(BoundObject)
+    expect(player).toBeInstanceOf(BoundEntity)
   })
 
   describe('The .update() method,', () => {
