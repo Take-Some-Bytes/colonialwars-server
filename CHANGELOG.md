@@ -3,7 +3,21 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
-## [v0.3.1] - 2020-01-23
+## [v0.3.2] - 2021-02-11
+### Added:
+- Added ``GameLoader`` specs.
+- Added a way to track clients in the ``Manager`` class.
+- Added a route that returns statistics about the games running on the GameServer.
+- Added a ``game/data`` folder to store game-related data, e.g. map save files and unit data files.
+### Changed:
+- Started using the ``Manager`` and ``GameLoader`` classes in our backend.
+- Updated compatibility data.
+### Fixed:
+- Fixed the fact that the ``bound-object.js`` file was ***not renamed*** to ``bound-entity.js`` in the GitHub repository.
+- Fixed the fact that all the dates in this CHANGELOG were wrong since
+2020-12-30.
+
+## [v0.3.1] - 2021-01-23
 ### Added:
 - Added a ``GameLoader`` class to load games from configuration files.
 - Added a ``Manager`` class to manage the amount of games that are running on this server.
@@ -22,7 +36,7 @@ will not pass.
 - Fixed the ``deepFreeze`` method; before, if there was a ``NO_FREEZE`` symbol on the passed-in object's
 properties, the entire function would exit.
 
-## [v0.3.0] - 2020-01-14
+## [v0.3.0] - 2021-01-14
 ### Added:
 - Added utility functions to mess around with math in ``/lib/utils/math-utils.js``.
 - Added many game-related files:
@@ -59,4 +73,5 @@ handled by the ``cors`` NPM package.
 [v0.1.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/4faa6df4e70ab7239b6d7edf29d22feb026657f3
 [v0.2.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/db96ffa372e8791d2a1cdbf47d4b69550b0cb3d4
 [v0.3.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/b4038be257524ea868baaf4cdd04893918946f8e
-[v0.3.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
+[v0.3.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/f1323f4de881d09549b9f965f7b853ebe7277c32
+[v0.3.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
