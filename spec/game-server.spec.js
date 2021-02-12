@@ -8,6 +8,7 @@ const Router = require('router')
 
 const GameServer = require('../')
 const Loggers = require('../lib/logging/loggers')
+const GameLoader = require('../lib/game/gameloader')
 const ServerUtils = require('../lib/utils/server-utils')
 const Middlewares = require('../lib/controllers/middlewares')
 const Controllers = require('../lib/controllers/controllers')
@@ -44,11 +45,13 @@ describe('The GameServer class,', () => {
     const obj = {}
     if (gameServer instanceof GameServer) {
       obj.loggers = gameServer.loggers
+      obj.gameloader = gameServer.gameloader
       obj.serverUtils = gameServer.serverUtils
       obj.middlewares = gameServer.middlewares
       obj.controllers = gameServer.controllers
     }
     expect(obj.loggers).toBeInstanceOf(Loggers)
+    expect(obj.gameloader).toBeInstanceOf(GameLoader)
     expect(obj.serverUtils).toBeInstanceOf(ServerUtils)
     expect(obj.middlewares).toBeInstanceOf(Middlewares)
     expect(obj.controllers).toBeInstanceOf(Controllers)
