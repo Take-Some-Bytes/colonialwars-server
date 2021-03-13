@@ -5,17 +5,15 @@
     "mode": "Teams",
     "maxPlayers": 40,
     "worldLimits": {
-      "WORLD_MIN": 0,
-      "WORLD_MAX": 6000
+      "x": 6000,
+      "y": 6000
     },
     "startPositions": {
       "British": { "x": 250, "y": 250 },
       "French": { "x": 5750, "y": 5750 },
       "American": { "x": 3000, "y": 3000 }
     },
-    "unitDataExtends": "default",
-    "tileDataExtends": "default",
-    "buildingDataExtends": "default",
-    "obstacleDataExtends": "default"
+    "tileType": "grass",
+    "defaultHeight": 0
   }
 }
