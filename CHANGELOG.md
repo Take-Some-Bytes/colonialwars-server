@@ -3,17 +3,40 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
+## [v0.4.0] - 2021-03-12
+### Added:
+- Added a ``.gitignore`` file so we can actually start using ``Git`` properly.
+### Changed:
+- Changed all game configuration files to conform to the save file structures
+defined in [``specifications/colonialwars/file-structures.md``](
+  https://github.com/Take-Some-Bytes/specifications/blob/main/colonialwars/file-structures.md
+).
+- Changed player input handling. Instead of applying player velocity changes
+right on input, the input is pushed to a queue with a timestamp, and
+processed every time the player is updated.
+- Updated all game-related classes to work with the updated save file structures.
+- Updated all HTTP responses to conform to the structure defined in
+[``specifications/colonialwars/message-structures.md``](
+  https://github.com/Take-Some-Bytes/specifications/blob/main/colonialwars/message-structure.md#http-response-body-structure
+).
+- Updated ``serverUtils.sendError()`` method to accept custom content types.
+- Update compatibility data in ``README.md``.
+### Fixed:
+- Fixed the fact that no response gets sent when a CORS error is encountered.
+
 ## [v0.3.2] - 2021-02-11
 ### Added:
 - Added ``GameLoader`` specs.
 - Added a way to track clients in the ``Manager`` class.
 - Added a route that returns statistics about the games running on the GameServer.
-- Added a ``game/data`` folder to store game-related data, e.g. map save files and unit data files.
+- Added a ``game/data`` folder to store game-related data, e.g. map save files
+and unit data files.
 ### Changed:
 - Started using the ``Manager`` and ``GameLoader`` classes in our backend.
 - Updated compatibility data.
 ### Fixed:
-- Fixed the fact that the ``bound-object.js`` file was ***not renamed*** to ``bound-entity.js`` in the GitHub repository.
+- Fixed the fact that the ``bound-object.js`` file was ***not renamed*** to ``bound-entity.js``
+in the GitHub repository.
 - Fixed the fact that all the dates in this CHANGELOG were wrong since
 2020-12-30.
 
@@ -74,4 +97,5 @@ handled by the ``cors`` NPM package.
 [v0.2.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/db96ffa372e8791d2a1cdbf47d4b69550b0cb3d4
 [v0.3.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/b4038be257524ea868baaf4cdd04893918946f8e
 [v0.3.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/f1323f4de881d09549b9f965f7b853ebe7277c32
-[v0.3.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
+[v0.3.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/1c66e82c53ae1c64810d7068f8642ebfca1062b3
+[v0.4.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
