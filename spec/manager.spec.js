@@ -174,8 +174,8 @@ describe('The Manager class,', () => {
 
   it('should be able to start the update loop', done => {
     /**
-       * @type {Array<jasmine.Spy<import('../lib/game/game-modes/base-game')['prototype']['update']>>}
-       */
+     * @type {Array<jasmine.Spy<import('../lib/game/game-modes/base-game')['prototype']['update']>>}
+     */
     const spies = []
     const doneEmitter = new events.EventEmitter()
     let calls = 0
@@ -197,7 +197,7 @@ describe('The Manager class,', () => {
     if (manager instanceof Manager) {
       const games = Array.from(manager.games.entries())
       manager.games = new Map(games.map((entry, i) => {
-        const spy = jasmine.createSpy('Game .update() method', entry[1].update).and.callFake(() => {
+        const spy = jasmine.createSpy('Game .update() method spy', entry[1].update).and.callFake(() => {
           calls++
           manager.games.set(entry[0], games[i][1])
           doneEmitter.emit('updated')
