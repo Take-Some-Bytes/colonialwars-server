@@ -48,7 +48,7 @@ describe('The GameLoader class,', () => {
     expect(gameLoader).toBeInstanceOf(GameLoader)
   })
 
-  describe('The .loadConfgFile() method,', () => {
+  describe('The .loadConfigFile() method,', () => {
     it('should throw an error if config file does not exist', async () => {
       let config = null
       let err = null
@@ -100,8 +100,8 @@ describe('The GameLoader class,', () => {
           mode: 'Teams',
           maxPlayers: 4,
           worldLimits: {
-            WORLD_MIN: 0,
-            WORLD_MAX: 200
+            x: 200,
+            y: 200
           },
           startPositions: {
             one: { x: 0, y: 0 },
