@@ -8,10 +8,16 @@ const BoundEntity = require('../lib/game/physics/bound-entity')
 
 describe('The BoundEntity class,', () => {
   const objPosition = new Vector2D(100, 100)
-  const bounds = {
-    MIN: 0,
-    MAX: 200
-  }
+  const bounds = Object.freeze({
+    x: {
+      MIN: 0,
+      MAX: 200
+    },
+    y: {
+      MIN: 0,
+      MAX: 200
+    }
+  })
   let boundObj = null
 
   it('should construct without error', () => {
