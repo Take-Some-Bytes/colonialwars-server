@@ -5,8 +5,8 @@
     "mode": "Teams",
     "maxPlayers": 4,
     "worldLimits": {
-      "WORLD_MIN": 0,
-      "WORLD_MAX": 200
+      "x": 200,
+      "y": 200
     },
     "startPositions": {
       "one": { "x": 0, "y": 0 },
