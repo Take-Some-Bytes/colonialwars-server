@@ -156,16 +156,7 @@ describe('The BaseGame class,', () => {
   })
 
   describe('The .sendState() method', () => {
-    beforeAll(() => {
-      playerSockets.forEach(socket => {
-        if (socket instanceof MockSocket) {
-          if (socket.listenerCount(communications.SOCKET_UPDATE) > 0) {
-            socket.removeAllListeners(communications.SOCKET_UPDATE)
-          }
-        }
-      })
-    })
-    afterAll(() => {
+    afterEach(() => {
       playerSockets.forEach(socket => {
         if (socket instanceof MockSocket) {
           if (socket.listenerCount(communications.SOCKET_UPDATE) > 0) {
@@ -244,7 +235,7 @@ describe('The BaseGame class,', () => {
         const players = new Map(baseGame.players.entries())
         baseGame.players = new Map(Array.from(players.entries()).map(
           entry => {
-            const spy = jasmine.createSpy('Player update() method', entry[1].update)
+            const spy = jasmine.createSpy('Player update() method spy', entry[1].update)
             entry[1].update = spy
             spies.push(spy)
             return [entry[0], entry[1]]
@@ -268,7 +259,11 @@ describe('The BaseGame class,', () => {
     it('should be able to clear all players and send an event telling the clients that the game is closing', done => {
       const allReceived = new EventEmitter()
       let receivedCount = 0
-      allReceived.on('received', () => {
+      allReceived.on('received', msg => {
+        // Make sure the message is correct.
+        expect(msg).toBe(JSON.stringify({
+          reason: 'Clearing the game room'
+        }))
         if (receivedCount === 3) {
           expect(receivedCount).toBe(3)
           expect(baseGame).toBeInstanceOf(BaseGame)
