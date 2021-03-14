@@ -28,6 +28,7 @@ describe('The Manager class,', () => {
     debug: (...args) => {
       process.stdout.write(Buffer.from(`DEBUG: ${args.join(' ')}\r\n`))
     },
+    loggers: new MockLoggers(),
     gameConstants: {
       communications: communications,
       playerStats: {

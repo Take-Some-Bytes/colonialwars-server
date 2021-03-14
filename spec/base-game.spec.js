@@ -34,7 +34,18 @@ describe('The BaseGame class,', () => {
         mode: 'Teams',
         maxPlayers: 4,
         worldLimits: { WORLD_MAX: 200, WORLD_MIN: 0 },
-        startPositions: { one: new Vector2D(0, 0), two: new Vector2D(200, 200) },
+        teams: [
+          {
+            name: 'one',
+            spawnPosition: new Vector2D(0, 0),
+            description: 'Team one.'
+          },
+          {
+            name: 'two',
+            spawnPosition: new Vector2D(200, 200),
+            description: 'Team two.'
+          }
+        ],
         debug: (...args) => {
           console.log(`DEBUG: ${args.join(' ')}`)
         },

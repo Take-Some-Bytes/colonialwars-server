@@ -11,6 +11,8 @@ const path = require('path')
 const GameLoader = require('../lib/game/gameloader')
 const TeamGame = require('../lib/game/game-modes/team-game')
 
+const MockLoggers = require('./mocks/internal/mock-loggers')
+
 describe('The static GameLoader.DEFAULT_MAX_CONF_SIZE property,', () => {
   it('should be equal to 1MB (1024 * 1024 * 1024)', () => {
     expect(GameLoader.DEFAULT_MAX_CONF_SIZE).toBe(1024 * 1024 * 1024)
@@ -38,7 +40,8 @@ describe('The GameLoader class,', () => {
         },
         debug: (...args) => {
           console.log(`DEBUG: ${args.join(' ')}`)
-        }
+        },
+        loggers: new MockLoggers()
       })
     } catch (ex) {
       err = ex
@@ -48,7 +51,7 @@ describe('The GameLoader class,', () => {
     expect(gameLoader).toBeInstanceOf(GameLoader)
   })
 
-  describe('The .loadConfigFile() method,', () => {
+  describe('the .loadConfigFile() method,', () => {
     it('should throw an error if config file does not exist', async () => {
       let config = null
       let err = null
@@ -103,15 +106,23 @@ describe('The GameLoader class,', () => {
             x: 200,
             y: 200
           },
-          startPositions: {
-            one: { x: 0, y: 0 },
-            two: { x: 200, y: 200 }
-          }
+          teams: [
+            {
+              name: 'one',
+              spawnPosition: { x: 0, y: 0 },
+              description: 'Team one.'
+            },
+            {
+              name: 'two',
+              spawnPosition: { x: 200, y: 200 },
+              description: 'Team two.'
+            }
+          ]
         }
       })
     })
   })
-  describe('The .loadFromFile() method,', () => {
+  describe('the .loadFromFile() method,', () => {
     it('should throw an error for invalid or missing config file', async () => {
       const errors = []
       const games = []
