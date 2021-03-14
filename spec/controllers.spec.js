@@ -2,6 +2,9 @@
 /**
  * @fileoverview Tests for the Controllers class.
  */
+/**
+ * @typedef {import('jasmine')} jasmine
+ */
 
 const http = require('http')
 const Router = require('router')
@@ -68,10 +71,13 @@ describe('The Controllers class,', () => {
     expect(serverRes.meta.headers['content-type']).toBe('application/json')
     expect(serverRes.body).toBeInstanceOf(Buffer)
     expect(JSON.parse(serverRes.body.toString('utf-8'))).toEqual({
-      serverRunning: true,
-      full: false,
-      maxClients: 10,
-      currentClients: 1
+      status: 'ok',
+      data: {
+        serverRunning: true,
+        full: false,
+        maxClients: 10,
+        currentClients: 1
+      }
     })
   })
 
@@ -82,9 +88,14 @@ describe('The Controllers class,', () => {
 
     expect(serverRes.meta).toBeInstanceOf(http.IncomingMessage)
     expect(serverRes.meta.statusCode).toBe(404)
-    expect(serverRes.meta.headers['content-type']).toBe('text/plain')
+    expect(serverRes.meta.headers['content-type']).toBe('application/json')
     expect(serverRes.body).toBeInstanceOf(Buffer)
-    expect(serverRes.body.toString('utf-8')).toBe('404 Route not found.')
+    expect(JSON.parse(serverRes.body.toString('utf-8'))).toEqual({
+      status: 'error',
+      error: {
+        message: '404 Resource Not Found.'
+      }
+    })
   })
 })
 
