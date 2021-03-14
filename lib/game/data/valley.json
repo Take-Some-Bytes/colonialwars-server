@@ -8,11 +8,23 @@
       "x": 6000,
       "y": 6000
     },
-    "startPositions": {
-      "British": { "x": 250, "y": 250 },
-      "French": { "x": 5750, "y": 5750 },
-      "American": { "x": 3000, "y": 3000 }
-    },
+    "teams": [
+      {
+        "name": "British",
+        "spawnPosition": { "x": 250, "y": 250 },
+        "description": "The British."
+      },
+      {
+        "name": "French",
+        "spawnPosition": { "x": 5750, "y": 5750 },
+        "description": "The French."
+      },
+      {
+        "name": "Americans",
+        "spawnPosition": { "x": 3000, "y": 3000 },
+        "description": "The Americans."
+      }
+    ],
     "tileType": "grass",
     "defaultHeight": 0
   }

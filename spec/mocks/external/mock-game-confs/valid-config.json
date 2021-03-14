@@ -8,9 +8,17 @@
       "x": 200,
       "y": 200
     },
-    "startPositions": {
-      "one": { "x": 0, "y": 0 },
-      "two": { "x": 200, "y": 200 }
-    }
+    "teams": [
+      {
+        "name": "one",
+        "spawnPosition": { "x": 0, "y": 0 },
+        "description": "Team one."
+      },
+      {
+        "name": "two",
+        "spawnPosition": { "x": 200, "y": 200 },
+        "description": "Team two."
+      }
+    ]
   }
 }

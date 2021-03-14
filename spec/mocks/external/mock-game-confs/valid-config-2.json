@@ -8,10 +8,22 @@
       "x": 1000,
       "y": 1000
     },
-    "startPositions": {
-      "one": { "x": 0, "y": 0 },
-      "two": { "x": 500, "y": 500 },
-      "three": { "x": 1000, "y": 1000 }
-    }
+    "teams": [
+      {
+        "name": "one",
+        "spawnPosition": { "x": 0, "y": 0 },
+        "description": "Team one."
+      },
+      {
+        "name": "two",
+        "spawnPosition": { "x": 500, "y": 500 },
+        "description": "Team two."
+      },
+      {
+        "name": "three",
+        "spawnPosition": { "x": 1000, "y": 1000 },
+        "description": "Team three."
+      }
+    ]
   }
 }
