@@ -3,17 +3,34 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
+## [v0.4.1] - 2021-03-13
+### Changed:
+- Updated NPM lock file version.
+- Updated code to work with updated map save file structures in [``specifications/colonialwars/file-structures.md``](
+  https://github.com/Take-Some-Bytes/specifications/blob/6505648b28a5f8b12edfaaf2d1df603ef48debc6/colonialwars/file-structures.md
+). Most notably, the way teams are specified have been changed. The old syntax for specifying
+teams is still supported for compatibility reasons, 
+- Updated a lot of logging in and around the game server.
+### Fixed:
+- Actually uploaded ``.gitignore`` to GitHub.
+- Actually uploaded updated compatibility data for ``README.md`` to GitHub.
+- Fixed specs for the ``Controllers`` class. The specs were still expecting the old response format,
+and now they (correctly) expect the new response format.
+- Fixed the links that point to the [``specifications``](https://github.com/Take-Some-Bytes/specifications)
+repository. Now, they point to specific commit hashes, which is always better since the client sees
+the specifications as they were at that time, instead of the latest specifications.
+
 ## [v0.4.0] - 2021-03-12
 ### Added:
 - Added a ``.gitignore`` file so we can actually start using ``Git`` properly.
 ### Changed:
 - Changed all game configuration files to conform to the save file structures
 defined in [``specifications/colonialwars/file-structures.md``](
-  https://github.com/Take-Some-Bytes/specifications/blob/main/colonialwars/file-structures.md
+  https://github.com/Take-Some-Bytes/specifications/blob/8b485d772503bcc0fce802a3407b5f54a655666c/colonialwars/file-structures.md
 ).
 - Changed player input handling. Instead of applying player velocity changes
-right on input, the input is pushed to a queue with a timestamp, and
-processed every time the player is updated.
+on input, the input is pushed to a queue with a timestamp, and processed
+every time the player is updated.
 - Updated all game-related classes to work with the updated save file structures.
 - Updated all HTTP responses to conform to the structure defined in
 [``specifications/colonialwars/message-structures.md``](
@@ -98,4 +115,5 @@ handled by the ``cors`` NPM package.
 [v0.3.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/b4038be257524ea868baaf4cdd04893918946f8e
 [v0.3.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/f1323f4de881d09549b9f965f7b853ebe7277c32
 [v0.3.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/1c66e82c53ae1c64810d7068f8642ebfca1062b3
-[v0.4.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
+[v0.4.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/ca6c60753f6ab621059641cb8e5a79eda8acf5c4
+[v0.4.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
