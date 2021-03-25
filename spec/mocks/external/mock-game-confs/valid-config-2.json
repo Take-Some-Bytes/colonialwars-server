@@ -25,5 +25,6 @@
         "description": "Team three."
       }
     ]
-  }
+  },
+  "description": "This is the second mock game config."
 }

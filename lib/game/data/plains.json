@@ -1,12 +1,12 @@
 {
   "configType": "game-config",
   "meta": {
-    "name": "Valley",
+    "name": "Plains",
     "mode": "Teams",
     "maxPlayers": 40,
     "worldLimits": {
-      "x": 6000,
-      "y": 6000
+      "x": 8000,
+      "y": 8000
     },
     "teams": [
       {
@@ -27,5 +27,6 @@
     ],
     "tileType": "grass",
     "defaultHeight": 0
-  }
+  },
+  "description": "A straightforward battle on the plains."
 }
