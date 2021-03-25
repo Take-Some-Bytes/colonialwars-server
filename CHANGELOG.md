@@ -3,6 +3,17 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
+## [v0.4.2] - 2021-03-25
+### Added:
+- Added a replacement for ``valley.json`` called ``plains.json``.
+- Added a map description field in all map save files.
+- Added some wrapper classes and utility functions to make working with ``ws`` easier.
+### Changed:
+- Used [``ws``](https://www.npmjs.com/package/ws) instead of Socket.IO.
+- Updated the ``/game-stats`` route to send a game description.
+### Removed:
+- Removed ``valley.json``.
+
 ## [v0.4.1] - 2021-03-13
 ### Changed:
 - Updated NPM lock file version.
@@ -116,4 +127,5 @@ handled by the ``cors`` NPM package.
 [v0.3.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/f1323f4de881d09549b9f965f7b853ebe7277c32
 [v0.3.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/1c66e82c53ae1c64810d7068f8642ebfca1062b3
 [v0.4.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/ca6c60753f6ab621059641cb8e5a79eda8acf5c4
-[v0.4.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
+[v0.4.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/cd8bb1506754564979add0c67c86d1f108a9e8a8
+[v0.4.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
