@@ -1,7 +1,7 @@
 # Colonial Wars Server
 This is ``colonialwars-server``, one of the components of Colonial Wars.
 This repository includes:
-- A ``Socket.IO`` server to manage real-time game communications, and
+- A ``WS`` server to manage real-time game communications, and
 - A ``HTTP`` API server to give game server information to clients.
 
 The front-end application could be found at ``colonialwars-client``.
