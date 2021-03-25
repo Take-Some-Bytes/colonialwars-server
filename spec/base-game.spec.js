@@ -52,7 +52,8 @@ describe('The BaseGame class,', () => {
         communications: communications,
         playerStats: {
           PLAYER_SPEED: 0.4
-        }
+        },
+        description: 'Testing this game.'
       })
       baseGame.init()
     } catch (ex) {

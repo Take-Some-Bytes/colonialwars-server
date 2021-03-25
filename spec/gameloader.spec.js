@@ -118,7 +118,8 @@ describe('The GameLoader class,', () => {
               description: 'Team two.'
             }
           ]
-        }
+        },
+        description: 'This is the first mock game config.'
       })
     })
   })
