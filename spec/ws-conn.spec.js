@@ -1,15 +1,16 @@
 /* eslint-env jasmine */
 /**
- * @fileoverview Specs for the ``WSConn`` class, which wraps
- * a plain WebSocket instance.
+ * @fileoverview Specs for the ``WSConn`` class, which implements the client
+ * socket for CWDTP.
  */
 /**
  * @typedef {import('jasmine')} jasmine
  */
 
-const os = require('os')
 const http = require('http')
-const events = require('events')
+const EventEmitter = require('events')
+const bufferUtils = require('../lib/websockets/buffer-utils')
+const crypto = require('../lib/websockets/crypto')
 
 const WebSocket = require('ws')
 const WSConn = require('../lib/websockets/conn')
@@ -25,38 +26,36 @@ const noop = () => { /* no-op */ }
  */
 let wsServer = null
 
-// Get an IP address to use.
-const nets = os.networkInterfaces()
-const results = {}
+/**
+ * Sets up a WebSocket Server.
+ */
+function setUp () {
+  const emitter = new EventEmitter()
+  wsServer.on('connection', ws => {
+    ws.on('message', async data => {
+      const parsed = JSON.parse(data.toString('utf16le'))
+      const connid = Buffer.from(await crypto.randomBytes(16)).toString('hex')
+      if (parsed.event === 'cwdtp::client-hello') {
+        const resKey = bufferUtils.toBase64(await crypto.hash(
+          bufferUtils.toBinary(parsed.meta.req_key + 'FJcod23c-aodDJf-302-D38cadjeC2381-F8fad-AJD3', false),
+          'SHA-1'
+        ))
 
-for (const name of Object.keys(nets)) {
-  for (const net of nets[name]) {
-    // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
-    if (net.family === 'IPv4' && !net.internal) {
-      if (!results[name]) {
-        results[name] = []
+        ws.send(JSON.stringify({
+          event: 'cwdtp::server-hello',
+          meta: {
+            res_key: resKey,
+            cid: connid
+          },
+          data: []
+        }))
+      } else {
+        emitter.emit('messageReceived', parsed)
       }
-      results[name].push(net.address)
-    }
-  }
-}
-/**
- * @type {string}
- */
-const localIP = Object.values(results)[0][0]
+    })
+  })
 
-/**
- * Creates a WebSocket connection
- * @param {string} [url]
- * @param {Partial<WebSocket.ClientOptions&import('http').ClientRequestArgs>} [opts]
- */
-function createConnection (url, opts) {
-  return new WebSocket(
-    url || 'http://localhost:3820/?hi=hello', Object.assign({
-      origin: 'http://localhost:4000',
-      localAddress: '127.0.0.1'
-    }, opts)
-  )
+  return emitter
 }
 /**
  * Some teardown to run after every suite.
@@ -78,198 +77,265 @@ function tearDown (done) {
 }
 
 describe('The WSConn class,', () => {
-  it('should wrap a normal WebSocket instance', () => {
-    const ws = createConnection()
-    ws.on('error', err => {
-      console.error(err.message)
-    })
-    const conn = new WSConn(ws, { isClient: true })
+  it('should create an internal WebSocket when in client mode', () => {
+    const conn = new WSConn('http://localhost')
+    conn.on('error', noop)
 
+    expect(conn.isClient).toBe(true)
     expect(conn.ws).toBeInstanceOf(WebSocket)
   })
 
-  describe('when handling reconnects,', () => {
-    const connAttempts = new Map([
-      ['127.0.0.1', 0],
-      [localIP, 0]
-    ])
+  it('should not create any WebSocket instances when in server mode', () => {
+    const conn = new WSConn(null)
+
+    expect(conn.ws).toBe(null)
+    expect(conn.isClient).toBe(false)
+  })
+
+  describe('when connecting to a server,', () => {
     beforeAll(done => {
-      server.on('upgrade', (req, socket, head) => {
-        // No connection for you.
-        socket.write([
-          'HTTP/1.1 404 NOPE',
-          '\r\n'
-        ].join('\r\n'))
-        connAttempts.set(socket.remoteAddress, connAttempts.get(socket.remoteAddress) + 1)
-        socket.destroy()
+      wsServer = new WebSocket.Server({
+        server: server,
+        handleProtocols: () => {
+          return 'pow::cwdtp'
+        }
       })
       server.listen(3820, 'localhost', done)
       server.on('error', done.fail)
     })
     afterAll(tearDown)
     afterEach(() => {
-      Array.from(connAttempts.keys()).forEach(key => {
-        connAttempts.set(key, 0)
-      })
+      wsServer.removeAllListeners()
     })
 
-    it('should not try to reconnect when reconnect option is false', done => {
-      const ws = createConnection(null, { localAddress: localIP })
-      const conn = new WSConn(ws, {
-        isClient: true,
-        reconnect: false
-      })
-      ws.on('error', noop)
-      conn.on('error', noop)
+    it('should abort the handshake if no reply is received after 30s', done => {
+      const realSetTimeout = setTimeout
+      let err = null
+      jasmine.clock().install()
+      const conn = new WSConn('http://localhost:3820')
+      conn.on('error', ex => (err = ex))
 
-      setTimeout(() => {
-        expect(conn.connected).toBe(false)
-        expect(connAttempts.get(localIP)).toBe(1)
+      realSetTimeout(() => {
+        jasmine.clock().tick(31000)
+
+        expect(err).toBeInstanceOf(Error)
+        expect(err.code).toBe('EHSTIMEOUT')
+        expect(conn.abortedHandshake).toBe(true)
+        jasmine.clock().uninstall()
         done()
       }, 500)
     })
 
-    it('should try to reconnect when reconnect option is true', done => {
-      const ws = createConnection()
-      const conn = new WSConn(ws, {
-        isClient: true,
-        reconnect: true,
-        reconnectionLimit: 2
+    it('should abort the handshake if invalid server hello is received', done => {
+      let abortHandshakeEmitted = false
+      let reason = ''
+      wsServer.on('connection', ws => {
+        setTimeout(() => {
+          ws.send(JSON.stringify({
+            event: 'cwdtp::server-hello',
+            meta: {},
+            valid: false,
+            data: []
+          }))
+        }, 40)
       })
-      ws.on('error', noop)
-      conn.on('error', noop)
+      const conn = new WSConn('http://localhost:3820')
+      conn.on('abortingHandshake', why => {
+        abortHandshakeEmitted = true
+        reason = why
+      })
 
       setTimeout(() => {
-        expect(conn.reconnects).toBe(2)
-        expect(conn.connected).toBe(false)
-        expect(connAttempts.get('127.0.0.1')).toBe(2)
+        expect(abortHandshakeEmitted).toBe(true)
+        expect(conn.abortedHandshake).toBe(true)
+        expect(reason).toBe('Invalid server handshake response!')
         done()
-      }, 3000)
+      }, 500)
+    })
+
+    it('should abort the handshake if res_key does not match', done => {
+      let abortHandshakeEmitted = false
+      let reason = ''
+      wsServer.on('connection', ws => {
+        setTimeout(() => {
+          ws.send(JSON.stringify({
+            event: 'cwdtp::server-hello',
+            meta: {
+              res_key: 'nope'
+            },
+            valid: false,
+            data: []
+          }))
+        }, 40)
+      })
+      const conn = new WSConn('http://localhost:3820')
+      conn.on('abortingHandshake', why => {
+        abortHandshakeEmitted = true
+        reason = why
+      })
+
+      setTimeout(() => {
+        expect(abortHandshakeEmitted).toBe(true)
+        expect(conn.abortedHandshake).toBe(true)
+        expect(reason).toBe('Invalid response key!')
+        done()
+      }, 500)
+    })
+
+    it('should abort the handshake if no connection ID is sent', done => {
+      let abortHandshakeEmitted = false
+      let reason = ''
+      wsServer.on('connection', ws => {
+        ws.on('message', async data => {
+          const parsed = JSON.parse(data.toString('utf16le'))
+          if (parsed.event === 'cwdtp::client-hello') {
+            const resKey = bufferUtils.toBase64(await crypto.hash(
+              bufferUtils.toBinary(parsed.meta.req_key + 'FJcod23c-aodDJf-302-D38cadjeC2381-F8fad-AJD3', false),
+              'SHA-1'
+            ))
+
+            ws.send(JSON.stringify({
+              event: 'cwdtp::server-hello',
+              meta: {
+                res_key: resKey
+              },
+              data: []
+            }))
+          }
+        })
+      })
+      const conn = new WSConn('http://localhost:3820')
+      conn.on('abortingHandshake', why => {
+        abortHandshakeEmitted = true
+        reason = why
+      })
+
+      setTimeout(() => {
+        expect(abortHandshakeEmitted).toBe(true)
+        expect(conn.abortedHandshake).toBe(true)
+        expect(reason).toBe('No connection ID received!')
+        done()
+      }, 500)
+    })
+
+    it('should connect successfully if everything passes', done => {
+      const connid = 'fjfjfjfdddiie33mccwaa.'
+      let abortHandshakeEmitted = false
+      let connected = false
+      let reason = ''
+      wsServer.on('connection', ws => {
+        ws.on('message', async data => {
+          const parsed = JSON.parse(data.toString('utf16le'))
+          if (parsed.event === 'cwdtp::client-hello') {
+            const resKey = bufferUtils.toBase64(await crypto.hash(
+              bufferUtils.toBinary(parsed.meta.req_key + 'FJcod23c-aodDJf-302-D38cadjeC2381-F8fad-AJD3', false),
+              'SHA-1'
+            ))
+
+            ws.send(JSON.stringify({
+              event: 'cwdtp::server-hello',
+              meta: {
+                res_key: resKey,
+                cid: connid
+              },
+              data: []
+            }))
+          }
+        })
+      })
+      const conn = new WSConn('http://localhost:3820')
+      conn.on('abortingHandshake', why => {
+        abortHandshakeEmitted = true
+        reason = why
+      })
+      conn.on('connect', () => (connected = true))
+
+      setTimeout(() => {
+        expect(abortHandshakeEmitted).toBe(false)
+        expect(conn.abortedHandshake).toBe(false)
+        expect(conn.connected).toBe(true)
+        expect(connected).toBe(true)
+        expect(conn.id).toBe(connid)
+        expect(reason).toBe('')
+        conn.disconnect(false, 1001, 'Exiting test item', false)
+        done()
+      }, 500)
     })
   })
 
   describe('when sending messages,', () => {
     beforeAll(done => {
       wsServer = new WebSocket.Server({
-        server: server
+        server: server,
+        handleProtocols: () => {
+          return 'pow::cwdtp'
+        }
       })
       server.listen(3820, 'localhost', done)
       server.on('error', done.fail)
     })
     afterAll(tearDown)
     afterEach(() => {
-      wsServer.removeAllListeners('connection')
+      wsServer.removeAllListeners()
     })
 
-    it('should send binary encoded JSON', done => {
-      const emitter = new events.EventEmitter()
-      emitter.on('messageReceived', data => {
-        let err = null
-        try {
-          JSON.parse(data.toString('utf16le'))
-        } catch (ex) {
-          err = ex
-        }
-        expect(data).toBeInstanceOf(Buffer)
-        expect(err).toBe(null)
-        conn.disconnect(false, 1001, 'Exiting test suite item.')
-        setTimeout(() => {
-          done()
-        }, 100)
+    it('should not send messages when not connected', done => {
+      const emitter = setUp(wsServer)
+      const conn = new WSConn('http://localhost:3820')
+      emitter.once('messageReceived', () => {
+        done.fail('Message got sent.')
       })
-
-      wsServer.on('connection', ws => {
-        ws.on('message', data => {
-          emitter.emit('messageReceived', data)
-        })
-      })
-
-      const conn = new WSConn(createConnection(), {
-        isClient: true
-      })
-      conn.on('connect', () => {
-        conn.emit('hi', 'greeatings')
-      })
+      try {
+        conn.emit('test-event', 'testing', 'testing', { 1: [2, 3] })
+      } catch (ex) {
+        expect(ex).toBeInstanceOf(Error)
+        expect(ex.message).toBe('WSConn is not connected!')
+        done()
+      }
     })
 
-    it('should send JSON with a specified structure', done => {
-      const emitter = new events.EventEmitter()
-      emitter.on('messageReceived', data => {
-        let parsed = null
-        let err = null
-        try {
-          parsed = JSON.parse(data.toString('utf16le'))
-        } catch (ex) {
-          err = ex
-        }
+    it('should send messages that comply to CWDTP message structures', done => {
+      const emitter = setUp(wsServer)
+      const conn = new WSConn('http://localhost:3820')
+      emitter.once('messageReceived', parsed => {
         expect(parsed).toBeInstanceOf(Object)
         expect(parsed).toEqual({
-          event: 'user_message',
-          data: [{
-            contents: 'Greetings from Goodness Me!'
-          }]
+          event: 'test-event',
+          meta: {},
+          data: [
+            'testing', 'testing',
+            { 1: [2, 3] }
+          ]
         })
-        expect(data).toBeInstanceOf(Buffer)
-        expect(err).toBe(null)
-        conn.disconnect(false, 1001, 'Exiting test suite item.')
-        setTimeout(() => {
-          done()
-        }, 100)
+        conn.disconnect(false, 1001, 'Exiting test item', false)
+        done()
       })
 
-      wsServer.on('connection', ws => {
-        ws.on('message', data => {
-          emitter.emit('messageReceived', data)
-        })
-      })
-
-      const conn = new WSConn(createConnection(), {
-        isClient: true
-      })
       conn.on('connect', () => {
-        conn.emit('user_message', { contents: 'Greetings from Goodness Me!' })
+        conn.emit('test-event', 'testing', 'testing', { 1: [2, 3] })
       })
     })
 
-    it('should be able to send binary arrays properly', done => {
-      const emitter = new events.EventEmitter()
-      emitter.on('messageReceived', data => {
-        let parsed = null
-        let err = null
-        try {
-          parsed = JSON.parse(data.toString('utf16le'))
-        } catch (ex) {
-          err = ex
-        }
+    it('should send binary arrays as specified in CWDTP', done => {
+      const emitter = setUp(wsServer)
+      const conn = new WSConn('http://localhost:3820')
+      emitter.once('messageReceived', parsed => {
         expect(parsed).toBeInstanceOf(Object)
         expect(parsed).toEqual({
-          event: 'binary',
+          event: 'test-binary',
+          meta: {},
           data: [{
-            type: 'arraybuffer',
             binary: true,
-            as: 'uint8array',
-            content: [100, 100, 100, 100, 100, 100, 100, 100]
+            type: 'int8array',
+            contents: [100, 3, 154]
           }]
         })
-        expect(data).toBeInstanceOf(Buffer)
-        expect(err).toBe(null)
-        conn.disconnect(false, 1001, 'Exiting test suite item.')
-        setTimeout(() => {
-          done()
-        }, 100)
+        conn.disconnect(false, 1001, 'Exiting test item', false)
+        done()
       })
 
-      wsServer.on('connection', ws => {
-        ws.on('message', data => {
-          emitter.emit('messageReceived', data)
-        })
-      })
-
-      const conn = new WSConn(createConnection(), {
-        isClient: true
-      })
       conn.on('connect', () => {
-        conn.emit('binary', new Uint8Array([100, 100, 100, 100, 100, 100, 100, 100]).buffer)
+        conn.emit('test-binary', new Int8Array([100, 0x3, -102]))
       })
     })
   })
@@ -277,49 +343,67 @@ describe('The WSConn class,', () => {
   describe('when receiving messages,', () => {
     beforeAll(done => {
       wsServer = new WebSocket.Server({
-        server: server
+        server: server,
+        handleProtocols: () => {
+          return 'pow::cwdtp'
+        }
       })
       server.listen(3820, 'localhost', done)
       server.on('error', done.fail)
     })
     afterAll(tearDown)
     afterEach(() => {
-      wsServer.removeAllListeners('connection')
+      wsServer.removeAllListeners()
     })
 
-    it('should allow plain text frames that have proper JSON in them', done => {
+    it('should be able to receive binary arrays as specified in CWDTP', done => {
+      setUp(wsServer)
       wsServer.on('connection', ws => {
-        ws.send(JSON.stringify({
-          event: 'server-hello',
-          data: ['Hello from the server!']
-        }))
-      })
-
-      const conn = new WSConn(createConnection(), { isClient: true })
-      conn.on('server-hello', data => {
-        expect(data).toBe('Hello from the server!')
-        conn.disconnect(false, 1001, 'Exiting test suite item.')
         setTimeout(() => {
-          done()
-        }, 100)
+          ws.send(JSON.stringify({
+            event: 'bin',
+            meta: {},
+            data: [{
+              binary: true,
+              type: 'float32array',
+              contents: [100.5, 20.1, 3.2, -100.4]
+            }]
+          }))
+        })
+      }, 700)
+
+      const conn = new WSConn('http://localhost:3820')
+      conn.on('bin', arr => {
+        expect(arr).toBeInstanceOf(Float32Array)
+        expect(arr).toEqual(new Float32Array([100.5, 20.1, 3.2, -100.4]))
+        done()
       })
     })
 
-    it('should allow UTF-16 encoded binary frames that also have proper JSON', done => {
+    it('should be able to receive DataViews properly', done => {
+      setUp(wsServer)
       wsServer.on('connection', ws => {
-        ws.send(Buffer.from(JSON.stringify({
-          event: 'server-hello',
-          data: ['Hello from the server!']
-        })))
-      })
-
-      const conn = new WSConn(createConnection(), { isClient: true })
-      conn.on('server-hello', data => {
-        expect(data).toBe('Hello from the server!')
-        conn.disconnect(false, 1001, 'Exiting test suite item.')
+        const stuff = [
+          100, 3200, 4235.2, 54841.2, 458.2, 222
+        ]
         setTimeout(() => {
-          done()
-        }, 100)
+          ws.send(JSON.stringify({
+            event: 'bin',
+            meta: {},
+            data: [{
+              binary: true,
+              type: 'dataview',
+              contents: Array.from(new Uint8Array(new DataView(new Float64Array(stuff).buffer).buffer))
+            }]
+          }))
+        })
+      }, 700)
+
+      const conn = new WSConn('http://localhost:3820')
+      conn.on('bin', view => {
+        expect(view).toBeInstanceOf(DataView)
+        expect(view.getFloat64(16, true)).toBe(4235.2)
+        done()
       })
     })
   })
