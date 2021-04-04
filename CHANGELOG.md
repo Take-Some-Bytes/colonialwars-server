@@ -3,6 +3,15 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
+## [v0.4.3] - 2021-04-03
+### Added:
+- Added [``nanoid``](https://www.npmjs.com/package/nanoid) for generating WebSocket connection IDs.
+- Added a ``crypto`` module to provide a unified API for Node.JS and the browser. That way, we won't
+have to rewrite a lot of crypto code when we use the ``WSConn`` class in the front end.
+### Changed:
+- ``WSServer`` and ``WSConn`` are now fully-fledged implementations of [``CWDTP``][3], instead of
+a "slight" wrapper around WebSockets.
+
 ## [v0.4.2] - 2021-03-25
 ### Added:
 - Added a replacement for ``valley.json`` called ``plains.json``.
@@ -120,6 +129,7 @@ handled by the ``cors`` NPM package.
 
 [1]: https://keepachangelog.com/
 [2]: https://semver.org
+[3]: https://github.com/Take-Some-Bytes/specifications/blob/5542f478975dc45480d631f314837cc571681b0a/colonialwars/pow_cwdtp.md
 
 [v0.1.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/4faa6df4e70ab7239b6d7edf29d22feb026657f3
 [v0.2.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/db96ffa372e8791d2a1cdbf47d4b69550b0cb3d4
@@ -128,4 +138,5 @@ handled by the ``cors`` NPM package.
 [v0.3.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/1c66e82c53ae1c64810d7068f8642ebfca1062b3
 [v0.4.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/ca6c60753f6ab621059641cb8e5a79eda8acf5c4
 [v0.4.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/cd8bb1506754564979add0c67c86d1f108a9e8a8
-[v0.4.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
+[v0.4.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/c375b8c0f2226ac94e514404dda1191fa76b8a3a
+[v0.4.3]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
