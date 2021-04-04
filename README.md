@@ -4,7 +4,11 @@ This repository includes:
 - A ``WS`` server to manage real-time game communications, and
 - A ``HTTP`` API server to give game server information to clients.
 
-The front-end application could be found at ``colonialwars-client``.
+The front-end application could be found at ``colonialwars-client``. The ``WS`` server
+in this application conforms to the Colonial Wars Data Transfer Protocol as defined
+[here](
+  https://github.com/Take-Some-Bytes/specifications/blob/5542f478975dc45480d631f314837cc571681b0a/colonialwars/pow_cwdtp.md
+).
 
 ## Compatibility
 | colonialwars-server | colonialwars-client |
