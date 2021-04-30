@@ -18,8 +18,8 @@ const MockLoggers = require('./mocks/internal/mock-loggers')
 const MockSocket = require('./mocks/external/mock-io-socket')
 
 const communications = {
-  SOCKET_UPDATE: 'mock-game-update',
-  SOCKET_REMOVE_PLAYER: 'mock-game-remove-player'
+  CONN_UPDATE: 'mock-game-update',
+  CONN_REMOVE_PLAYER: 'mock-game-remove-player'
 }
 
 describe('The Manager class,', () => {
