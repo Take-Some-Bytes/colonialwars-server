@@ -3,6 +3,35 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
+## [v0.5.0] - 2021-04-29
+### Added:
+- Added a ``TimedStore`` class, which deletes items after the specified amount of time.
+- Added [``lru-cache``](https://www.npmjs.com/package/lru-cache),
+which ``TimedStore`` depends on.
+- Added a 6 second idle timeout for all connections made to this server. This is to prevent
+the process from indefinitely hanging when we want to shut down, and it's nice for DDOS prevention
+too (....probably not).
+- Added a new ``GameServer`` class, which handles game updates, admissions, player input,
+authorization, and the WebSocket server. This completes the connection between the game
+client and game server.
+- Added a ``/game-auth`` route, which clients can use to obtain authorization to enter a game.
+- Added player tracking in the ``Manager`` class: it now tracks all the player's names across
+all the games that ``Manager`` is managing. Subsequently, it could be used to ensure that no more
+than one instance of player ``Bob`` exists on a single game server.
+- Added new game configurations; now, you need to specify the game's map's theme.
+### Changed:
+- Renamed the ``GameServer`` class to the ``CWServer`` class, as ``CWServer`` is a more appropriate
+name for what the class does.
+- Moved all the stuff in ``lib/websockets`` to ``lib/cwdtp``.
+- Decreased updates per second from 25/s to 10/s.
+- Increased player speed from 0.4 to 0.9.
+- Updated the ``WSConn`` class to conform to [CWDTP Revision 6][4].
+### Removed:
+- Removed logic which decided whether to log an error while parsing the ``Forwarded`` header.
+Now, if an error is encountered, the header is ignored, and the next middleware is called.
+- Removed all references to [``Socket.IO``](https://socket.io). We never used it in this project,
+and with our current plans, we never will.
+
 ## [v0.4.3] - 2021-04-03
 ### Added:
 - Added [``nanoid``](https://www.npmjs.com/package/nanoid) for generating WebSocket connection IDs.
@@ -130,6 +159,7 @@ handled by the ``cors`` NPM package.
 [1]: https://keepachangelog.com/
 [2]: https://semver.org
 [3]: https://github.com/Take-Some-Bytes/specifications/blob/5542f478975dc45480d631f314837cc571681b0a/colonialwars/pow_cwdtp.md
+[4]: https://github.com/Take-Some-Bytes/specifications/blob/d8013611e60ce71d845b7d7d7d9570a05f11ca34/colonialwars/pow_cwdtp.md
 
 [v0.1.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/4faa6df4e70ab7239b6d7edf29d22feb026657f3
 [v0.2.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/db96ffa372e8791d2a1cdbf47d4b69550b0cb3d4
@@ -139,4 +169,5 @@ handled by the ``cors`` NPM package.
 [v0.4.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/ca6c60753f6ab621059641cb8e5a79eda8acf5c4
 [v0.4.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/cd8bb1506754564979add0c67c86d1f108a9e8a8
 [v0.4.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/c375b8c0f2226ac94e514404dda1191fa76b8a3a
-[v0.4.3]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
+[v0.4.3]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/f083df5d5f546e2ffb261e61a38e86fc2fab4c08
+[v0.5.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
