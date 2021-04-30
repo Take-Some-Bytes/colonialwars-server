@@ -34,8 +34,8 @@ describe('The GameLoader class,', () => {
             PLAYER_SPEED: 0.4
           },
           communications: {
-            SOCKET_UPDATE: 'mock-game-update',
-            SOCKET_REMOVE_PLAYER: 'mock-game-remove-player'
+            CONN_UPDATE: 'mock-game-update',
+            CONN_REMOVE_PLAYER: 'mock-game-remove-player'
           }
         },
         debug: (...args) => {
@@ -117,7 +117,8 @@ describe('The GameLoader class,', () => {
               spawnPosition: { x: 200, y: 200 },
               description: 'Team two.'
             }
-          ]
+          ],
+          tileType: 'grass'
         },
         description: 'This is the first mock game config.'
       })
