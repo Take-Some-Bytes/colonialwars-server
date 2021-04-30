@@ -9,11 +9,11 @@
 
 const http = require('http')
 const EventEmitter = require('events')
-const bufferUtils = require('../lib/websockets/buffer-utils')
-const crypto = require('../lib/websockets/crypto')
+const bufferUtils = require('../lib/cwdtp/buffer-utils')
+const crypto = require('../lib/cwdtp/crypto')
 
 const WebSocket = require('ws')
-const WSConn = require('../lib/websockets/conn')
+const WSConn = require('../lib/cwdtp/conn')
 
 const server = http.createServer((_, res) => {
   res.statusCode = 404
@@ -97,7 +97,7 @@ describe('The WSConn class,', () => {
       wsServer = new WebSocket.Server({
         server: server,
         handleProtocols: () => {
-          return 'pow::cwdtp'
+          return 'pow.cwdtp'
         }
       })
       server.listen(3820, 'localhost', done)
@@ -268,7 +268,7 @@ describe('The WSConn class,', () => {
       wsServer = new WebSocket.Server({
         server: server,
         handleProtocols: () => {
-          return 'pow::cwdtp'
+          return 'pow.cwdtp'
         }
       })
       server.listen(3820, 'localhost', done)
@@ -345,7 +345,7 @@ describe('The WSConn class,', () => {
       wsServer = new WebSocket.Server({
         server: server,
         handleProtocols: () => {
-          return 'pow::cwdtp'
+          return 'pow.cwdtp'
         }
       })
       server.listen(3820, 'localhost', done)
