@@ -7,6 +7,7 @@
  * @prop {string} ip
  * @prop {string} url
  * @prop {string} method
+ * @prop {URLSearchParams} query
  * @prop {string} socketRemoteAddr
  * @prop {Object<string, string>} headers
  * @prop {ReturnType<import('forwarded-parse')>} forwardedRecords
@@ -19,6 +20,7 @@ class MockHTTPRequest {
    */
   constructor (opts) {
     this.url = opts.url
+    this.query = opts.query
     this.method = opts.method
     this.forwardedRecords = opts.forwardedRecords
 

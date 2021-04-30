@@ -24,7 +24,8 @@
         "spawnPosition": { "x": 1000, "y": 1000 },
         "description": "Team three."
       }
-    ]
+    ],
+    "tileType": "grass"
   },
   "description": "This is the second mock game config."
 }

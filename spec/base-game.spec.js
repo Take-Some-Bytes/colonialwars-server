@@ -14,8 +14,8 @@ const BaseGame = require('../lib/game/game-modes/base-game')
 const MockSocket = require('./mocks/external/mock-io-socket')
 
 const communications = {
-  SOCKET_UPDATE: 'mock-game-update',
-  SOCKET_REMOVE_PLAYER: 'mock-game-remove-player'
+  CONN_UPDATE: 'mock-game-update',
+  CONN_REMOVE_PLAYER: 'mock-game-remove-player'
 }
 
 describe('The BaseGame class,', () => {
@@ -33,7 +33,8 @@ describe('The BaseGame class,', () => {
         name: 'Base game 1',
         mode: 'Teams',
         maxPlayers: 4,
-        worldLimits: { WORLD_MAX: 200, WORLD_MIN: 0 },
+        description: 'Testing this game.',
+        worldLimits: { x: 200, y: 0 },
         teams: [
           {
             name: 'one',
@@ -46,14 +47,13 @@ describe('The BaseGame class,', () => {
             description: 'Team two.'
           }
         ],
-        debug: (...args) => {
-          console.log(`DEBUG: ${args.join(' ')}`)
+        graphicsData: {
+          theme: 'grass'
         },
         communications: communications,
         playerStats: {
           PLAYER_SPEED: 0.4
-        },
-        description: 'Testing this game.'
+        }
       })
       baseGame.init()
     } catch (ex) {
@@ -171,8 +171,8 @@ describe('The BaseGame class,', () => {
     afterEach(() => {
       playerSockets.forEach(socket => {
         if (socket instanceof MockSocket) {
-          if (socket.listenerCount(communications.SOCKET_UPDATE) > 0) {
-            socket.removeAllListeners(communications.SOCKET_UPDATE)
+          if (socket.listenerCount(communications.CONN_UPDATE) > 0) {
+            socket.removeAllListeners(communications.CONN_UPDATE)
           }
         }
       })
@@ -198,7 +198,7 @@ describe('The BaseGame class,', () => {
       })
       if (playerSockets.length === 4 && playerSockets.every(val => val instanceof MockSocket)) {
         playerSockets.forEach(conn => {
-          conn.on(communications.SOCKET_UPDATE, data => {
+          conn.on(communications.CONN_UPDATE, data => {
             receivedData.push({ id: conn.id, data: data })
             allReceived.emit('received')
           })
@@ -225,7 +225,7 @@ describe('The BaseGame class,', () => {
       })
       if (playerSockets[2] instanceof MockSocket) {
         const socket = playerSockets[2]
-        socket.on(communications.SOCKET_REMOVE_PLAYER, msg => {
+        socket.on(communications.CONN_REMOVE_PLAYER, msg => {
           received = true
           receivedListener.emit('received', msg)
         })
@@ -288,7 +288,7 @@ describe('The BaseGame class,', () => {
       })
       if (playerSockets.length === 3 && playerSockets.every(conn => conn instanceof MockSocket)) {
         playerSockets.forEach(conn => {
-          conn.on(communications.SOCKET_REMOVE_PLAYER, msg => {
+          conn.on(communications.CONN_REMOVE_PLAYER, msg => {
             receivedCount++
             allReceived.emit('received', msg)
           })
