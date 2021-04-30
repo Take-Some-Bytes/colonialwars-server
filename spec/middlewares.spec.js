@@ -2,6 +2,9 @@
 /**
  * @fileoverview Tests for Middlewares class.
  */
+/**
+ * @typedef {import('jasmine')} jasmine
+ */
 
 const Middlewares = require('../lib/controllers/middlewares')
 
@@ -28,6 +31,28 @@ describe('The Middlewares class,', () => {
 
     expect(err).toBe(null)
     expect(middlewares).toBeInstanceOf(Middlewares)
+  })
+
+  it('should be able to parse querystring', () => {
+    const mockReq = new MockHttpRequest({
+      url: '/?i_am_a_qs=1&can_i_have_cheese=0'
+    })
+    let passed = false
+
+    if (middlewares instanceof Middlewares) {
+      middlewares.queryParser()(
+        mockReq, null, err => {
+          if (err) { throw err }
+
+          passed = true
+        }
+      )
+    }
+
+    expect(passed).toBe(true)
+    expect(mockReq.query).toBeInstanceOf(URLSearchParams)
+    expect(mockReq.query.get('i_am_a_qs')).toBe('1')
+    expect(mockReq.query.get('can_i_have_cheese')).toBe('0')
   })
 
   it('should be able to parse Forwarded header', () => {
@@ -173,7 +198,7 @@ describe('The Middlewares class,', () => {
   })
 })
 
-describe('The Middlewares class\'s getClientIP method,', () => {
+describe("The Middlewares class's getClientIP method,", () => {
   let middlewares = null
 
   beforeAll(() => {
