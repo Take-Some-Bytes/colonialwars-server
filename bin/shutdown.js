@@ -3,8 +3,8 @@
  */
 
 /**
- * Gracefully shuts down a GameServer instance.
- * @param {InstanceType<import('../')>} server The GameServer instance.
+ * Gracefully shuts down a CWServer instance.
+ * @param {InstanceType<import('../')>} server The CWServer instance.
  * @param {NodeJS.Signals} signal The signal that was received.
  */
 async function handleShutdown (server, signal) {
@@ -33,7 +33,7 @@ async function handleShutdown (server, signal) {
 
 /**
  * Handles an uncaught exception in the process.
- * @param {InstanceType<import('../')>} server The GameServer instance.
+ * @param {InstanceType<import('../')>} server The CWServer instance.
  * @param {Error} ex The error that happened.
  */
 async function handleUncaughtEx (server, ex) {

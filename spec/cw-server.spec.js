@@ -1,12 +1,12 @@
 /* eslint-env jasmine */
 /**
- * @fileoverview Tests for the GameServer class.
+ * @fileoverview Tests for the CWServer class.
  */
 
 const http = require('http')
 const Router = require('router')
 
-const GameServer = require('../')
+const CWServer = require('../')
 const Manager = require('../lib/game/manager')
 const Loggers = require('../lib/logging/loggers')
 const GameLoader = require('../lib/game/gameloader')
@@ -17,40 +17,40 @@ const Configurations = require('../lib/utils/configurations')
 
 const fetch = require('./helpers/fetch')
 
-describe('The GameServer class,', () => {
+describe('The CWServer class,', () => {
   // Set PORT to 1487 to avoid clashing with other processes.
   process.env.PORT = 1487
-  let gameServer = null
+  let cwServer = null
 
   it('should construct and initialize without error', async () => {
     let err = null
     try {
-      gameServer = await GameServer.create()
+      cwServer = await CWServer.create()
     } catch (ex) {
       err = ex
     }
 
     expect(err).toBe(null)
-    expect(gameServer).toBeInstanceOf(GameServer)
+    expect(cwServer).toBeInstanceOf(CWServer)
   })
 
   it('should have the proper configuration object', () => {
     let configurationObj = null
-    if (gameServer instanceof GameServer) {
-      configurationObj = gameServer.config
+    if (cwServer instanceof CWServer) {
+      configurationObj = cwServer.config
     }
     expect(configurationObj).toBeInstanceOf(Configurations)
   })
 
   it('should have the proper helper classes', () => {
     const obj = {}
-    if (gameServer instanceof GameServer) {
-      obj.loggers = gameServer.loggers
-      obj.manager = gameServer.manager
-      obj.gameloader = gameServer.gameloader
-      obj.serverUtils = gameServer.serverUtils
-      obj.middlewares = gameServer.middlewares
-      obj.controllers = gameServer.controllers
+    if (cwServer instanceof CWServer) {
+      obj.loggers = cwServer.loggers
+      obj.manager = cwServer.manager
+      obj.gameloader = cwServer.gameloader
+      obj.serverUtils = cwServer.serverUtils
+      obj.middlewares = cwServer.middlewares
+      obj.controllers = cwServer.controllers
     }
     expect(obj.loggers).toBeInstanceOf(Loggers)
     expect(obj.manager).toBeInstanceOf(Manager)
@@ -63,31 +63,31 @@ describe('The GameServer class,', () => {
   it('should have a Router object and a HTTP server instance', () => {
     let httpServer = null
     let routerObj = null
-    if (gameServer instanceof GameServer) {
-      httpServer = gameServer.server
-      routerObj = gameServer.router
+    if (cwServer instanceof CWServer) {
+      httpServer = cwServer.server
+      routerObj = cwServer.router
     }
     expect(httpServer).toBeInstanceOf(http.Server)
     expect(routerObj).toBeInstanceOf(Router)
   })
 })
 
-describe('The GameServer class, when handling requests,', () => {
+describe('The CWServer class, when handling requests,', () => {
   const oldProcessTitle = process.title
-  let gameServer = null
+  let cwServer = null
 
   beforeAll(async () => {
     // Set the process title... just because.
     process.title = 'colonialwars-gameserver'
-    gameServer = await GameServer.create()
+    cwServer = await CWServer.create()
     console.log()
-    await gameServer.start()
+    await cwServer.start()
   })
   afterAll(async () => {
     // And then... reset it.
     process.title = oldProcessTitle
-    if (gameServer instanceof GameServer) {
-      await gameServer.stop()
+    if (cwServer instanceof CWServer) {
+      await cwServer.stop()
     }
   })
 

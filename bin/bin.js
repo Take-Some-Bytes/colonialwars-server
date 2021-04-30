@@ -3,13 +3,13 @@
  * @fileoverview Executable file for the Colonial Wars backend.
  */
 
-const GameServer = require('../')
+const CWServer = require('../')
 const shutdown = require('./shutdown')
 
 process.title = `cw-server-${process.env.INSTANCE_NUM}`
 
 ;(async () => {
-  const server = await GameServer.create(process.argv[2])
+  const server = await CWServer.create(process.argv[2])
   const serverLogger = server.loggers.get('Server-logger')
 
   server.start().then(serverStarted => {
