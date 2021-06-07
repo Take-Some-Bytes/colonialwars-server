@@ -3,7 +3,7 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
-## [v0.5.1] - 2021-05-31
+## [v0.5.1] - 2021-06-06
 ### Added:
 - Added [``accepts``](https://www.npmjs.com/package/accepts) to parse the ``Accept`` header,
 instead of trying to parse it ourselves.
