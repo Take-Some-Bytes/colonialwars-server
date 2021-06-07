@@ -1,8 +1,12 @@
 /* eslint-env jasmine */
 /**
- * @fileoverview Tests for Logger class.
+ * @fileoverview Tests for Loggers class.
+ */
+/**
+ * @typedef {import('jasmine')} jasmine
  */
 
+const fs = require('fs')
 const winston = require('winston')
 const Loggers = require('../lib/logging/loggers')
 const MockSyslogServer = require('./mocks/external/mock-syslog-server')
@@ -12,6 +16,7 @@ const MockSyslogServer = require('./mocks/external/mock-syslog-server')
  * @param {number} time The time to delay for.
  */
 const delay = (time) => new Promise(resolve => setTimeout(resolve, time))
+const nullWriteStream = fs.createWriteStream('/dev/null', { encoding: 'utf8' })
 
 describe('The Loggers class, when used without a Syslog server,', () => {
   const oldProcessTitle = process.title
@@ -31,23 +36,9 @@ describe('The Loggers class, when used without a Syslog server,', () => {
     try {
       console.log()
       loggers = new Loggers({
-        isProd: false,
-        debug: (...args) => {
-          console.log(`DEBUG: ${args.join(' ')}`)
-        },
-        loggerInfos: [
-          {
-            id: 'Server-logger',
-            label: 'Server_log'
-          },
-          {
-            id: 'Security-logger',
-            label: 'Security_log'
-          }
-        ],
-        // Use syslog config.
-        levels: winston.config.syslog.levels,
-        colors: winston.config.syslog.colors
+        colourize: true,
+        colours: winston.config.syslog.colors,
+        loggingLevels: winston.config.syslog.levels
       })
     } catch (ex) {
       err = ex
@@ -57,19 +48,24 @@ describe('The Loggers class, when used without a Syslog server,', () => {
     expect(loggers).toBeInstanceOf(Loggers)
   })
 
-  it('should have two loggers', () => {
-    let numLoggers = 0
+  it('should be able to create as many loggers as we want', () => {
     if (loggers instanceof Loggers) {
-      numLoggers = loggers.allLoggers().length
+      loggers.addLogger({
+        id: 'test-logger-1',
+        label: 'Test Logger 1',
+        useReadableFormat: true,
+        transports: [{ type: 'stream', config: { stream: nullWriteStream } }]
+      })
     }
-    expect(numLoggers).toBe(2)
+
+    expect(loggers.allLoggers().length).toBe(1)
   })
 
   it('should be able to log (with colour)', () => {
     let logged = 0
     if (loggers instanceof Loggers) {
+      spyOn(nullWriteStream, 'write').and.callThrough()
       loggers.allLoggers().forEach(logger => {
-        console.log()
         logger.debug('DEBUG level')
         logger.info('INFO level')
         logger.notice('NOTICE level')
@@ -81,7 +77,9 @@ describe('The Loggers class, when used without a Syslog server,', () => {
         logged++
       })
     }
+
     expect(logged).toBeGreaterThanOrEqual(1)
+    expect(nullWriteStream.write).toHaveBeenCalled()
   })
 })
 
@@ -103,28 +101,24 @@ describe('The Loggers class, when used with a mock Syslog server,', () => {
     console.log()
     try {
       loggers = new Loggers({
-        isProd: true,
-        debug: console.log,
-        loggerInfos: [
-          {
-            id: 'Server-logger',
-            label: 'Server_log'
-          },
-          {
-            id: 'Security-logger',
-            label: 'Security_log'
-          }
-        ],
         // Use syslog config
-        levels: winston.config.syslog.levels,
-        colors: winston.config.syslog.colors,
-        syslogOpts: {
-          port: 5514,
-          host: 'localhost',
-          protocol: 'tcp4',
-          type: 'rfc5424',
-          eol: '\r\n'
-        }
+        loggingLevels: winston.config.syslog.levels,
+        colours: winston.config.syslog.colors,
+        colourize: true
+      })
+      loggers.addLogger({
+        id: 'syslog-transport-logger',
+        label: 'Syslog Transport Log',
+        transports: [{
+          type: 'syslog',
+          config: {
+            port: 5514,
+            host: 'localhost',
+            protocol: 'tcp4',
+            type: 'rfc5424'
+          }
+        }],
+        useReadableFormat: true
       })
     } catch (ex) {
       err = ex
@@ -136,7 +130,6 @@ describe('The Loggers class, when used with a mock Syslog server,', () => {
 
   it('should be able to send logs to syslog server', async () => {
     let dataReceived = false
-    console.log()
     if (loggers instanceof Loggers) {
       loggers.allLoggers().forEach(logger => {
         logger.alert('If you don\'t log this you don\'t work.')
