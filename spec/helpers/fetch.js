@@ -37,6 +37,8 @@ function fetch (opts, body) {
         })
       })
     })
+    req.on('error', reject)
+
     if (opts && typeof opts === 'object' && opts.method === 'POST') {
       req.write(body)
     }
@@ -44,4 +46,4 @@ function fetch (opts, body) {
   })
 }
 
-module.exports = exports = fetch
+module.exports = fetch
