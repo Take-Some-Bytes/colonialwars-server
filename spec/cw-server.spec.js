@@ -7,6 +7,7 @@ const http = require('http')
 const Router = require('router')
 
 const CWServer = require('../')
+const GameServer = require('../lib/game-server')
 const Manager = require('../lib/game/manager')
 const Loggers = require('../lib/logging/loggers')
 const GameLoader = require('../lib/game/gameloader')
@@ -60,42 +61,51 @@ describe('The CWServer class,', () => {
     expect(obj.controllers).toBeInstanceOf(Controllers)
   })
 
-  it('should have a Router object and a HTTP server instance', () => {
+  it('should have a Router, HTTP server, and GameServer object', () => {
     let httpServer = null
+    let gameServer = null
     let routerObj = null
     if (cwServer instanceof CWServer) {
-      httpServer = cwServer.server
+      gameServer = cwServer.gameServer
+      httpServer = cwServer.httpServer
       routerObj = cwServer.router
     }
+
     expect(httpServer).toBeInstanceOf(http.Server)
+    expect(gameServer).toBeInstanceOf(GameServer)
     expect(routerObj).toBeInstanceOf(Router)
   })
-})
 
-describe('The CWServer class, when handling requests,', () => {
-  const oldProcessTitle = process.title
-  let cwServer = null
+  describe('when starting and stopping,', () => {
+    it('should start at the specified port', async () => {
+      if (cwServer instanceof CWServer) {
+        await cwServer.start()
+      }
 
-  beforeAll(async () => {
-    // Set the process title... just because.
-    process.title = 'colonialwars-gameserver'
-    cwServer = await CWServer.create()
-    console.log()
-    await cwServer.start()
+      const serverRes = await fetch('http://localhost:1487/status-report')
+      expect(serverRes.meta).toBeInstanceOf(http.IncomingMessage)
+      expect(serverRes.meta.statusCode).toBe(200)
+      expect(serverRes.body).toBeInstanceOf(Buffer)
+      expect(JSON.parse(serverRes.body.toString('utf-8')).data.serverRunning)
+        .toBeTrue()
+    })
   })
-  afterAll(async () => {
-    // And then... reset it.
-    process.title = oldProcessTitle
+
+  it('should be able to stop when requested', async () => {
+    let err = null
     if (cwServer instanceof CWServer) {
       await cwServer.stop()
     }
-  })
 
-  it('should respond to requests at /testing', async () => {
-    const serverRes = await fetch('http://localhost:1487/testing')
+    try {
+      await fetch('http://localhost:1487/status-report')
+    } catch (ex) {
+      err = ex
+    }
 
-    expect(serverRes.meta).toBeInstanceOf(http.IncomingMessage)
-    expect(serverRes.meta.statusCode).toBe(200)
-    expect(serverRes.body).toBeInstanceOf(Buffer)
+    expect(err).toBeInstanceOf(Error)
+    expect(err.errno).toBe(-61)
+    expect(err.code).toBe('ECONNREFUSED')
+    expect(err.syscall).toBe('connect')
   })
 })
