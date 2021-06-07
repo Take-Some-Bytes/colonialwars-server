@@ -3,11 +3,20 @@
  */
 
 /**
+ * A variable which contains a timeout that forcefully shuts
+ * down this process.
+ */
+let exitTimeout = null
+
+/**
  * Gracefully shuts down a CWServer instance.
  * @param {InstanceType<import('../')>} server The CWServer instance.
  * @param {NodeJS.Signals} signal The signal that was received.
  */
 async function handleShutdown (server, signal) {
+  // You have ten seconds.
+  !exitTimeout && (exitTimeout = setTimeout(process.exit, 10 * 1000, 1).unref())
+
   server.loggers.get('Server-logger').info(
     `Signal ${signal} received. Shutting down server...`
   )
@@ -37,14 +46,17 @@ async function handleShutdown (server, signal) {
  * @param {Error} ex The error that happened.
  */
 async function handleUncaughtEx (server, ex) {
+  // You have ten seconds.
+  !exitTimeout && (exitTimeout = setTimeout(process.exit, 10 * 1000, 1).unref())
+
   try {
-    await server.stop()
     server.loggers.get('Server-logger').crit(
       `Server crashed. Error is: ${ex.stack}`
     )
     server.loggers.get('Server-logger').crit(
       'Exiting...'
     )
+    await server.stop()
     process.exitCode = 1
   } catch (err) {
     server.loggers.get('Server-logger').crit(
