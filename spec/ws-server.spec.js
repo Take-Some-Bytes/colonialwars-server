@@ -74,11 +74,6 @@ function startServer (done) {
  * @param {DoneFn} done Done callback.
  */
 function stopServer (done) {
-  /**
-   * TODO: Find out why the handshake *always* times out when closing the server.
-   * The afterAll hooks always fail due to the WSConn closing timeouts, which occur
-   * for apparently no reason.
-   * (04/27/2021) Take-Some-Bytes */
   wsServer.detach(server)
   server.close(err => {
     if (err) return done.fail(err)
@@ -176,7 +171,7 @@ describe('The WSServer class,', () => {
     afterAll(stopServer)
 
     it('should not try to accept connection if path does not match', done => {
-      const toggles = getToggles(new WebSocket('http://localhost:2583/nomatch'))
+      const toggles = getToggles(new WebSocket('ws://localhost:2583/nomatch'))
 
       setTimeout(() => {
         expect(toggles.hadError).toBe(true)
@@ -186,7 +181,7 @@ describe('The WSServer class,', () => {
     })
 
     it('should not accept connection if subprotocol is not CWDTP', done => {
-      const toggles = getToggles(new WebSocket('http://localhost:2583/?hi=hello', {
+      const toggles = getToggles(new WebSocket('ws://localhost:2583/?hi=hello', {
         origin: 'http://localhost:4000',
         localAddress: '127.0.0.1'
       }))
@@ -204,7 +199,7 @@ describe('The WSServer class,', () => {
     })
 
     it('should not accept connection if CORS does not pass', done => {
-      const toggles = getToggles(new WebSocket('http://localhost:2583/?hi=hello', 'pow.cwdtp', {
+      const toggles = getToggles(new WebSocket('ws://localhost:2583/?hi=hello', 'pow.cwdtp', {
         // The one is the death of the connection.
         origin: 'http://localhost:4001',
         localAddress: '127.0.0.1'
@@ -219,7 +214,7 @@ describe('The WSServer class,', () => {
     })
 
     it("should not accept connection if verifyClient doesn't pass", done => {
-      const toggles = getToggles(new WebSocket('http://localhost:2583/?NOPE=1', 'pow.cwdtp', {
+      const toggles = getToggles(new WebSocket('ws://localhost:2583/?NOPE=1', 'pow.cwdtp', {
         origin: 'http://localhost:4000',
         localAddress: '127.0.0.1'
       }))
@@ -237,10 +232,11 @@ describe('The WSServer class,', () => {
     it('should not accept connection if CWDTP handshake does not complete', done => {
       const realTimeout = setTimeout
       jasmine.clock().install()
-      const toggles = getToggles(new WebSocket('http://localhost:2583/?hi=hello', 'pow.cwdtp', {
+      const ws = new WebSocket('ws://localhost:2583/?hi=hello', 'pow.cwdtp', {
         origin: 'http://localhost:4000',
         localAddress: '127.0.0.1'
-      }))
+      })
+      const toggles = getToggles(ws)
 
       realTimeout(() => {
         jasmine.clock().tick(31000)
@@ -253,13 +249,14 @@ describe('The WSServer class,', () => {
           expect(toggles.hadError).toBe(false)
           expect(toggles.connected).toBe(false)
           jasmine.clock().uninstall()
+          // ws.terminate()
           done()
         }, 100)
       }, 100)
     })
 
     it('should accept connection if everything passes', done => {
-      const conn = new WSConn('http://localhost:2583/?hi=hello', {
+      const conn = new WSConn('ws://localhost:2583/?hi=hello', {
         wsOpts: {
           origin: 'http://localhost:4000',
           localAddress: '127.0.0.1'
@@ -281,7 +278,7 @@ describe('The WSServer class,', () => {
     })
 
     it('should not allow too many connections from one IP address', done => {
-      const conn = new WSConn('http://localhost:2583/?hi=hello', {
+      const conn = new WSConn('ws://localhost:2583/?hi=hello', {
         wsOpts: {
           origin: 'http://localhost:4000',
           localAddress: '127.0.0.1'
@@ -311,13 +308,13 @@ describe('The WSServer class,', () => {
 
     it('should terminate connections which do not send a pong event in the alloted time', done => {
       const conns = [
-        new WSConn('http://localhost:2583/?hi=hello', {
+        new WSConn('ws://localhost:2583/?hi=hello', {
           wsOpts: {
             origin: 'http://localhost:4000',
             localAddress: '127.0.0.1'
           }
         }),
-        new WSConn('http://localhost:2583/?hi=hello', {
+        new WSConn('ws://localhost:2583/?hi=hello', {
           wsOpts: {
             origin: 'http://localhost:4000',
             localAddress: localIP
@@ -337,19 +334,22 @@ describe('The WSServer class,', () => {
         conns.forEach(conn => {
           expect(conn.pong).toHaveBeenCalled()
         })
+        conns.forEach(conn => {
+          conn.disconnect(false, 1001, 'Exiting test item')
+        })
         done()
       }, 3500)
     })
 
     it('should not terminate connections which do send a pong event in the alloted time', done => {
       const conns = [
-        new WSConn('http://localhost:2583/?hi=hello', {
+        new WSConn('ws://localhost:2583/?hi=hello', {
           wsOpts: {
             origin: 'http://localhost:4000',
             localAddress: '127.0.0.1'
           }
         }),
-        new WSConn('http://localhost:2583/?hi=hello', {
+        new WSConn('ws://localhost:2583/?hi=hello', {
           wsOpts: {
             origin: 'http://localhost:4000',
             localAddress: localIP
