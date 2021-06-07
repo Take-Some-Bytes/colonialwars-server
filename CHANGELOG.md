@@ -3,6 +3,38 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
+## [v0.5.1] - 2021-05-31
+### Added:
+- Added [``accepts``](https://www.npmjs.com/package/accepts) to parse the ``Accept`` header,
+instead of trying to parse it ourselves.
+- Added [``morgan``](https://www.npmjs.com/package/morgan) for request logging.
+- Added a new ``ErrorSender`` class that sends errors to clients. Compared with the ``ServerUtils``
+class, the ``ErrorSender`` class only has one responsibility, doesn't force you to specify
+everything, and is more explicit in what methods do what.
+### Changed:
+- Changed logging architecture. Transports for loggers are now more flexible (and configurable),
+support for formatting (via ``winston.format.splat``) has been added, and JSON logging is supported.
+- Removed code that directly registered handler on a router in the ``Controllers`` class. All route
+handlers are just returned, and the caller has the register them explicitly.
+### Fixed:
+- Fixed the fact that, sometimes, a WSConn would refuse to close.
+  * **THE REASON**: When a handshake timeout occurs, a WSConn would try to forcefully disconnect.
+  But due to the implementation of the ``disconnect`` function, it doesn't work. So, the WSConn stayed
+  open indefinitely.
+  * **THE SOLUTION**: We separated the ``disconnect`` function into two new ones: the new ``disconnect``
+  function only handles graceful disconnects, and the new ``terminate`` function handles forceful
+  disconnects.
+- Fixed the fact that a WSConn will not emit a ``disconnect`` event if the transport layer (the
+WebSocket connection) was closed.
+- Fixed application shutdown handlers. They will now register a 10-second timeout--if the application
+has still not exited gracefully after ten seconds, the application is going to be shut down forcefully
+using ``process.exit(1)``.
+- Fixed the spec helper ``fetch``. It now rejects correctly when the request faces an error.
+### Deprecated:
+- The ``ServerUtils`` class is now deprecated. New code should use the ``ErrorSender`` class.
+### Removed:
+- Removed the ``/testing`` route.
+
 ## [v0.5.0] - 2021-04-29
 ### Added:
 - Added a ``TimedStore`` class, which deletes items after the specified amount of time.
