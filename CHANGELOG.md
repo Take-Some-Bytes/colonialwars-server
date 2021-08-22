@@ -3,6 +3,12 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
+## [Unreleased]
+### Changed:
+- Updated [``ws``](https://www.npmjs.com/package/ws) to 8.x line. This a major update.
+### Fixed:
+- Fixed WSConn specs to use ``ws://`` URLs instead of ``http://`` URLs.
+
 ## [v0.5.1] - 2021-06-06
 ### Added:
 - Added [``accepts``](https://www.npmjs.com/package/accepts) to parse the ``Accept`` header,
