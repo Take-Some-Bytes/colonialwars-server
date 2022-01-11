@@ -104,7 +104,6 @@ describe('The CWServer class,', () => {
     }
 
     expect(err).toBeInstanceOf(Error)
-    expect(err.errno).toBe(-61)
     expect(err.code).toBe('ECONNREFUSED')
     expect(err.syscall).toBe('connect')
   })
