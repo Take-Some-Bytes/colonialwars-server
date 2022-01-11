@@ -22,7 +22,8 @@
     "email": "horton0712@gmail.com"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=12",
+    "npm": ">=7"
   },
   "devDependencies": {
     "jasmine": "^3.6.4",
