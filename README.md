@@ -25,4 +25,6 @@ Download this repository somehow, ``cd`` into the project root, and run:
 npm install
 npm test
 ```
-(just like any other Node.JS project.)
+Make sure you have Node.JS [installed](https://nodejs.org), with a version that satisfies
+the [``engines``](https://github.com/Take-Some-Bytes/colonialwars-server/blob/main/package.json#L24)
+field (currently Node.JS 12 and up).
