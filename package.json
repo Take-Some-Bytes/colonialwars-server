@@ -1,7 +1,7 @@
 {
   "name": "colonialwars-server",
   "description": "Colonial Wars backend server.",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "main": "index.js",
   "bin": "./bin/bin.js",
   "scripts": {
@@ -22,7 +22,8 @@
     "email": "horton0712@gmail.com"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=12",
+    "npm": ">=7"
   },
   "devDependencies": {
     "jasmine": "^3.6.4",

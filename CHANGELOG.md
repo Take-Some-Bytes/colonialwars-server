@@ -6,8 +6,16 @@ The format is based on [Keep a Changelog][1], and this project adheres to [Seman
 ## [Unreleased]
 ### Changed:
 - Updated [``ws``](https://www.npmjs.com/package/ws) to 8.x line. This a major update.
+- Don't check for error number (``err.errno``) because of unreliability.
 ### Fixed:
 - Fixed WSConn specs to use ``ws://`` URLs instead of ``http://`` URLs.
+
+## [v0.5.2] - 2021-08-24
+### Changed:
+- Log a message when a request tries to GET a non-existent route instead of just silently sending
+a 404.
+### Fixed:
+- Fixed links in this changelog.
 
 ## [v0.5.1] - 2021-06-06
 ### Added:
@@ -208,4 +216,7 @@ handled by the ``cors`` NPM package.
 [v0.4.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/cd8bb1506754564979add0c67c86d1f108a9e8a8
 [v0.4.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/c375b8c0f2226ac94e514404dda1191fa76b8a3a
 [v0.4.3]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/f083df5d5f546e2ffb261e61a38e86fc2fab4c08
-[v0.5.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
+[v0.5.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/e3ff32918ba199298fb2aa8121534fe4fd8807ff
+[v0.5.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/428a5256378b4bc0574a2d3e92d81336e3501a69
+[v0.5.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/09c4902bc57c53bf1904975a27bd59e216164dc9
+[Unreleased]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main

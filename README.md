@@ -25,4 +25,27 @@ Download this repository somehow, ``cd`` into the project root, and run:
 npm install
 npm test
 ```
-(just like any other Node.JS project.)
+Make sure you have Node.JS [installed](https://nodejs.org), with a version that satisfies
+the [``engines``](https://github.com/Take-Some-Bytes/colonialwars-server/blob/main/package.json#L24)
+field (currently Node.JS 12 and up).
+
+## Running the server
+When this project is downloaded, there is a script to start the server for development
+called ``dev``. It may be accessed like so:
+```sh
+npm run dev
+```
+By default, debug logging is turned off. To turn it on, just specify the ``DEBUG`` environment
+variable as documented in the [``debug``](https://www.npmjs.com/package/debug#usage) module.
+
+To enable all debug logging, use this:
+```sh
+DEBUG=colonialwars* npm run dev
+```
+There are many more configuration options for the server, however, they are not documented
+yet. Looking through the main source file ([``lib/cw-server.js``](
+  https://github.com/Take-Some-Bytes/colonialwars-server/blob/main/lib/cw-server.js
+)) *should* give a good idea of the available configurations though.
+
+Again, make sure Node.JS has been installed before running the server (see above for
+requirements).
