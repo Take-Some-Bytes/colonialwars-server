@@ -78,7 +78,7 @@ function tearDown (done) {
 
 describe('The WSConn class,', () => {
   it('should create an internal WebSocket when in client mode', () => {
-    const conn = new WSConn('http://localhost')
+    const conn = new WSConn('ws://localhost')
     conn.on('error', noop)
 
     expect(conn.isClient).toBe(true)
@@ -112,7 +112,7 @@ describe('The WSConn class,', () => {
       const realSetTimeout = setTimeout
       let err = null
       jasmine.clock().install()
-      const conn = new WSConn('http://localhost:3820')
+      const conn = new WSConn('ws://localhost:3820')
       conn.on('error', ex => (err = ex))
 
       realSetTimeout(() => {
@@ -139,7 +139,7 @@ describe('The WSConn class,', () => {
           }))
         }, 40)
       })
-      const conn = new WSConn('http://localhost:3820')
+      const conn = new WSConn('ws://localhost:3820')
       conn.on('abortingHandshake', why => {
         abortHandshakeEmitted = true
         reason = why
@@ -168,7 +168,7 @@ describe('The WSConn class,', () => {
           }))
         }, 40)
       })
-      const conn = new WSConn('http://localhost:3820')
+      const conn = new WSConn('ws://localhost:3820')
       conn.on('abortingHandshake', why => {
         abortHandshakeEmitted = true
         reason = why
@@ -204,7 +204,7 @@ describe('The WSConn class,', () => {
           }
         })
       })
-      const conn = new WSConn('http://localhost:3820')
+      const conn = new WSConn('ws://localhost:3820')
       conn.on('abortingHandshake', why => {
         abortHandshakeEmitted = true
         reason = why
@@ -243,7 +243,7 @@ describe('The WSConn class,', () => {
           }
         })
       })
-      const conn = new WSConn('http://localhost:3820')
+      const conn = new WSConn('ws://localhost:3820')
       conn.on('abortingHandshake', why => {
         abortHandshakeEmitted = true
         reason = why
@@ -281,7 +281,7 @@ describe('The WSConn class,', () => {
 
     it('should not send messages when not connected', done => {
       const emitter = setUp(wsServer)
-      const conn = new WSConn('http://localhost:3820')
+      const conn = new WSConn('ws://localhost:3820')
       emitter.once('messageReceived', () => {
         done.fail('Message got sent.')
       })
@@ -296,7 +296,7 @@ describe('The WSConn class,', () => {
 
     it('should send messages that comply to CWDTP message structures', done => {
       const emitter = setUp(wsServer)
-      const conn = new WSConn('http://localhost:3820')
+      const conn = new WSConn('ws://localhost:3820')
       emitter.once('messageReceived', parsed => {
         expect(parsed).toBeInstanceOf(Object)
         expect(parsed).toEqual({
@@ -318,7 +318,7 @@ describe('The WSConn class,', () => {
 
     it('should send binary arrays as specified in CWDTP', done => {
       const emitter = setUp(wsServer)
-      const conn = new WSConn('http://localhost:3820')
+      const conn = new WSConn('ws://localhost:3820')
       emitter.once('messageReceived', parsed => {
         expect(parsed).toBeInstanceOf(Object)
         expect(parsed).toEqual({
@@ -372,7 +372,7 @@ describe('The WSConn class,', () => {
         })
       }, 700)
 
-      const conn = new WSConn('http://localhost:3820')
+      const conn = new WSConn('ws://localhost:3820')
       conn.on('bin', arr => {
         expect(arr).toBeInstanceOf(Float32Array)
         expect(arr).toEqual(new Float32Array([100.5, 20.1, 3.2, -100.4]))
@@ -399,7 +399,7 @@ describe('The WSConn class,', () => {
         })
       }, 700)
 
-      const conn = new WSConn('http://localhost:3820')
+      const conn = new WSConn('ws://localhost:3820')
       conn.on('bin', view => {
         expect(view).toBeInstanceOf(DataView)
         expect(view.getFloat64(16, true)).toBe(4235.2)

@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog][1], and this project adheres to [Seman
 
 ## [Unreleased]
 ### Changed:
+- Updated [``ws``](https://www.npmjs.com/package/ws) to 8.x line. This a major update.
 - Don't check for error number (``err.errno``) because of unreliability.
+### Fixed:
+- Fixed WSConn specs to use ``ws://`` URLs instead of ``http://`` URLs.
 
 ## [v0.5.2] - 2021-08-24
 ### Changed:
