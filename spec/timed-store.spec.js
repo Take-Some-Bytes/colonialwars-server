@@ -16,7 +16,6 @@ describe('The TimedStore class,', () => {
 
     try {
       store = new TimedStore({
-        pruneInterval: 5000,
         maxAge: 5000,
         maxItems: 100,
         strict: true
@@ -27,48 +26,60 @@ describe('The TimedStore class,', () => {
 
     expect(err).toBe(null)
     expect(store).toBeInstanceOf(TimedStore)
-    expect(store._pruneInterval.hasRef()).toBe(false)
   })
 
   describe('when used in strict mode', () => {
     const store = new TimedStore({
-      pruneInterval: 200,
       maxAge: 100,
       maxItems: 10,
       strict: true
     })
 
-    it("should not renew an item's TTL", done => {
+    beforeAll(() => {
+      jasmine.clock().install()
+    })
+    afterAll(() => {
+      jasmine.clock().uninstall()
+    })
+
+    it("should not renew an item's TTL", () => {
       store.set('hi', 'hey there')
 
-      setTimeout(() => {
-        store.get('hi')
-      }, 80)
-      setTimeout(() => {
-        expect(store.get('hi')).toBe(undefined)
-        done()
-      }, 300)
+      jasmine.clock().tick(80)
+
+      // Try to renew item TTL.
+      store.get('hi')
+
+      jasmine.clock().tick(100)
+
+      expect(store.get('hi')).toBe(undefined)
     })
   })
 
   describe('when used in non-strict mode', () => {
     const store = new TimedStore({
-      pruneInterval: 200,
-      maxAge: 290,
+      maxAge: 100,
       maxItems: 10,
       strict: false
     })
 
-    it("should renew an item's TTL", done => {
+    beforeAll(() => {
+      jasmine.clock().install()
+    })
+    afterAll(() => {
+      jasmine.clock().uninstall()
+    })
+
+    it("should renew an item's TTL", () => {
       store.set('hi', 'hey there')
 
-      setTimeout(() => {
-        store.get('hi')
-      }, 80)
-      setTimeout(() => {
-        expect(store.get('hi')).toBe('hey there')
-        done()
-      }, 300)
+      jasmine.clock().tick(80)
+
+      // Try to renew item TTL.
+      store.get('hi')
+
+      jasmine.clock().tick(80)
+      expect(store.get('hi')).toBe('hey there')
     })
   })
 })
