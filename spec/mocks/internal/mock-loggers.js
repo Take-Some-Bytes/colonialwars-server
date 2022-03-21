@@ -13,9 +13,7 @@ const winstonConfig = require('winston/lib/winston/config')
  */
 class MockLoggers {
   constructor () {
-    this.log = function (...args) {
-      console.log(`LOGGER: ${args.join(' ')}`)
-    }
+    this.log = function (...args) { /** Swallow */ }
   }
 
   /**

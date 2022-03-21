@@ -6,8 +6,6 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const util = require('util')
-
 const Player = require('../../lib/game/player')
 const Vector2D = require('../../lib/game/physics/vector-2d')
 const BoundEntity = require('../../lib/game/physics/bound-entity')
@@ -41,9 +39,6 @@ describe('The Player class,', () => {
       player = new Player({
         name: playerStats.name,
         team: playerStats.team,
-        debug: (...args) => {
-          console.log(`DEBUG: ${util.format(...args)}`)
-        },
         socketID: playerStats.socketID,
         position: playerStats.position,
         PLAYER_SPEED: playerStats.playerConf.PLAYER_SPEED,
@@ -85,7 +80,6 @@ describe('The Player class,', () => {
 
   describe('the .updateOnInput() method,', () => {
     it('should change the player velocity based on the input data', () => {
-      console.log()
       const inputs = [
         { direction: { up: true } },
         { direction: { down: true } },

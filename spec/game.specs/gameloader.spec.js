@@ -38,9 +38,6 @@ describe('The GameLoader class,', () => {
             CONN_REMOVE_PLAYER: 'mock-game-remove-player'
           }
         },
-        debug: (...args) => {
-          console.log(`DEBUG: ${args.join(' ')}`)
-        },
         loggers: new MockLoggers()
       })
     } catch (ex) {

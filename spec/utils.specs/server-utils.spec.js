@@ -18,9 +18,7 @@ describe('The ServerUtils class,', () => {
     try {
       serverUtils = new ServerUtils({
         loggers: mockLoggers,
-        debug: function (...args) {
-          console.log(`DEBUG: ${args.join(' ')}`)
-        }
+        debug: function (...args) { /** Swallow */ }
       })
     } catch (ex) {
       err = ex
@@ -37,11 +35,8 @@ describe('The ServerUtils class,', () => {
     const mockRes = new MockHttpResponse()
 
     if (serverUtils instanceof ServerUtils) {
-      console.log()
       serverUtils.sendError()(mockReq, mockRes, null)
     }
-
-    console.log(mockRes.responseContent.toString('utf-8'))
 
     expect(mockRes.statusCode).toBe(500)
     expect(mockRes.writableEnded).toBe(true)
@@ -57,7 +52,6 @@ describe('The ServerUtils class,', () => {
     const mockRes = new MockHttpResponse()
 
     if (serverUtils instanceof ServerUtils) {
-      console.log()
       serverUtils.sendError({
         httpOpts: {
           status: 404
