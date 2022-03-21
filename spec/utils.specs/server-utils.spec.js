@@ -3,11 +3,11 @@
  * @fileoverview Testing server utility methods.
  */
 
-const ServerUtils = require('../lib/utils/server-utils')
+const ServerUtils = require('../../lib/utils/server-utils')
 
-const MockLoggers = require('./mocks/internal/mock-loggers')
-const MockHttpRequest = require('./mocks/external/mock-http-request')
-const MockHttpResponse = require('./mocks/external/mock-http-response')
+const MockLoggers = require('../mocks/internal/mock-loggers')
+const MockHttpRequest = require('../mocks/external/mock-http-request')
+const MockHttpResponse = require('../mocks/external/mock-http-response')
 
 describe('The ServerUtils class,', () => {
   const mockLoggers = new MockLoggers()

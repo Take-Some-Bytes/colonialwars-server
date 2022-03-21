@@ -11,8 +11,8 @@ const http = require('http')
 const events = require('events')
 
 const WebSocket = require('ws')
-const WSConn = require('../lib/cwdtp/conn')
-const WSServer = require('../lib/cwdtp/server')
+const WSConn = require('../../lib/cwdtp/conn')
+const WSServer = require('../../lib/cwdtp/server')
 
 /**
  * @type {InstanceType<WSServer>}

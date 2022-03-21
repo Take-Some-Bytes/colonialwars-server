@@ -7,10 +7,10 @@
  */
 
 const crypto = require('crypto')
-const Controllers = require('../lib/controllers/controllers')
-const MockLoggers = require('./mocks/internal/mock-loggers')
-const MockHttpRequest = require('./mocks/external/mock-http-request')
-const MockHttpResponse = require('./mocks/external/mock-http-response')
+const Controllers = require('../../lib/controllers/controllers')
+const MockLoggers = require('../mocks/internal/mock-loggers')
+const MockHttpRequest = require('../mocks/external/mock-http-request')
+const MockHttpResponse = require('../mocks/external/mock-http-response')
 
 describe('The Controllers class,', () => {
   const mockDB = new Map()

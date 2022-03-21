@@ -8,10 +8,10 @@
 
 const path = require('path')
 
-const GameLoader = require('../lib/game/gameloader')
-const TeamGame = require('../lib/game/game-modes/team-game')
+const GameLoader = require('../../lib/game/gameloader')
+const TeamGame = require('../../lib/game/game-modes/team-game')
 
-const MockLoggers = require('./mocks/internal/mock-loggers')
+const MockLoggers = require('../mocks/internal/mock-loggers')
 
 describe('The static GameLoader.DEFAULT_MAX_CONF_SIZE property,', () => {
   it('should be equal to 1MB (1024 * 1024 * 1024)', () => {
@@ -28,7 +28,7 @@ describe('The GameLoader class,', () => {
 
     try {
       gameLoader = new GameLoader({
-        baseDir: path.join(__dirname, 'mocks/external/mock-game-confs'),
+        baseDir: path.join(__dirname, '../mocks/external/mock-game-confs'),
         gameConstants: {
           playerStats: {
             PLAYER_SPEED: 0.4

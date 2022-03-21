@@ -6,11 +6,11 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const Middlewares = require('../lib/controllers/middlewares')
+const Middlewares = require('../../lib/controllers/middlewares')
 
-const MockLoggers = require('./mocks/internal/mock-loggers')
-const MockHttpRequest = require('./mocks/external/mock-http-request')
-const MockHttpResponse = require('./mocks/external/mock-http-response')
+const MockLoggers = require('../mocks/internal/mock-loggers')
+const MockHttpRequest = require('../mocks/external/mock-http-request')
+const MockHttpResponse = require('../mocks/external/mock-http-response')
 
 describe('The Middlewares class,', () => {
   let middlewares = null

@@ -3,8 +3,8 @@
  * @fileoverview Specs for the BoundEntity class.
  */
 
-const Vector2D = require('../lib/game/physics/vector-2d')
-const BoundEntity = require('../lib/game/physics/bound-entity')
+const Vector2D = require('../../lib/game/physics/vector-2d')
+const BoundEntity = require('../../lib/game/physics/bound-entity')
 
 describe('The BoundEntity class,', () => {
   const objPosition = new Vector2D(100, 100)

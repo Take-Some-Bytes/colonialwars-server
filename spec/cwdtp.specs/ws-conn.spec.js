@@ -9,11 +9,11 @@
 
 const http = require('http')
 const EventEmitter = require('events')
-const bufferUtils = require('../lib/cwdtp/buffer-utils')
-const crypto = require('../lib/cwdtp/crypto')
+const bufferUtils = require('../../lib/cwdtp/buffer-utils')
+const crypto = require('../../lib/cwdtp/crypto')
 
 const WebSocket = require('ws')
-const WSConn = require('../lib/cwdtp/conn')
+const WSConn = require('../../lib/cwdtp/conn')
 
 const server = http.createServer((_, res) => {
   res.statusCode = 404

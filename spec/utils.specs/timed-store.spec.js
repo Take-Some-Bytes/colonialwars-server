@@ -7,7 +7,7 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const TimedStore = require('../lib/timed-store')
+const TimedStore = require('../../lib/timed-store')
 
 describe('The TimedStore class,', () => {
   it('should construct without error', () => {
