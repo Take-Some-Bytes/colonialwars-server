@@ -6,6 +6,8 @@
  * @typedef {import('jasmine')} jasmine
  */
 
+const fs = require('fs')
+
 const Middlewares = require('../../lib/controllers/middlewares')
 
 const MockLoggers = require('../mocks/internal/mock-loggers')
@@ -13,6 +15,7 @@ const MockHttpRequest = require('../mocks/external/mock-http-request')
 const MockHttpResponse = require('../mocks/external/mock-http-response')
 
 describe('The Middlewares class,', () => {
+  const nullWriteStream = fs.createWriteStream('/dev/null', { encoding: 'utf8' })
   let middlewares = null
 
   it('should construct without error', () => {
@@ -21,7 +24,7 @@ describe('The Middlewares class,', () => {
         URL_MAX_LEN: 100,
         loggers: new MockLoggers(),
         corsOpts: { origin: 'http://localhost:3000' },
-        requestLoggerStream: { write: process.stdout.write.bind(process.stdout) }
+        requestLoggerStream: nullWriteStream
       })
     }).not.toThrow()
   })
@@ -171,8 +174,6 @@ describe('The checkpoint middlewares,', () => {
       })
 
       expect(calledNext).toBe(true)
-      // 200 is the default status code, and if the status code was not set,
-      // that's what it will be.
       expect(mockRes.statusCode).toBe(200)
       expect(mockRes.responseContent).toBe(null)
     })
@@ -226,8 +227,6 @@ describe('The checkpoint middlewares,', () => {
 
       expect(passes).toBe(2)
       mockReses.forEach(res => {
-        // 200 is the default status code, and if the status code was not set,
-        // that's what it will be.
         expect(res.statusCode).toBe(200)
         expect(res.responseContent).toBe(null)
       })
