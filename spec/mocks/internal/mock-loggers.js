@@ -2,6 +2,8 @@
  * @fileoverview Mock Loggers class.
  */
 
+const events = require('events')
+
 const winstonConfig = require('winston/lib/winston/config')
 
 /**
@@ -9,11 +11,17 @@ const winstonConfig = require('winston/lib/winston/config')
  */
 
 /**
- * Again, just prints everything to console.
+ * Mock loggers.
+ *
+ * Emits a 'log' event whenever something is logged.
  */
-class MockLoggers {
+class MockLoggers extends events.EventEmitter {
   constructor () {
-    this.log = function (...args) { /** Swallow */ }
+    super()
+
+    this.log = function (...args) {
+      this.emit('log', ...args)
+    }
   }
 
   /**
@@ -23,7 +31,7 @@ class MockLoggers {
   get () {
     const logger = {}
     Object.keys(winstonConfig.syslog.levels).forEach(level => {
-      logger[level] = this.log
+      logger[level] = this.log.bind(this)
     })
     return logger
   }
