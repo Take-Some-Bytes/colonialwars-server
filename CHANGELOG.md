@@ -3,8 +3,12 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
-## [Unreleased]
+## [v0.5.3]
+### Added:
+- Added specs for the ``ErrorHandlers`` class, the ``Vector2D`` class, the ``GameServer`` class,
+and CWDTP utility functions.
 ### Changed:
+- Reorganized specs - everything is now in its own folder.
 - Updated [``ws``](https://www.npmjs.com/package/ws) to 8.x release line. This a major
 dependency update.
 - Updated [``jasmine``](https://www.npmjs.com/package/jasmine) to 4.x release line. This a major
@@ -12,6 +16,13 @@ dependency update.
 - Don't check for error number (``err.errno``) because of unreliability.
 ### Fixed:
 - Fixed WSConn specs to use ``ws://`` URLs instead of ``http://`` URLs.
+- Fixed an unknown error with the ``bufferUtils.concatBuffers()`` function - if it was called, an
+error was just thrown.
+- Fixed an unknown error with the ``crypto.hash()`` function - if the data passed in was an
+[``ArrayBuffer``](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer),
+an error was thrown because ``hash.update`` does not take array buffers.
+### Removed:
+- Removed the ``ServerUtils`` class and its specs.
 
 ## [v0.5.2] - 2021-08-24
 ### Changed:
@@ -222,4 +233,4 @@ handled by the ``cors`` NPM package.
 [v0.5.0]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/e3ff32918ba199298fb2aa8121534fe4fd8807ff
 [v0.5.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/428a5256378b4bc0574a2d3e92d81336e3501a69
 [v0.5.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/09c4902bc57c53bf1904975a27bd59e216164dc9
-[Unreleased]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
+[v0.5.3]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
