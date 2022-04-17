@@ -4,9 +4,6 @@
 
 const net = require('net')
 
-/**
- * Literately just prints everything to the console.
- */
 class MockSyslogServer {
   constructor () {
     this.conns = []
@@ -21,7 +18,6 @@ class MockSyslogServer {
    * @param {net.Socket} conn The connection to handle.
    */
   _onConnect (conn) {
-    console.log('Connection received')
     this.conns.push(conn)
     conn.once('error', err => {
       console.error(err)
@@ -29,9 +25,7 @@ class MockSyslogServer {
     })
 
     conn.on('data', data => {
-      console.log('Received data')
       const stringifiedData = data.toString('utf-8')
-      console.log(stringifiedData)
       if (typeof stringifiedData === 'string' && stringifiedData) {
         this.dataReceived = true
       }

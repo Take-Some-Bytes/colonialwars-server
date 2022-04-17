@@ -7,10 +7,10 @@
  */
 
 const crypto = require('crypto')
-const Controllers = require('../lib/controllers/controllers')
-const MockLoggers = require('./mocks/internal/mock-loggers')
-const MockHttpRequest = require('./mocks/external/mock-http-request')
-const MockHttpResponse = require('./mocks/external/mock-http-response')
+const Controllers = require('../../lib/controllers/controllers')
+const MockLoggers = require('../mocks/internal/mock-loggers')
+const MockHttpRequest = require('../mocks/external/mock-http-request')
+const MockHttpResponse = require('../mocks/external/mock-http-response')
 
 describe('The Controllers class,', () => {
   const mockDB = new Map()
@@ -162,7 +162,7 @@ describe('The Controllers class,', () => {
     })
 
     it('should return an async function that takes two parameters', () => {
-      const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor
+      const AsyncFunction = Object.getPrototypeOf(async () => { }).constructor
       expect(ctlrs.gameAuth()).toBeInstanceOf(Function)
       expect(ctlrs.gameAuth()).toBeInstanceOf(AsyncFunction)
       expect(ctlrs.gameAuth().length).toBe(2)
@@ -207,7 +207,7 @@ describe('The Controllers class,', () => {
       }, 100)
     })
 
-    it('should return the SHA-256 HMAC of the passed-in fields', done => {
+    it('should return the SHA-256 HMAC of the passed-in fields', async () => {
       const data = {
         playerName: 'NOPE',
         playerTeam: 'Franch',
@@ -228,26 +228,23 @@ describe('The Controllers class,', () => {
         .digest()
         .toString('hex')
 
-      ctlrs.gameAuth()(mockReq, mockRes)
+      await ctlrs.gameAuth()(mockReq, mockRes)
 
-      setTimeout(() => {
-        expect(mockRes.statusCode).toBe(200)
-        expect(mockRes.headers['Content-Type']).toBe('application/json')
-        expect(mockRes.responseContent).toBeInstanceOf(Buffer)
-        expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).not.toEqual({
-          status: 'ok',
-          data: {
-            auth: unexpectedHmac
-          }
-        })
-        expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
-          status: 'ok',
-          data: {
-            auth: JSON.parse(mockDB.get('NOPE')).auth
-          }
-        })
-        done()
-      }, 100)
+      expect(mockRes.statusCode).toBe(200)
+      expect(mockRes.headers['Content-Type']).toBe('application/json')
+      expect(mockRes.responseContent).toBeInstanceOf(Buffer)
+      expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).not.toEqual({
+        status: 'ok',
+        data: {
+          auth: unexpectedHmac
+        }
+      })
+      expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
+        status: 'ok',
+        data: {
+          auth: JSON.parse(mockDB.get('NOPE')).auth
+        }
+      })
     })
   })
 

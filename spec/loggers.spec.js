@@ -34,7 +34,6 @@ describe('The Loggers class, when used without a Syslog server,', () => {
 
   it('should construct without error', () => {
     try {
-      console.log()
       loggers = new Loggers({
         colourize: true,
         colours: winston.config.syslog.colors,
@@ -98,7 +97,6 @@ describe('The Loggers class, when used with a mock Syslog server,', () => {
   })
 
   it('should construct without error', () => {
-    console.log()
     try {
       loggers = new Loggers({
         // Use syslog config

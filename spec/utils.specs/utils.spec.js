@@ -3,7 +3,7 @@
  * @fileoverview Testing application utility methods.
  */
 
-const utils = require('../lib/utils/utils')
+const utils = require('../../lib/utils/utils')
 
 describe('The Colonial Wars basic utility object,', () => {
   it('should have four properties', () => {

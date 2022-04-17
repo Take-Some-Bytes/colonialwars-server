@@ -6,13 +6,14 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const os = require('os')
 const http = require('http')
 const events = require('events')
 
 const WebSocket = require('ws')
-const WSConn = require('../lib/cwdtp/conn')
-const WSServer = require('../lib/cwdtp/server')
+const WSConn = require('../../lib/cwdtp/conn')
+const WSServer = require('../../lib/cwdtp/server')
+
+const getPrivateIp = require('../helpers/get-private-ip')
 
 /**
  * @type {InstanceType<WSServer>}
@@ -24,22 +25,7 @@ const server = http.createServer((_, res) => {
   res.end('404 Not Found.')
 })
 
-// Get an IP address to use.
-const nets = os.networkInterfaces()
-const results = {}
-
-for (const name of Object.keys(nets)) {
-  for (const net of nets[name]) {
-    // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
-    if (net.family === 'IPv4' && !net.internal) {
-      if (!results[name]) {
-        results[name] = []
-      }
-      results[name].push(net.address)
-    }
-  }
-}
-const localIP = Object.values(results)[0][0]
+const localIP = getPrivateIp()
 
 /**
  * Starts the WSServer and HTTP server.

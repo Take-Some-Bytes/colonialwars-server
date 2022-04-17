@@ -4,7 +4,7 @@
  */
 
 const path = require('path')
-const Configurations = require('../lib/utils/configurations')
+const Configurations = require('../../lib/utils/configurations')
 
 describe('The Configurations class, when used without a file input,', () => {
   let configurations = null
@@ -56,7 +56,7 @@ describe('The Configurations class, when used with a file input,', () => {
   it('should create without error', async () => {
     try {
       configurations = await Configurations.readFrom(
-        path.join(__dirname, 'mocks/external', 'mock-config.json')
+        path.join(__dirname, '../mocks/external', 'mock-config.json')
       )
     } catch (er) {
       err = er

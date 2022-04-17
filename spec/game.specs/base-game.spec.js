@@ -8,10 +8,10 @@
 
 const EventEmitter = require('events').EventEmitter
 
-const Vector2D = require('../lib/game/physics/vector-2d')
-const BaseGame = require('../lib/game/game-modes/base-game')
+const Vector2D = require('../../lib/game/physics/vector-2d')
+const BaseGame = require('../../lib/game/game-modes/base-game')
 
-const MockSocket = require('./mocks/external/mock-io-socket')
+const MockSocket = require('../mocks/external/mock-io-socket')
 
 const communications = {
   CONN_UPDATE: 'mock-game-update',
@@ -240,7 +240,7 @@ describe('The BaseGame class,', () => {
   describe('The .update() method,', () => {
     it('should call every player\'s .update() method', () => {
       /**
-       * @type {Array<jasmine.Spy<import('../lib/game/player')['prototype']['update']>>}
+       * @type {Array<jasmine.Spy<import('../../lib/game/player')['prototype']['update']>>}
        */
       const spies = []
       if (baseGame instanceof BaseGame) {

@@ -9,13 +9,13 @@
 const path = require('path')
 const events = require('events')
 
-const Player = require('../lib/game/player')
-const Manager = require('../lib/game/manager')
-const GameLoader = require('../lib/game/gameloader')
-const TeamGame = require('../lib/game/game-modes/team-game')
+const Player = require('../../lib/game/player')
+const Manager = require('../../lib/game/manager')
+const GameLoader = require('../../lib/game/gameloader')
+const TeamGame = require('../../lib/game/game-modes/team-game')
 
-const MockLoggers = require('./mocks/internal/mock-loggers')
-const MockSocket = require('./mocks/external/mock-io-socket')
+const MockLoggers = require('../mocks/internal/mock-loggers')
+const MockSocket = require('../mocks/external/mock-io-socket')
 
 const communications = {
   CONN_UPDATE: 'mock-game-update',
@@ -24,7 +24,7 @@ const communications = {
 
 describe('The Manager class,', () => {
   const gameLoader = new GameLoader({
-    baseDir: path.join(__dirname, 'mocks/external/mock-game-confs'),
+    baseDir: path.join(__dirname, '../mocks/external/mock-game-confs'),
     debug: (...args) => {
       process.stdout.write(Buffer.from(`DEBUG: ${args.join(' ')}\r\n`))
     },
@@ -175,7 +175,7 @@ describe('The Manager class,', () => {
 
   it('should be able to start the update loop', done => {
     /**
-     * @type {Array<jasmine.Spy<import('../lib/game/game-modes/base-game')['prototype']['update']>>}
+     * @type {Array<jasmine.Spy<import('../../lib/game/game-modes/base-game')['prototype']['update']>>}
      */
     const spies = []
     const doneEmitter = new events.EventEmitter()
