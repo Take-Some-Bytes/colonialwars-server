@@ -115,7 +115,7 @@ describe('The ErrorSender class,', () => {
 
       errSender.sendErrorAndLog('Not Found!', logger, { status: 404 })
 
-      expect(res.statusCode).toBe(500)
+      expect(res.statusCode).toBe(404)
       expect(res.headers['Content-Type']).toBe('application/json')
       expect(res.responseContent).toBeInstanceOf(Buffer)
       expect(JSON.parse(res.responseContent.toString('utf-8'))).toEqual({
@@ -147,7 +147,7 @@ describe('The ErrorSender class,', () => {
         { logMsg: 'Client tried to do this too many times', status: 413 }
       )
 
-      expect(res.statusCode).toBe(500)
+      expect(res.statusCode).toBe(413)
       expect(res.headers['Content-Type']).toBe('application/json')
       expect(res.responseContent).toBeInstanceOf(Buffer)
       expect(JSON.parse(res.responseContent.toString('utf-8'))).toEqual({
