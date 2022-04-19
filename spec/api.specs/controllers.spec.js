@@ -168,26 +168,23 @@ describe('The Controllers class,', () => {
       expect(ctlrs.gameAuth().length).toBe(2)
     })
 
-    it('should return an error if no query is given', done => {
+    it('should return an error if no query is given', async () => {
       const mockReq = new MockHttpRequest({
         url: '/game-auth/get',
         method: 'GET'
       })
       const mockRes = new MockHttpResponse()
 
-      ctlrs.gameAuth()(mockReq, mockRes)
+      await ctlrs.gameAuth()(mockReq, mockRes)
 
-      setTimeout(() => {
-        expect(mockRes.statusCode).toBe(400)
-        expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
-          status: 'error',
-          error: { message: 'Query string is required!' }
-        })
-        done()
-      }, 100)
+      expect(mockRes.statusCode).toBe(400)
+      expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
+        status: 'error',
+        error: { message: 'Query string is required!' }
+      })
     })
 
-    it('should return an error if query does not include required fields', done => {
+    it('should return an error if query does not include required fields', async () => {
       const mockReq = new MockHttpRequest({
         url: `/game-auth/get?player=${encodeURIComponent('[object Object]')}`,
         query: new URLSearchParams(`?player=${encodeURIComponent('[object Object]')}`),
@@ -195,16 +192,13 @@ describe('The Controllers class,', () => {
       })
       const mockRes = new MockHttpResponse()
 
-      ctlrs.gameAuth()(mockReq, mockRes)
+      await ctlrs.gameAuth()(mockReq, mockRes)
 
-      setTimeout(() => {
-        expect(mockRes.statusCode).toBe(400)
-        expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
-          status: 'error',
-          error: { message: 'Query string missing fields.' }
-        })
-        done()
-      }, 100)
+      expect(mockRes.statusCode).toBe(400)
+      expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
+        status: 'error',
+        error: { message: 'Query string missing fields.' }
+      })
     })
 
     it('should return the SHA-256 HMAC of the passed-in fields', async () => {
