@@ -13,7 +13,7 @@ const MockLoggers = require('../mocks/internal/mock-loggers')
 const MockRequest = require('../mocks/external/mock-http-request')
 const MockResponse = require('../mocks/external/mock-http-response')
 
-describe('The ErrorSenders class,', () => {
+describe('The ErrorHandlers class,', () => {
   describe('the CORS error handler,', () => {
     it('should not do anything if error is not a CorsError', () => {
       const err = new Error('Something bad happened!')
