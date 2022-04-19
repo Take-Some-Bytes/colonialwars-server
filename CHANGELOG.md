@@ -4,6 +4,8 @@ Changelog for ``colonialwars-server``.
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
 ## [Unreleased]
+### Changed:
+- Changed the call signature of the ``.sendAndLogError()`` method on the ``ErrorSender`` class.
 
 ## [v0.5.3] - 2022-04-17
 ### Added:
