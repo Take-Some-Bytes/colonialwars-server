@@ -4,13 +4,16 @@ Changelog for ``colonialwars-server``.
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
 ## [Unreleased]
+
 ### Changed:
 - Changed the call signature of the ``.sendAndLogError()`` method on the ``ErrorSender`` class.
 
 ## [v0.5.3] - 2022-04-17
+
 ### Added:
 - Added specs for the ``ErrorHandlers`` class, the ``Vector2D`` class, the ``GameServer`` class,
 and CWDTP utility functions.
+
 ### Changed:
 - Reorganized specs - everything is now in its own folder.
 - Updated [``ws``](https://www.npmjs.com/package/ws) to 8.x release line. This a major
@@ -18,6 +21,7 @@ dependency update.
 - Updated [``jasmine``](https://www.npmjs.com/package/jasmine) to 4.x release line. This a major
 dependency update.
 - Don't check for error number (``err.errno``) because of unreliability.
+
 ### Fixed:
 - Fixed WSConn specs to use ``ws://`` URLs instead of ``http://`` URLs.
 - Fixed an unknown error with the ``bufferUtils.concatBuffers()`` function - if it was called, an
@@ -25,13 +29,16 @@ error was just thrown.
 - Fixed an unknown error with the ``crypto.hash()`` function - if the data passed in was an
 [``ArrayBuffer``](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer),
 an error was thrown because ``hash.update`` does not take array buffers.
+
 ### Removed:
 - Removed the ``ServerUtils`` class and its specs.
 
 ## [v0.5.2] - 2021-08-24
+
 ### Changed:
 - Log a message when a request tries to GET a non-existent route instead of just silently sending
 a 404.
+
 ### Fixed:
 - Fixed links in this changelog.
 
@@ -43,11 +50,13 @@ instead of trying to parse it ourselves.
 - Added a new ``ErrorSender`` class that sends errors to clients. Compared with the ``ServerUtils``
 class, the ``ErrorSender`` class only has one responsibility, doesn't force you to specify
 everything, and is more explicit in what methods do what.
+
 ### Changed:
 - Changed logging architecture. Transports for loggers are now more flexible (and configurable),
 support for formatting (via ``winston.format.splat``) has been added, and JSON logging is supported.
 - Removed code that directly registered handler on a router in the ``Controllers`` class. All route
 handlers are just returned, and the caller has the register them explicitly.
+
 ### Fixed:
 - Fixed the fact that, sometimes, a WSConn would refuse to close.
   * **THE REASON**: When a handshake timeout occurs, a WSConn would try to forcefully disconnect.
@@ -62,8 +71,10 @@ WebSocket connection) was closed.
 has still not exited gracefully after ten seconds, the application is going to be shut down forcefully
 using ``process.exit(1)``.
 - Fixed the spec helper ``fetch``. It now rejects correctly when the request faces an error.
+
 ### Deprecated:
 - The ``ServerUtils`` class is now deprecated. New code should use the ``ErrorSender`` class.
+
 ### Removed:
 - Removed the ``/testing`` route.
 
@@ -83,6 +94,7 @@ client and game server.
 all the games that ``Manager`` is managing. Subsequently, it could be used to ensure that no more
 than one instance of player ``Bob`` exists on a single game server.
 - Added new game configurations; now, you need to specify the game's map's theme.
+
 ### Changed:
 - Renamed the ``GameServer`` class to the ``CWServer`` class, as ``CWServer`` is a more appropriate
 name for what the class does.
@@ -90,6 +102,7 @@ name for what the class does.
 - Decreased updates per second from 25/s to 10/s.
 - Increased player speed from 0.4 to 0.9.
 - Updated the ``WSConn`` class to conform to [CWDTP Revision 6][4].
+
 ### Removed:
 - Removed logic which decided whether to log an error while parsing the ``Forwarded`` header.
 Now, if an error is encountered, the header is ignored, and the next middleware is called.
@@ -97,26 +110,32 @@ Now, if an error is encountered, the header is ignored, and the next middleware 
 and with our current plans, we never will.
 
 ## [v0.4.3] - 2021-04-03
+
 ### Added:
 - Added [``nanoid``](https://www.npmjs.com/package/nanoid) for generating WebSocket connection IDs.
 - Added a ``crypto`` module to provide a unified API for Node.JS and the browser. That way, we won't
 have to rewrite a lot of crypto code when we use the ``WSConn`` class in the front end.
+
 ### Changed:
 - ``WSServer`` and ``WSConn`` are now fully-fledged implementations of [``CWDTP``][3], instead of
 a "slight" wrapper around WebSockets.
 
 ## [v0.4.2] - 2021-03-25
+
 ### Added:
 - Added a replacement for ``valley.json`` called ``plains.json``.
 - Added a map description field in all map save files.
 - Added some wrapper classes and utility functions to make working with ``ws`` easier.
+
 ### Changed:
 - Used [``ws``](https://www.npmjs.com/package/ws) instead of Socket.IO.
 - Updated the ``/game-stats`` route to send a game description.
+
 ### Removed:
 - Removed ``valley.json``.
 
 ## [v0.4.1] - 2021-03-13
+
 ### Changed:
 - Updated NPM lock file version.
 - Updated code to work with updated map save file structures in [``specifications/colonialwars/file-structures.md``](
@@ -124,6 +143,7 @@ a "slight" wrapper around WebSockets.
 ). Most notably, the way teams are specified have been changed. The old syntax for specifying
 teams is still supported for compatibility reasons, 
 - Updated a lot of logging in and around the game server.
+
 ### Fixed:
 - Actually uploaded ``.gitignore`` to GitHub.
 - Actually uploaded updated compatibility data for ``README.md`` to GitHub.
@@ -134,8 +154,10 @@ repository. Now, they point to specific commit hashes, which is always better si
 the specifications as they were at that time, instead of the latest specifications.
 
 ## [v0.4.0] - 2021-03-12
+
 ### Added:
 - Added a ``.gitignore`` file so we can actually start using ``Git`` properly.
+
 ### Changed:
 - Changed all game configuration files to conform to the save file structures
 defined in [``specifications/colonialwars/file-structures.md``](
@@ -151,19 +173,23 @@ every time the player is updated.
 ).
 - Updated ``serverUtils.sendError()`` method to accept custom content types.
 - Update compatibility data in ``README.md``.
+
 ### Fixed:
 - Fixed the fact that no response gets sent when a CORS error is encountered.
 
 ## [v0.3.2] - 2021-02-11
+
 ### Added:
 - Added ``GameLoader`` specs.
 - Added a way to track clients in the ``Manager`` class.
 - Added a route that returns statistics about the games running on the GameServer.
 - Added a ``game/data`` folder to store game-related data, e.g. map save files
 and unit data files.
+
 ### Changed:
 - Started using the ``Manager`` and ``GameLoader`` classes in our backend.
 - Updated compatibility data.
+
 ### Fixed:
 - Fixed the fact that the ``bound-object.js`` file was ***not renamed*** to ``bound-entity.js``
 in the GitHub repository.
@@ -171,17 +197,20 @@ in the GitHub repository.
 2020-12-30.
 
 ## [v0.3.1] - 2021-01-23
+
 ### Added:
 - Added a ``GameLoader`` class to load games from configuration files.
 - Added a ``Manager`` class to manage the amount of games that are running on this server.
 - Added compatibility data in ``README.md``.
 - Added an NPM ``check`` script that runs ``npm audit``, ``npm outdated``, and ``npm test``.
+
 ### Changed:
 - Renamed the ``BoundObject`` class to the ``BoundEntity`` class.
 - Updated the ``BaseGame`` class to inherit from the ``events.EventEmitter`` class.
 - Updated some game-related files to take required parameters inside a ``config`` object instead
 of passing them one by one.
 - Updated the ``fetch`` function in ``fetch.js`` to use ``http.request`` instead of ``http.get``.
+
 ### Fixed:
 - Fixed the ``RegExp`` used to check if the ``Accept`` header has the correct values. Before,
 users could enter values like ``application/plain``, and it will pass. Now, ``application/plain``
@@ -198,11 +227,13 @@ properties, the entire function would exit.
   to all game modes;
   * ``bound-object.js``, a class representing an object that is bound to a minimum and maximum; and
   * ``vector-2d.js``, a class representing a 2D vector.
+
 ### Changed:
 - Changed spec naming convention--instead of using ``[name]_spec.js``, now we use ``[name].spec.js``.
 - Changed all occurances of the [EM dash](https://www.thesaurus.com/e/grammar/em-dash/) to use two
 hypens instead. Why? I've decided I don't want to use obscure characters in my programs, since they could
 cause all sorts of problems... (An EM dash is not a valid ASCII character).
+
 ### Removed:
 - Removed a lot of ``console.log``s in the specs.
 
@@ -212,6 +243,7 @@ cause all sorts of problems... (An EM dash is not a valid ASCII character).
 - Added CORS support within the application since some client-side JavaScript is going to
 make requests to these servers from different domains.
 - Added a class (``ErrorHandlers``) to house application error handlers.
+
 ### Removed:
 - Removed the ``.handleOptions()`` method on the ``Middlewares`` class. The OPTIONS method is now
 handled by the ``cors`` NPM package.
