@@ -35,6 +35,7 @@
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "debug": "^4.3.1",
+    "dotenv": "^16.0.0",
     "forwarded-parse": "^2.1.1",
     "is-valid-hostname": "^1.0.2",
     "morgan": "^1.10.0",
