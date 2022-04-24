@@ -6,6 +6,8 @@
 const CWServer = require('../')
 const shutdown = require('./shutdown')
 
+require('dotenv').config()
+
 process.title = `cw-server-${process.env.INSTANCE_NUM}`
 
 ;(async () => {
