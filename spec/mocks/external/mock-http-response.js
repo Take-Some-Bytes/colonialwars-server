@@ -19,9 +19,7 @@ class MockHTTPResponse extends stream.Writable {
     super(opts)
 
     this._headers = {}
-    this.cookies = {}
     this.statusCode = 200
-    this.cookieNum = 0
     this.response = null
   }
 
