@@ -95,7 +95,7 @@ describe('The WSConn class,', () => {
   describe('when connecting to a server,', () => {
     beforeAll(done => {
       wsServer = new WebSocket.Server({
-        server: server,
+        server,
         handleProtocols: () => {
           return 'pow.cwdtp'
         }
@@ -266,7 +266,7 @@ describe('The WSConn class,', () => {
   describe('when sending messages,', () => {
     beforeAll(done => {
       wsServer = new WebSocket.Server({
-        server: server,
+        server,
         handleProtocols: () => {
           return 'pow.cwdtp'
         }
@@ -343,7 +343,7 @@ describe('The WSConn class,', () => {
   describe('when receiving messages,', () => {
     beforeAll(done => {
       wsServer = new WebSocket.Server({
-        server: server,
+        server,
         handleProtocols: () => {
           return 'pow.cwdtp'
         }

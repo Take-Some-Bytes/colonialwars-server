@@ -30,7 +30,7 @@ describe('The Manager class,', () => {
     },
     loggers: new MockLoggers(),
     gameConstants: {
-      communications: communications,
+      communications,
       playerStats: {
         PLAYER_SPEED: 0.4
       }
@@ -50,7 +50,7 @@ describe('The Manager class,', () => {
           'valid-config.json',
           'valid-config-2.json'
         ],
-        gameLoader: gameLoader,
+        gameLoader,
         updateLoopFrequency: 40
       })
     } catch (ex) {

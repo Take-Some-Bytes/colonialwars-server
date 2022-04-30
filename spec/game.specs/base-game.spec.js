@@ -50,7 +50,7 @@ describe('The BaseGame class,', () => {
         graphicsData: {
           theme: 'grass'
         },
-        communications: communications,
+        communications,
         playerStats: {
           PLAYER_SPEED: 0.4
         }
@@ -199,7 +199,7 @@ describe('The BaseGame class,', () => {
       if (playerSockets.length === 4 && playerSockets.every(val => val instanceof MockSocket)) {
         playerSockets.forEach(conn => {
           conn.on(communications.CONN_UPDATE, data => {
-            receivedData.push({ id: conn.id, data: data })
+            receivedData.push({ id: conn.id, data })
             allReceived.emit('received')
           })
         })

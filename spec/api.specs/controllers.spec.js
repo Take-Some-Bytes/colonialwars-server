@@ -213,7 +213,7 @@ describe('The Controllers class,', () => {
         ))
       const mockReq = new MockHttpRequest({
         url: `/game-auth/get?${query.toString()}`,
-        query: query,
+        query,
         method: 'GET'
       })
       const mockRes = new MockHttpResponse()

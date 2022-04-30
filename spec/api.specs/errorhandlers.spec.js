@@ -24,7 +24,7 @@ describe('The ErrorHandlers class,', () => {
       const loggers = new MockLoggers()
       spyOn(loggers, 'log').and.callThrough()
 
-      const errHandlers = new ErrorHandlers({ loggers: loggers })
+      const errHandlers = new ErrorHandlers({ loggers })
       const corsErrHandler = errHandlers.handleCorsError()
 
       let nextCalled = false
@@ -44,7 +44,7 @@ describe('The ErrorHandlers class,', () => {
       const loggers = new MockLoggers()
       spyOn(loggers, 'log').and.callThrough()
 
-      const errHandlers = new ErrorHandlers({ loggers: loggers })
+      const errHandlers = new ErrorHandlers({ loggers })
       const corsErrHandler = errHandlers.handleCorsError()
 
       let nextCalled = false
