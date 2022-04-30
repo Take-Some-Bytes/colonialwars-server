@@ -15,8 +15,8 @@ const MockLoggers = require('../mocks/internal/mock-loggers')
 
 describe('The static GameLoader.DEFAULT_MAX_CONF_SIZE property,', () => {
   it('should be equal to 1MB (1024 * 1024 * 1024)', () => {
-    expect(GameLoader.DEFAULT_MAX_CONF_SIZE).toBe(1024 * 1024 * 1024)
-    expect(GameLoader.DEFAULT_MAX_CONF_SIZE).toBe(1073741824)
+    expect(GameLoader.MAX_CONF_SIZE).toBe(1024 * 1024 * 100)
+    expect(GameLoader.MAX_CONF_SIZE).toBe(104857600)
   })
 })
 

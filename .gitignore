@@ -3,3 +3,5 @@ node_modules/
 
 # Please no .DS_Store files
 .DS_Store
+
+.env
