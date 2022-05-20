@@ -11,10 +11,21 @@ The format is based on [Keep a Changelog][1], and this project adheres to [Seman
     - Update compatibility table in README.md if needed.
 -->
 
-## [Unreleased]
+## [v0.5.4] - 2022-05-20
+
+### Added:
+- Added documentation for server configuration options.
 
 ### Changed:
+- Updated [``standard``](https://npmjs.com/package/standard) to 17.x release line.
 - Changed the call signature of the ``.sendAndLogError()`` method on the ``ErrorSender`` class.
+- Changed configuration system.
+  * Removed option to pass in JSON configuration file. All configuration is done via environment
+  variables now.
+  * Added support for ``.env`` files, courtesy of [``dotenv``](https://npmjs.com/package/dotenv).
+
+### Removed:
+- Removed cookie parsing from dependencies. They were useless anyway.
 
 ## [v0.5.3] - 2022-04-17
 
@@ -278,4 +289,4 @@ handled by the ``cors`` NPM package.
 [v0.5.1]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/428a5256378b4bc0574a2d3e92d81336e3501a69
 [v0.5.2]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/09c4902bc57c53bf1904975a27bd59e216164dc9
 [v0.5.3]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/567c80dfe3cd51f8b84be748ba5368029857b1af
-[Unreleased]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
+[v0.5.4]: https://github.com/Take-Some-Bytes/colonialwars-server/tree/main
