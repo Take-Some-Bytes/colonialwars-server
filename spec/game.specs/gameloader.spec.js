@@ -136,7 +136,7 @@ describe('The GameLoader class,', () => {
       }
       try {
         if (gameLoader instanceof GameLoader) {
-          const config = await gameLoader.loadFromFile('invalid-config.json', 'afii3i2l.do')
+          const config = await gameLoader.loadFromFile('invalid-config2.json', 'afii3i2l.do')
           games.push(config)
         }
       } catch (ex) {
