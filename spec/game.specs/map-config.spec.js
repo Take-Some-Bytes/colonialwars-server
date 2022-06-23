@@ -80,4 +80,20 @@ describe('The MapConfig class,', () => {
     expect(config.modifiers).toHaveSize(0)
     expect(config.player).toHaveSize(0)
   })
+
+  it('should be able to load map configs from a file', async () => {
+    const filePath = path.join(__dirname, '../mocks/external/mock-game-confs/valid-config.json')
+    const config = await MapConfig.fromFile(filePath)
+
+    expect(config.mode).toBe('teams')
+    expect(config.tileType).toBe('grass')
+    expect(config.maxPlayers).toBe(4)
+    expect(config.defaultHeight).toBe(0)
+    expect(config.description).toBeTruthy()
+    expect(config.worldLimits).toEqual(new Vector2D(200, 200))
+    expect(config.teams).toHaveSize(2)
+    expect(config.graphics).toHaveSize(0)
+    expect(config.modifiers).toHaveSize(0)
+    expect(config.player).toHaveSize(0)
+  })
 })
