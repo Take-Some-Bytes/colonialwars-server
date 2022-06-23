@@ -1,32 +1,89 @@
 {
-  "configType": "game-config",
+  "configType": "map-config",
   "meta": {
     "name": "Plains",
-    "mode": "Teams",
-    "maxPlayers": 40,
+    "maxPlayers": 30,
+    "description": "A straightforward battle on the plains.",
+    "unitDataExtends": "none",
+    "buildingDataExtends": "none",
+    "graphicsDataExtends": "none",
+    "playerDataExtends": "none",
+    "mode": "teams",
+    "tileType": "grass",
     "worldLimits": {
       "x": 8000,
       "y": 8000
     },
+    "defaultHeight": 0,
     "teams": [
       {
-        "name": "British",
-        "spawnPosition": { "x": 250, "y": 250 },
-        "description": "The British."
+        "name": "Red",
+        "description": "Team Red",
+        "maxPlayers": 10,
+        "spawnPosition": {
+          "x": 0,
+          "y": 0
+        }
       },
       {
-        "name": "French",
-        "spawnPosition": { "x": 5750, "y": 5750 },
-        "description": "The French."
+        "name": "Blue",
+        "description": "Team Blue",
+        "maxPlayers": 10,
+        "spawnPosition": {
+          "x": 8000,
+          "y": 8000
+        }
       },
       {
-        "name": "Americans",
-        "spawnPosition": { "x": 3000, "y": 3000 },
-        "description": "The Americans."
+        "name": "Green",
+        "description": "Team Green",
+        "maxPlayers": 10,
+        "spawnPosition": {
+          "x": 4000,
+          "y": 4000
+        }
       }
-    ],
-    "tileType": "grass",
-    "defaultHeight": 0
+    ]
   },
-  "description": "A straightforward battle on the plains."
+  "data": {
+    "graphicsData": {
+      "commander_img": {
+        "id": "commander_img",
+        "name": "Commander",
+        "file": "placeholder/commander.png",
+        "angles": 1,
+        "hasAnimations": false,
+        "mainImg": {
+          "x": 0,
+          "y": 0,
+          "w": 840,
+          "h": 1080
+        },
+        "damaged1Img": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "damaged2Img": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "constructing1Img": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "animations": null
+      }
+    },
+    "modifiersData": {},
+    "playerData": {
+      "img": "commander_img",
+      "speed": 1
+    }
+  }
 }
