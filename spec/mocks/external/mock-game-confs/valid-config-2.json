@@ -1,5 +1,5 @@
 {
-  "configType": "game-config",
+  "configType": "map-config",
   "meta": {
     "name": "Mock Game 2",
     "mode": "Teams",
@@ -12,20 +12,33 @@
       {
         "name": "one",
         "spawnPosition": { "x": 0, "y": 0 },
-        "description": "Team one."
+        "description": "Team one.",
+        "maxPlayers": 4
       },
       {
         "name": "two",
         "spawnPosition": { "x": 500, "y": 500 },
-        "description": "Team two."
+        "description": "Team two.",
+        "maxPlayers": 4
       },
       {
         "name": "three",
         "spawnPosition": { "x": 1000, "y": 1000 },
-        "description": "Team three."
+        "description": "Team three.",
+        "maxPlayers": 4
       }
     ],
-    "tileType": "grass"
+    "tileType": "grass",
+    "defaultHeight": 0,
+    "description": "This is the second mock game config.",
+    "unitDataExtends": "none",
+    "buildingDataExtends": "none",
+    "graphicsDataExtends": "none",
+    "playerDataExtends": "default"
   },
-  "description": "This is the second mock game config."
+  "data": {
+    "graphicsData": {},
+    "modifiersData": {},
+    "playerData": {}
+  }
 }
