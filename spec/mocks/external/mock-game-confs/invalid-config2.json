@@ -1,0 +1,9 @@
+{
+  "configType": "game-config",
+  "meta": {
+    "unitDataExtends": true
+  },
+  "data": {
+    "cheese": "is delicious"
+  }
+}
