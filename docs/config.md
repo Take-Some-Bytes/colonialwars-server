@@ -111,8 +111,7 @@ Default is 3.
 ### ``PLAYER_SPEED``
 ***DEPRECATED***: The speed of the player when in a game.
 
-Leave this as the default; a new option to configure player speed will appear in map save
-files sometime in the near future.
+Edit the player properties in a map save file instead.
 
 Default is 0.9.
 
