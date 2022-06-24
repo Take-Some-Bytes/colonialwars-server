@@ -443,7 +443,7 @@ describe('The GameServer class,', () => {
       mockConn.emit('ready')
       mockConn.emit('disconnect')
 
-      expect(mockGame.removePlayer).toHaveBeenCalledWith('1', null, false)
+      expect(mockGame.removePlayer).toHaveBeenCalledWith(mockConn)
     })
   })
 })
