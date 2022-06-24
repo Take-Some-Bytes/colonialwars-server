@@ -167,20 +167,21 @@ describe('The Manager class,', () => {
       })
     })
 
-    it('should be able to get a player by their ID', async () => {
+    it("should be able to add input to a player's input queue", async () => {
       const manager = await initManager()
       const handle = manager.getGame('game-1')
-
       const player = TEST_PLAYERS[1]
 
       handle.addPlayer(player.socket, player.meta)
 
-      expect(manager.games.get('game-1').currentPlayers).toBe(1)
-      expect(manager.games.get('game-1').currentPlayers).toBe(handle.currentPlayers)
+      const spy = spyOn(
+        manager.games.get('game-1').getPlayerByID(player.socket.id),
+        'addInputToQueue'
+      ).and.callFake((..._args) => {})
 
-      const player2 = handle.getPlayerByID(player.socket.id)
+      handle.addInputTo(player.socket.id, { up: true })
 
-      expect(player.meta.name).toEqual(player2.name)
+      expect(spy).toHaveBeenCalledWith({ up: true })
     })
   })
 

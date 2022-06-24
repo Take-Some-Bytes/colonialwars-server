@@ -376,7 +376,7 @@ describe('The GameServer class,', () => {
     })
 
     describe('when a client action is received,', () => {
-      it('should disconnect if player does not exist', () => {
+      it('should terminate the connection if player does not exist', () => {
         const mockConn = createMockConn()
         const mockGame = {
           closed: false,
@@ -393,18 +393,16 @@ describe('The GameServer class,', () => {
         mockConn.emit('client-action')
 
         expect(mockGame.removePlayer).toHaveBeenCalled()
-        expect(mockConn.disconnect).toHaveBeenCalled()
+        expect(mockConn.terminate).toHaveBeenCalled()
       })
 
       it('should add input to queue if player does exist', () => {
         const mockConn = createMockConn()
-        const mockPlayer = {
-          addInputToQueue: jasmine.createSpy('addInputToQueueMock', input => {})
-        }
+        mockConn.id = '1'
         const mockGame = {
           closed: false,
           addPlayer: jasmine.createSpy('addPlayerMock', (conn, meta) => {}),
-          getPlayerByID: () => mockPlayer,
+          addInputTo: jasmine.createSpy('addInputToMock', input => {}),
           removePlayer: jasmine.createSpy('removePlayerMock', (connId, reason, sendReason) => {}),
           getMapData: jasmine.createSpy('getMapDataMock', () => ({})).and.callThrough()
         }
@@ -417,7 +415,7 @@ describe('The GameServer class,', () => {
           up: true
         })
 
-        expect(mockPlayer.addInputToQueue).toHaveBeenCalledWith({
+        expect(mockGame.addInputTo).toHaveBeenCalledWith('1', {
           up: true
         })
       })
