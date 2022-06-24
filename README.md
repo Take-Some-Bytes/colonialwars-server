@@ -42,10 +42,8 @@ To enable all debug logging, use this:
 ```sh
 DEBUG=colonialwars* npm run dev
 ```
-There are many more configuration options for the server, however, they are not documented
-yet. Looking through the main source file ([``lib/cw-server.js``](
-  https://github.com/Take-Some-Bytes/colonialwars-server/blob/main/lib/cw-server.js
-)) *should* give a good idea of the available configurations though.
+
+Additional documentation can be found in the ``docs/`` folder.
 
 Again, make sure Node.JS has been installed before running the server (see above for
 requirements).
