@@ -11,31 +11,12 @@ const events = require('events')
 
 const Player = require('../../lib/game/player')
 const Manager = require('../../lib/game/manager')
-const GameLoader = require('../../lib/game/gameloader')
 const TeamGame = require('../../lib/game/game-modes/team-game')
 
 const MockLoggers = require('../mocks/internal/mock-loggers')
 const MockSocket = require('../mocks/external/mock-io-socket')
 
-const communications = {
-  CONN_UPDATE: 'mock-game-update',
-  CONN_REMOVE_PLAYER: 'mock-game-remove-player'
-}
-
 describe('The Manager class,', () => {
-  const gameLoader = new GameLoader({
-    baseDir: path.join(__dirname, '../mocks/external/mock-game-confs'),
-    debug: (...args) => {
-      process.stdout.write(Buffer.from(`DEBUG: ${args.join(' ')}\r\n`))
-    },
-    loggers: new MockLoggers(),
-    gameConstants: {
-      communications,
-      playerStats: {
-        PLAYER_SPEED: 0.4
-      }
-    }
-  })
   let manager = null
 
   it('should construct without error', () => {
@@ -46,12 +27,11 @@ describe('The Manager class,', () => {
         maxGames: 2,
         startGames: 1,
         loggers: new MockLoggers(),
-        gameConfs: [
-          'valid-config.json',
-          'valid-config-2.json'
-        ],
-        gameLoader,
-        updateLoopFrequency: 40
+        updateLoopFrequency: 40,
+        dataFiles: {
+          location: path.join(__dirname, '../mocks/external/mock-game-confs'),
+          availableMaps: ['valid-config.json']
+        }
       })
     } catch (ex) {
       err = ex
