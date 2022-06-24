@@ -362,7 +362,8 @@ describe('The GameServer class,', () => {
       const mockConn = createMockConn()
       const mockGame = {
         closed: false,
-        addNewPlayer: jasmine.createSpy('addNewPlayerMock', (conn, meta) => {})
+        addPlayer: jasmine.createSpy('addPlayerMock', (conn, meta) => {}),
+        getMapData: jasmine.createSpy('getMapDataMock', () => ({})).and.callThrough()
       }
       const [gmServer, mockReq] = createMockServerAndReq(mockGame)
 
@@ -370,7 +371,8 @@ describe('The GameServer class,', () => {
 
       mockConn.emit('ready')
 
-      expect(mockGame.addNewPlayer).toHaveBeenCalled()
+      expect(mockGame.addPlayer).toHaveBeenCalled()
+      expect(mockGame.getMapData).toHaveBeenCalled()
     })
 
     describe('when a client action is received,', () => {
@@ -378,9 +380,10 @@ describe('The GameServer class,', () => {
         const mockConn = createMockConn()
         const mockGame = {
           closed: false,
-          addNewPlayer: jasmine.createSpy('addNewPlayerMock', (conn, meta) => {}),
-          getPlayerByConnID: () => null,
-          removePlayer: jasmine.createSpy('removePlayerMock', (connId, reason, sendReason) => {})
+          addPlayer: jasmine.createSpy('addPlayerMock', (conn, meta) => {}),
+          getPlayerByID: () => null,
+          removePlayer: jasmine.createSpy('removePlayerMock', (connId, reason, sendReason) => {}),
+          getMapData: jasmine.createSpy('getMapDataMock', () => ({})).and.callThrough()
         }
         const [gmServer, mockReq] = createMockServerAndReq(mockGame)
 
@@ -400,9 +403,10 @@ describe('The GameServer class,', () => {
         }
         const mockGame = {
           closed: false,
-          addNewPlayer: jasmine.createSpy('addNewPlayerMock', (conn, meta) => {}),
-          getPlayerByConnID: () => mockPlayer,
-          removePlayer: jasmine.createSpy('removePlayerMock', (connId, reason, sendReason) => {})
+          addPlayer: jasmine.createSpy('addPlayerMock', (conn, meta) => {}),
+          getPlayerByID: () => mockPlayer,
+          removePlayer: jasmine.createSpy('removePlayerMock', (connId, reason, sendReason) => {}),
+          getMapData: jasmine.createSpy('getMapDataMock', () => ({})).and.callThrough()
         }
         const [gmServer, mockReq] = createMockServerAndReq(mockGame)
 
@@ -427,9 +431,10 @@ describe('The GameServer class,', () => {
       }
       const mockGame = {
         closed: false,
-        addNewPlayer: jasmine.createSpy('addNewPlayerMock', (conn, meta) => {}),
-        getPlayerByConnID: () => mockPlayer,
-        removePlayer: jasmine.createSpy('removePlayerMock', (connId, reason, sendReason) => {})
+        addPlayer: jasmine.createSpy('addPlayerMock', (conn, meta) => {}),
+        getPlayerByID: () => mockPlayer,
+        removePlayer: jasmine.createSpy('removePlayerMock', (connId, reason, sendReason) => {}),
+        getMapData: jasmine.createSpy('getMapDataMock', () => ({})).and.callThrough()
       }
       const [gmServer, mockReq] = createMockServerAndReq(mockGame)
 
