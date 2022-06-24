@@ -33,7 +33,7 @@ Define the [``winston``](https://www.npmjs.com/package/winston) logging transpor
 This configuration is parsed as a JSON array of objects, and it is applied to *all* loggers.
 The structure of each element is as follows:
 
-```json
+```jsonc
 {
   "type": "<transport type>",
   "config": {
