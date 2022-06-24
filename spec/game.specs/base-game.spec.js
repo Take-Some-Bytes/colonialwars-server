@@ -8,15 +8,13 @@
 
 const EventEmitter = require('events').EventEmitter
 
+const constants = require('../../lib/constants')
 const Vector2D = require('../../lib/game/physics/vector-2d')
-const BaseGame = require('../../lib/game/game-modes/base-game')
+const { BaseGame } = require('../../lib/game/game-modes')
 
 const MockSocket = require('../mocks/external/mock-io-socket')
 
-const communications = {
-  CONN_UPDATE: 'mock-game-update',
-  CONN_REMOVE_PLAYER: 'mock-game-remove-player'
-}
+const communications = constants.COMMUNICATIONS
 
 describe('The BaseGame class,', () => {
   /**
@@ -30,29 +28,30 @@ describe('The BaseGame class,', () => {
     try {
       baseGame = new BaseGame({
         id: 'V3RY-UN1QU3-1D',
-        name: 'Base game 1',
-        mode: 'Teams',
-        maxPlayers: 4,
-        description: 'Testing this game.',
-        worldLimits: { x: 200, y: 0 },
-        teams: [
-          {
-            name: 'one',
-            spawnPosition: new Vector2D(0, 0),
-            description: 'Team one.'
-          },
-          {
-            name: 'two',
-            spawnPosition: new Vector2D(200, 200),
-            description: 'Team two.'
+        mapConfig: {
+          mapName: 'Base Game 1',
+          mode: 'Teams',
+          maxPlayers: 4,
+          description: 'Testing this game.',
+          worldLimits: { x: 200, y: 0 },
+          teams: [
+            {
+              name: 'one',
+              spawnPosition: new Vector2D(0, 0),
+              description: 'Team one.',
+              maxPlayers: 2
+            },
+            {
+              name: 'two',
+              spawnPosition: new Vector2D(200, 200),
+              description: 'Team two.',
+              maxPlayers: 2
+            }
+          ],
+          tileType: 'grass',
+          player: {
+            speed: 0.4
           }
-        ],
-        graphicsData: {
-          theme: 'grass'
-        },
-        communications,
-        playerStats: {
-          PLAYER_SPEED: 0.4
         }
       })
       baseGame.init()
