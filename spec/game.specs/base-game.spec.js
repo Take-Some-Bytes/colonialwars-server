@@ -6,21 +6,16 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const EventEmitter = require('events').EventEmitter
+const nanoid = require('nanoid')
 
-const constants = require('../../lib/constants')
 const Vector2D = require('../../lib/game/physics/vector-2d')
 const { BaseGame } = require('../../lib/game/game-modes')
 
-const MockSocket = require('../mocks/external/mock-io-socket')
-
-const communications = constants.COMMUNICATIONS
-
 describe('The BaseGame class,', () => {
   /**
-   * @type {Array<InstanceType<MockSocket>>}
+   * @type {Array<{ meta: Record<'name'|'team', string>, id: string }>}
    */
-  const playerSockets = []
+  const players = []
   let baseGame = null
 
   it('should construct without error', () => {
@@ -33,7 +28,7 @@ describe('The BaseGame class,', () => {
           mode: 'Teams',
           maxPlayers: 4,
           description: 'Testing this game.',
-          worldLimits: { x: 200, y: 0 },
+          worldLimits: { x: 200, y: 200 },
           teams: [
             {
               name: 'one',
@@ -63,7 +58,7 @@ describe('The BaseGame class,', () => {
     expect(baseGame).toBeInstanceOf(BaseGame)
   })
 
-  describe('The .addNewPlayer() method,', () => {
+  describe('The .addPlayer() method,', () => {
     it('should be able to add new players when space is available', () => {
       let err = null
       const newPlayers = [
@@ -72,29 +67,29 @@ describe('The BaseGame class,', () => {
             name: 'GENERAL LOUDSPEAKER',
             team: 'one'
           },
-          socket: MockSocket.create()
+          id: nanoid.nanoid()
         },
         {
           meta: {
             name: 'THISISTHEPOLICE',
             team: 'two'
           },
-          socket: MockSocket.create()
+          id: nanoid.nanoid()
         },
         {
           meta: {
             name: 'socialsecurity',
             team: 'one'
           },
-          socket: MockSocket.create()
+          id: nanoid.nanoid()
         }
       ]
 
       try {
         newPlayers.forEach(player => {
           if (baseGame instanceof BaseGame) {
-            baseGame.addNewPlayer(player.socket, player.meta)
-            playerSockets.push(player.socket)
+            baseGame.addPlayer(player.id, player.meta)
+            players.push(player)
           }
         })
       } catch (ex) {
@@ -104,7 +99,6 @@ describe('The BaseGame class,', () => {
       expect(err).toBe(null)
       expect(baseGame.full).toBe(false)
       expect(baseGame.players.size).toBe(3)
-      expect(baseGame.clients.size).toBe(3)
       expect(baseGame.currentPlayers).toBe(3)
     })
 
@@ -115,14 +109,14 @@ describe('The BaseGame class,', () => {
           name: 'Let me in please!',
           team: 'two'
         },
-        socket: MockSocket.create()
+        id: nanoid.nanoid()
       }
 
       try {
         if (baseGame instanceof BaseGame) {
           baseGame.closed = true
-          baseGame.addNewPlayer(player.socket, player.meta)
-          playerSockets.push(player.socket)
+          baseGame.addPlayer(player.id, player.meta)
+          players.push(player)
         } else {
           throw new TypeError()
         }
@@ -136,17 +130,17 @@ describe('The BaseGame class,', () => {
 
     it('should not accept players when game is full', () => {
       const errors = []
-      const players = [
-        { meta: { name: 'FBIOPENUP', team: 'two' }, socket: MockSocket.create() },
-        { meta: { name: 'Let me in please!', team: 'two' }, socket: MockSocket.create() }
+      const newPlayers = [
+        { meta: { name: 'FBIOPENUP', team: 'two' }, id: nanoid.nanoid() },
+        { meta: { name: 'Let me in please!', team: 'two' }, id: nanoid.nanoid() }
       ]
 
       baseGame.closed = false
-      players.forEach(player => {
+      newPlayers.forEach(player => {
         try {
           if (baseGame instanceof BaseGame) {
-            baseGame.addNewPlayer(player.socket, player.meta)
-            playerSockets.push(player.socket)
+            baseGame.addPlayer(player.id, player.meta)
+            players.push(player)
             errors.push(null)
           } else {
             throw new TypeError()
@@ -161,142 +155,66 @@ describe('The BaseGame class,', () => {
       expect(errors[1]).toBeInstanceOf(RangeError)
       expect(baseGame.full).toBe(true)
       expect(baseGame.players.size).toBe(4)
-      expect(baseGame.clients.size).toBe(4)
       expect(baseGame.currentPlayers).toBe(4)
     })
   })
 
-  describe('The .sendState() method', () => {
-    afterEach(() => {
-      playerSockets.forEach(socket => {
-        if (socket instanceof MockSocket) {
-          if (socket.listenerCount(communications.CONN_UPDATE) > 0) {
-            socket.removeAllListeners(communications.CONN_UPDATE)
-          }
-        }
-      })
-    })
+  it('should be able to serialize the current state for the specified client', () => {
+    const player = players[1]
+    const expectedPosition = player.meta.team === 'one'
+      ? { x: 0, y: 0 }
+      : { x: 200, y: 200 }
+    const state = baseGame.serializeStateFor(player.id)
 
-    it('should send the current game state to all players', done => {
-      const allReceived = new EventEmitter()
-      const receivedData = []
-      allReceived.on('received', () => {
-        if (receivedData.length === 4) {
-          expect(receivedData.length).toBe(4)
-          receivedData.forEach((data, i) => {
-            expect(data.id).toBe(playerSockets[i].id)
-            expect(JSON.parse(data.data)).toEqual(JSON.parse(JSON.stringify({
-              self: baseGame.players.get(data.id)
-            })))
-            expect(JSON.parse(data.data)).toEqual(JSON.parse(JSON.stringify({
-              self: baseGame.players.get(playerSockets[i].id)
-            })))
-          })
-          done()
+    expect(JSON.parse(state).self.position).toEqual(expectedPosition)
+    expect(JSON.parse(state).self.velocity).toEqual({ x: 0, y: 0 })
+  })
+
+  it('should be able to remove the specified player', () => {
+    const player = players.splice(2, 1)[0]
+
+    baseGame.removePlayer(player.id)
+
+    expect(baseGame.full).toBe(false)
+    expect(baseGame.players.size).toBe(3)
+    expect(baseGame.currentPlayers).toBe(3)
+
+    expect(baseGame.getPlayerByID(player.id)).toBeFalsy()
+  })
+
+  it('should be able to call every player\'s .update() method', () => {
+    /**
+     * @type {Array<jasmine.Spy<import('../../lib/game/player')['prototype']['update']>>}
+     */
+    const spies = []
+    if (baseGame instanceof BaseGame) {
+      const players = new Map(baseGame.players.entries())
+      baseGame.players = new Map(Array.from(players.entries()).map(
+        entry => {
+          const spy = jasmine.createSpy('Player update() method spy', entry[1].update)
+          entry[1].update = spy
+          spies.push(spy)
+          return [entry[0], entry[1]]
         }
-      })
-      if (playerSockets.length === 4 && playerSockets.every(val => val instanceof MockSocket)) {
-        playerSockets.forEach(conn => {
-          conn.on(communications.CONN_UPDATE, data => {
-            receivedData.push({ id: conn.id, data })
-            allReceived.emit('received')
-          })
-        })
-      }
-      if (baseGame instanceof BaseGame) {
-        baseGame.sendState()
-      }
+      ))
+      baseGame.update()
+      // Restore original Player implementations.
+      baseGame.players = new Map(players.entries())
+    }
+
+    expect(spies.length).toBe(3)
+    spies.forEach(spy => {
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(spy.calls.all().length).toBe(1)
+      expect(spy.calls.argsFor(0).every(val => typeof val === 'number')).toBe(true)
     })
   })
 
-  describe('The .removePlayer() method,', () => {
-    it('should be able to remove the specified player and send the removed player a Socket.IO event', done => {
-      const receivedListener = new EventEmitter()
-      let received = false
-      receivedListener.on('received', () => {
-        expect(received).toBe(true)
-        expect(baseGame).toBeInstanceOf(BaseGame)
-        expect(baseGame.full).toBe(false)
-        expect(baseGame.clients.size).toBe(3)
-        expect(baseGame.players.size).toBe(3)
-        expect(baseGame.currentPlayers).toBe(3)
-        done()
-      })
-      if (playerSockets[2] instanceof MockSocket) {
-        const socket = playerSockets[2]
-        socket.on(communications.CONN_REMOVE_PLAYER, msg => {
-          received = true
-          receivedListener.emit('received', msg)
-        })
-        playerSockets.splice(2, 1)
-        if (baseGame instanceof BaseGame) {
-          baseGame.removePlayer(socket.id, 'You were kicked from the game.')
-        }
-      }
-    })
-  })
+  it('should be able to clear all players', () => {
+    baseGame.clearPlayers()
 
-  describe('The .update() method,', () => {
-    it('should call every player\'s .update() method', () => {
-      /**
-       * @type {Array<jasmine.Spy<import('../../lib/game/player')['prototype']['update']>>}
-       */
-      const spies = []
-      if (baseGame instanceof BaseGame) {
-        const players = new Map(baseGame.players.entries())
-        baseGame.players = new Map(Array.from(players.entries()).map(
-          entry => {
-            const spy = jasmine.createSpy('Player update() method spy', entry[1].update)
-            entry[1].update = spy
-            spies.push(spy)
-            return [entry[0], entry[1]]
-          }
-        ))
-        baseGame.update()
-        // Restore original Player implementations.
-        baseGame.players = new Map(players.entries())
-      }
-
-      expect(spies.length).toBe(3)
-      spies.forEach(spy => {
-        expect(spy).toHaveBeenCalledTimes(1)
-        expect(spy.calls.all().length).toBe(1)
-        expect(spy.calls.argsFor(0).every(val => typeof val === 'number')).toBe(true)
-      })
-    })
-  })
-
-  describe('The .clearPlayers() method,', () => {
-    it('should be able to clear all players and send an event telling the clients that the game is closing', done => {
-      const allReceived = new EventEmitter()
-      let receivedCount = 0
-      allReceived.on('received', msg => {
-        // Make sure the message is correct.
-        expect(msg).toBe(JSON.stringify({
-          reason: 'Clearing the game room'
-        }))
-        if (receivedCount === 3) {
-          expect(receivedCount).toBe(3)
-          expect(baseGame).toBeInstanceOf(BaseGame)
-          expect(baseGame.full).toBe(false)
-          expect(baseGame.clients.size).toBe(0)
-          expect(baseGame.players.size).toBe(0)
-          expect(baseGame.currentPlayers).toBe(0)
-          done()
-        }
-      })
-      if (playerSockets.length === 3 && playerSockets.every(conn => conn instanceof MockSocket)) {
-        playerSockets.forEach(conn => {
-          conn.on(communications.CONN_REMOVE_PLAYER, msg => {
-            receivedCount++
-            allReceived.emit('received', msg)
-          })
-        })
-      }
-
-      if (baseGame instanceof BaseGame) {
-        baseGame.clearPlayers('Clearing the game room')
-      }
-    })
+    expect(baseGame.full).toBe(false)
+    expect(baseGame.players.size).toBe(0)
+    expect(baseGame.currentPlayers).toBe(0)
   })
 })
