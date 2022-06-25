@@ -161,9 +161,10 @@ describe('The Manager class,', () => {
       const mapData = handle.getMapData()
 
       expect(mapData).toEqual({
+        obstacles: [],
+        decoration: [],
         tileType: 'grass',
-        worldLimits: new Vector2D(200, 200),
-        static: {}
+        worldLimits: new Vector2D(200, 200)
       })
     })
 
