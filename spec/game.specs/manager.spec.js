@@ -154,6 +154,44 @@ describe('The Manager class,', () => {
       expect(manager.games.get('game-1').currentPlayers).toBe(0)
     })
 
+    it('should correctly return number of players and max players', async () => {
+      const manager = await initManager()
+      const handle = manager.getGame('game-1')
+
+      expect(handle.maxPlayers).toBe(4)
+      expect(handle.currentPlayers).toBe(0)
+
+      handle.addPlayer(TEST_PLAYERS[0].socket, TEST_PLAYERS[0].meta)
+
+      expect(handle.currentPlayers).toBe(1)
+    })
+
+    it('should be able to test if a team exists', async () => {
+      const manager = await initManager()
+      const handle = manager.getGame('game-1')
+
+      expect(handle.hasTeam('one')).toBeTrue()
+      expect(handle.hasTeam('three')).toBeFalse()
+    })
+
+    it('should be able to test if a team is full', async () => {
+      const manager = await initManager()
+      const handle = manager.getGame('game-1')
+
+      expect(handle.teamFull('one')).toBeFalse()
+      expect(handle.teamFull('two')).toBeFalse()
+
+      TEST_PLAYERS.forEach(player => handle.addPlayer(player.socket, player.meta))
+
+      expect(handle.teamFull('one')).toBeTrue()
+      expect(handle.teamFull('two')).toBeTrue()
+
+      handle.clearPlayers()
+
+      expect(handle.teamFull('one')).toBeFalse()
+      expect(handle.teamFull('two')).toBeFalse()
+    })
+
     it('should be able to get map data', async () => {
       const manager = await initManager()
       const handle = manager.getGame('game-1')
