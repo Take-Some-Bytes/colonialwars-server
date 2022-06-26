@@ -124,6 +124,31 @@ describe('The BaseGame class,', () => {
       expect(func).toThrowError(RangeError)
       expect(func).toThrowError('Could not add player. Game is either full or closed.')
     })
+
+    it('should not accept players to a team if said team is full', () => {
+      const baseGame = createBaseGame()
+      const player = {
+        meta: {
+          name: 'Let me in please!',
+          team: 'one'
+        },
+        id: nanoid.nanoid()
+      }
+
+      TESTING_PLAYERS.slice(0, 3).forEach(player => {
+        baseGame.addPlayer(player.id, player.meta)
+      })
+
+      const func = () => {
+        baseGame.addPlayer(player.id, player.meta)
+      }
+
+      expect(baseGame.full).toBeFalse()
+      expect(baseGame.players.size).toBe(3)
+      expect(baseGame.currentPlayers).toBe(3)
+      expect(func).toThrowError(RangeError)
+      expect(func).toThrowError('Team is full!')
+    })
   })
 
   it('should be able to serialize the current state for the specified client', () => {
