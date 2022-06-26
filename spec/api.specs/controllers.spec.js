@@ -7,10 +7,43 @@
  */
 
 const crypto = require('crypto')
-const Controllers = require('../../lib/controllers/controllers')
+
+const MockGame = require('../mocks/internal/mock-game')
 const MockLoggers = require('../mocks/internal/mock-loggers')
+const MockManager = require('../mocks/internal/mock-manager')
 const MockHttpRequest = require('../mocks/external/mock-http-request')
 const MockHttpResponse = require('../mocks/external/mock-http-response')
+
+const Controllers = require('../../lib/controllers/controllers')
+
+const SPEC_SECRET = 'very secrety'
+
+/**
+ * Creates a controllers instance for specs.
+ * @param {import('../../lib/controllers/controllers').IStringDB} db The auth DB.
+ * @returns {Controllers}
+ */
+function createCtlrs (db) {
+  return new Controllers({
+    gameAuthSecret: SPEC_SECRET,
+    authDB: db,
+    loggers: new MockLoggers()
+  })
+}
+/**
+ * Creates a URLSearchParams object with the specified parameters
+ * @param {string} name The name of the player.
+ * @param {string} team The team to join.
+ * @param {string} game The game ID.
+ * @returns {URLSearchParams}
+ */
+function createQueryWith (name, team, game) {
+  return new URLSearchParams({
+    playername: name,
+    playerteam: team,
+    playergame: game
+  })
+}
 
 describe('The Controllers class,', () => {
   const mockDB = new Map()
@@ -151,24 +184,15 @@ describe('The Controllers class,', () => {
   })
 
   describe('the /game-auth handler,', () => {
-    it('should take no arguments', () => {
-      const thisShouldNotThrow = () => {
-        ctlrs.gameAuth('Foo')
-      }
+    const mockDB = new Map()
+    mockDB.del = mockDB.delete
 
-      expect(ctlrs.gameAuth).toBeInstanceOf(Function)
-      expect(ctlrs.gameAuth.length).toBe(0)
-      expect(thisShouldNotThrow).not.toThrow()
-    })
-
-    it('should return an async function that takes two parameters', () => {
-      const AsyncFunction = Object.getPrototypeOf(async () => { }).constructor
-      expect(ctlrs.gameAuth()).toBeInstanceOf(Function)
-      expect(ctlrs.gameAuth()).toBeInstanceOf(AsyncFunction)
-      expect(ctlrs.gameAuth().length).toBe(2)
+    afterEach(() => {
+      mockDB.clear()
     })
 
     it('should return an error if no query is given', async () => {
+      const ctlrs = createCtlrs(mockDB)
       const mockReq = new MockHttpRequest({
         url: '/game-auth/get',
         method: 'GET'
@@ -185,6 +209,7 @@ describe('The Controllers class,', () => {
     })
 
     it('should return an error if query does not include required fields', async () => {
+      const ctlrs = createCtlrs(mockDB)
       const mockReq = new MockHttpRequest({
         url: `/game-auth/get?player=${encodeURIComponent('[object Object]')}`,
         query: new URLSearchParams(`?player=${encodeURIComponent('[object Object]')}`),
@@ -201,28 +226,201 @@ describe('The Controllers class,', () => {
       })
     })
 
-    it('should return the SHA-256 HMAC of the passed-in fields', async () => {
-      const data = {
-        playerName: 'NOPE',
-        playerTeam: 'Franch',
-        playerGame: '7H3_B357_G4M3_0N_7H15_53RV3R'
-      }
-      const query = new URLSearchParams(
-        Object.fromEntries(
-          Object.entries(data).map(entry => [entry[0].toLowerCase(), entry[1]])
-        ))
+    it('should return an error if the player has already requested auth', async () => {
+      const ctlrs = createCtlrs(mockDB)
+      const query = createQueryWith('NOPE', 'Franch', '7H3_B357_G4M3_0N_7H15_53RV3R')
       const mockReq = new MockHttpRequest({
         url: `/game-auth/get?${query.toString()}`,
         query,
         method: 'GET'
       })
       const mockRes = new MockHttpResponse()
+
+      mockDB.set('NOPE', {})
+
+      await ctlrs.gameAuth()(mockReq, mockRes)
+
+      expect(mockRes.statusCode).toBe(409)
+      expect(mockRes.headers['Content-Type']).toBe('application/json')
+      expect(mockRes.responseContent).toBeInstanceOf(Buffer)
+      expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
+        status: 'error',
+        error: { message: 'Player already exists.' }
+      })
+    })
+
+    it('should return an error if the player already exists in a game', async () => {
+      const ctlrs = createCtlrs(mockDB)
+      const query = createQueryWith('NOPE', 'Franch', '7H3_B357_G4M3_0N_7H15_53RV3R')
+      const mockReq = new MockHttpRequest({
+        url: `/game-auth/get?${query.toString()}`,
+        query,
+        method: 'GET'
+      })
+      const mockRes = new MockHttpResponse()
+
+      const mockManager = new MockManager({
+        existingPlayers: ['NOPE']
+      })
+
+      await ctlrs.gameAuth(mockManager)(mockReq, mockRes)
+
+      expect(mockRes.statusCode).toBe(409)
+      expect(mockRes.headers['Content-Type']).toBe('application/json')
+      expect(mockRes.responseContent).toBeInstanceOf(Buffer)
+      expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
+        status: 'error',
+        error: { message: 'Player already exists.' }
+      })
+    })
+
+    it('should return an error if the game does not exist', async () => {
+      const ctlrs = createCtlrs(mockDB)
+      const query = createQueryWith('NOPE', 'Franch', 'no_exist')
+      const mockReq = new MockHttpRequest({
+        url: `/game-auth/get?${query.toString()}`,
+        query,
+        method: 'GET'
+      })
+      const mockRes = new MockHttpResponse()
+
+      const mockManager = new MockManager({
+        games: new Map([['exists', {}]])
+      })
+
+      await ctlrs.gameAuth(mockManager)(mockReq, mockRes)
+
+      expect(mockRes.statusCode).toBe(400)
+      expect(mockRes.headers['Content-Type']).toBe('application/json')
+      expect(mockRes.responseContent).toBeInstanceOf(Buffer)
+      expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
+        status: 'error',
+        error: { message: 'Game not found' }
+      })
+    })
+
+    it('should return an error if the game is full', async () => {
+      const ctlrs = createCtlrs(mockDB)
+      const query = createQueryWith('NOPE', 'Franch', 'exists')
+      const mockReq = new MockHttpRequest({
+        url: `/game-auth/get?${query.toString()}`,
+        query,
+        method: 'GET'
+      })
+      const mockRes = new MockHttpResponse()
+
+      const mockManager = new MockManager({
+        games: new Map([
+          ['game-exists', new MockGame({
+            currentPlayers: 1,
+            maxPlayers: 1
+          })]
+        ])
+      })
+
+      await ctlrs.gameAuth(mockManager)(mockReq, mockRes)
+
+      expect(mockRes.statusCode).toBe(400)
+      expect(mockRes.headers['Content-Type']).toBe('application/json')
+      expect(mockRes.responseContent).toBeInstanceOf(Buffer)
+      expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
+        status: 'error',
+        error: { message: 'Game is full' }
+      })
+    })
+
+    it('should return an error if the team does not exist', async () => {
+      const ctlrs = createCtlrs(mockDB)
+      const query = createQueryWith('NOPE', 'Franch', 'exists')
+      const mockReq = new MockHttpRequest({
+        url: `/game-auth/get?${query.toString()}`,
+        query,
+        method: 'GET'
+      })
+      const mockRes = new MockHttpResponse()
+
+      const mockManager = new MockManager({
+        games: new Map([
+          ['game-exists', new MockGame({
+            teams: [{ name: 'notfranch' }],
+            currentPlayers: 0,
+            maxPlayers: 1
+          })]
+        ])
+      })
+
+      await ctlrs.gameAuth(mockManager)(mockReq, mockRes)
+
+      expect(mockRes.statusCode).toBe(400)
+      expect(mockRes.headers['Content-Type']).toBe('application/json')
+      expect(mockRes.responseContent).toBeInstanceOf(Buffer)
+      expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
+        status: 'error',
+        error: { message: 'Team not found' }
+      })
+    })
+
+    it('should return an error if the team is full', async () => {
+      const ctlrs = createCtlrs(mockDB)
+      const query = createQueryWith('NOPE', 'Franch', 'exists')
+      const mockReq = new MockHttpRequest({
+        url: `/game-auth/get?${query.toString()}`,
+        query,
+        method: 'GET'
+      })
+      const mockRes = new MockHttpResponse()
+
+      const mockManager = new MockManager({
+        games: new Map([
+          ['game-exists', new MockGame({
+            teams: [{ name: 'Franch', maxPlayers: 1, currentPlayers: 1 }],
+            currentPlayers: 0,
+            maxPlayers: 1
+          })]
+        ])
+      })
+
+      await ctlrs.gameAuth(mockManager)(mockReq, mockRes)
+
+      expect(mockRes.statusCode).toBe(400)
+      expect(mockRes.headers['Content-Type']).toBe('application/json')
+      expect(mockRes.responseContent).toBeInstanceOf(Buffer)
+      expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
+        status: 'error',
+        error: { message: 'Team is full' }
+      })
+    })
+
+    it('should return the SHA-256 HMAC of the passed-in fields', async () => {
+      const ctlrs = createCtlrs(mockDB)
+      const data = {
+        playerName: 'NOPE',
+        playerTeam: 'Franch',
+        playerGame: '7H3_B357_G4M3_0N_7H15_53RV3R'
+      }
+      const query = createQueryWith('NOPE', 'Franch', '7H3_B357_G4M3_0N_7H15_53RV3R')
+      const mockReq = new MockHttpRequest({
+        url: `/game-auth/get?${query.toString()}`,
+        query,
+        method: 'GET'
+      })
+      const mockRes = new MockHttpResponse()
+      const mockManager = new MockManager({
+        games: new Map([[
+          'game-7H3_B357_G4M3_0N_7H15_53RV3R',
+          new MockGame({
+            teams: [{ name: 'Franch', maxPlayers: 1, currentPlayers: 0 }],
+            currentPlayers: 0,
+            maxPlayers: 1
+          })
+        ]])
+      })
       const unexpectedHmac = crypto.createHmac('sha256', 'game-auth-secret')
         .update(JSON.stringify(data))
         .digest()
         .toString('hex')
 
-      await ctlrs.gameAuth()(mockReq, mockRes)
+      await ctlrs.gameAuth(mockManager)(mockReq, mockRes)
 
       expect(mockRes.statusCode).toBe(200)
       expect(mockRes.headers['Content-Type']).toBe('application/json')
