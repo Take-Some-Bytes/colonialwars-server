@@ -48,104 +48,75 @@ function createQueryWith (name, team, game) {
 describe('The Controllers class,', () => {
   const mockDB = new Map()
   mockDB.del = mockDB.delete
-  let ctlrs = null
 
-  it('should construct without error', () => {
-    let e = null
-
-    try {
-      ctlrs = new Controllers({
-        gameAuthSecret: 'very secrety',
-        authDB: mockDB,
-        loggers: new MockLoggers()
-      })
-    } catch (ex) {
-      e = ex
-    }
-
-    expect(e).toBeNull()
-    expect(ctlrs).toBeInstanceOf(Controllers)
-  })
+  afterEach(() => mockDB.clear())
 
   it('should have 4 methods for handling routes', () => {
+    const ctlrs = createCtlrs(mockDB)
+
     expect(ctlrs.statusReport).toBeInstanceOf(Function)
     expect(ctlrs.gamesInfo).toBeInstanceOf(Function)
     expect(ctlrs.gameAuth).toBeInstanceOf(Function)
     expect(ctlrs.unhandled).toBeInstanceOf(Function)
   })
 
-  describe('the /status-report handler,', () => {
-    it('should take one argument that must be an object with a getStatus method', () => {
-      const thisShouldThrow = () => {
-        ctlrs.statusReport('I am not a status reporter')
-      }
-      const thisShouldNotThrow = () => {
-        ctlrs.statusReport({ getStatus () { return 'Status!' } })
-      }
-
-      expect(ctlrs.statusReport).toBeInstanceOf(Function)
-      expect(ctlrs.statusReport.length).toBe(1)
-      expect(thisShouldThrow).toThrowError(TypeError)
-      expect(thisShouldNotThrow).not.toThrowError(TypeError)
-    })
-
-    it('should return a function that takes two parameters', () => {
-      const statusReporter = { getStatus () { return 'Status!' } }
-      expect(ctlrs.statusReport(statusReporter)).toBeInstanceOf(Function)
-      expect(ctlrs.statusReport(statusReporter).length).toBe(2)
-    })
-
-    it('should send an object detailing the server status', () => {
-      const mockRes = new MockHttpResponse()
-      const reporter = {
-        getStatus () {
-          return {
-            running: true,
-            full: false,
-            capacity: { maxClients: 10, currentClients: 1 }
-          }
-        }
-      }
-
-      ctlrs.statusReport(reporter)(null, mockRes)
-
-      expect(mockRes.writableEnded).toBeTrue()
-      expect(mockRes.statusCode).toBe(200)
-      expect(Object.keys(mockRes.headers)).toHaveSize(2)
-      expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
-        status: 'ok',
-        data: {
-          serverRunning: true,
+  it('should have an endpoint that details the server status', () => {
+    const ctlrs = createCtlrs(mockDB)
+    const mockRes = new MockHttpResponse()
+    const reporter = {
+      getStatus () {
+        return {
+          running: true,
           full: false,
-          maxClients: 10,
-          currentClients: 1
+          capacity: { maxClients: 10, currentClients: 1 }
         }
-      })
+      }
+    }
+
+    ctlrs.statusReport(reporter)(null, mockRes)
+
+    expect(mockRes.writableEnded).toBeTrue()
+    expect(mockRes.statusCode).toBe(200)
+    expect(Object.keys(mockRes.headers)).toHaveSize(2)
+    expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
+      status: 'ok',
+      data: {
+        serverRunning: true,
+        full: false,
+        maxClients: 10,
+        currentClients: 1
+      }
+    })
+  })
+
+  it('should have an endpoint that handles all unhandled routes', () => {
+    const ctlrs = createCtlrs(mockDB)
+    const mockReq = new MockHttpRequest({ id: '10', url: '/404' })
+    const mockRes = new MockHttpResponse()
+    let logged = false
+
+    // Feature of the MockLoggers class.
+    ctlrs.loggers.on('log', () => {
+      logged = true
+    })
+
+    ctlrs.unhandled()(mockReq, mockRes)
+
+    expect(logged).toBeTrue()
+    expect(mockRes.statusCode).toBe(404)
+    expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
+      status: 'error',
+      error: {
+        message: '404 Not Found'
+      }
     })
   })
 
   describe('the /games-info handler,', () => {
-    it('should take one argument that must be a Manager instance', () => {
-      const thisShouldThrow = () => {
-        ctlrs.gamesInfo('Not a manager')
-      }
-      const thisShouldNotThrow = () => {
-        ctlrs.gamesInfo({ availableGames: [] })
-      }
-
-      expect(ctlrs.gamesInfo).toBeInstanceOf(Function)
-      expect(ctlrs.gamesInfo.length).toBe(1)
-      expect(thisShouldThrow).toThrowError(TypeError)
-      expect(thisShouldNotThrow).not.toThrowError(TypeError)
-    })
-
-    it('should return a function that takes two parameters', () => {
-      const manager = { availableGames: [] }
-      expect(ctlrs.gamesInfo(manager)).toBeInstanceOf(Function)
-      expect(ctlrs.gamesInfo(manager).length).toBe(2)
-    })
+    afterEach(() => mockDB.clear())
 
     it('should send an array listing the games that are hosted', () => {
+      const ctlrs = createCtlrs(mockDB)
       const mockRes = new MockHttpResponse()
       const definitelyAManager = {
         availableGames: [
@@ -181,15 +152,48 @@ describe('The Controllers class,', () => {
         }]
       })
     })
+
+    it('should send games even if they are full', () => {
+      const ctlrs = createCtlrs(mockDB)
+      const mockRes = new MockHttpResponse()
+      const definitelyAManager = {
+        availableGames: [
+          {
+            id: 'fjfj',
+            name: 'Hey there',
+            mode: 'Teams',
+            availableTeams: ['Rouge', 'Bleu'],
+            description: 'Oi there. How ya doin',
+            maxPlayers: 12,
+            currentPlayers: 12
+          }
+        ]
+      }
+
+      ctlrs.gamesInfo(definitelyAManager)(null, mockRes)
+
+      expect(mockRes.writableEnded).toBeTrue()
+      expect(mockRes.statusCode).toBe(200)
+      expect(Object.keys(mockRes.headers)).toHaveSize(2)
+      expect(JSON.parse(mockRes.responseContent.toString('utf-8'))).toEqual({
+        status: 'ok',
+        data: [{
+          id: 'fjfj',
+          mode: 'Teams',
+          name: 'Hey there',
+          teams: ['Rouge', 'Bleu'],
+          description: 'Oi there. How ya doin',
+          capacity: {
+            max: 12,
+            current: 12
+          }
+        }]
+      })
+    })
   })
 
   describe('the /game-auth handler,', () => {
-    const mockDB = new Map()
-    mockDB.del = mockDB.delete
-
-    afterEach(() => {
-      mockDB.clear()
-    })
+    afterEach(() => mockDB.clear())
 
     it('should return an error if no query is given', async () => {
       const ctlrs = createCtlrs(mockDB)
@@ -437,23 +441,6 @@ describe('The Controllers class,', () => {
           auth: JSON.parse(mockDB.get('NOPE')).auth
         }
       })
-    })
-  })
-
-  describe('the handler which catches all unhandled routes,', () => {
-    it('should take no arguments', () => {
-      const thisShouldNotThrow = () => {
-        ctlrs.unhandled('fart')
-      }
-
-      expect(ctlrs.unhandled).toBeInstanceOf(Function)
-      expect(ctlrs.unhandled.length).toBe(0)
-      expect(thisShouldNotThrow).not.toThrow()
-    })
-
-    it('should return a function that takes two parameters', () => {
-      expect(ctlrs.unhandled()).toBeInstanceOf(Function)
-      expect(ctlrs.unhandled().length).toBe(2)
     })
   })
 })
