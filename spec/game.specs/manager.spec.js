@@ -48,10 +48,21 @@ async function initManager () {
 describe('The Manager class,', () => {
   it('should add the number of games specified with the .startGames property', async () => {
     const manager = await initManager()
-    const createdGame = manager.games.get('game-1')
+    const createdGame = manager._games.get('game-1')
 
-    expect(manager.games.size).toBe(1)
+    expect(manager._games.size).toBe(1)
     expect(createdGame).toBeInstanceOf(TeamGame)
+  })
+
+  it('should be able to return all running games', async () => {
+    const manager = await initManager()
+
+    expect(manager.games).toHaveSize(manager._games.size)
+
+    // "All running games" include games which aren't accepting players.
+    manager._games.get('game-1').closed = true
+
+    expect(manager.games).toHaveSize(manager._games.size)
   })
 
   describe('The .newRandomGame() method', () => {
@@ -59,7 +70,7 @@ describe('The Manager class,', () => {
       const manager = await initManager()
       const game = await manager.newRandomGame()
 
-      expect(manager.games.size).toBe(2)
+      expect(manager._games.size).toBe(2)
       expect(game).toBeInstanceOf(TeamGame)
     })
 
@@ -72,7 +83,7 @@ describe('The Manager class,', () => {
       }
 
       await expectAsync(promise()).toBeRejectedWithError(RangeError)
-      expect(manager.games.size).toBe(2)
+      expect(manager._games.size).toBe(2)
     })
   })
 
@@ -82,7 +93,7 @@ describe('The Manager class,', () => {
 
       TEST_PLAYERS.forEach(player => manager.addClientTo('game-1', player.socket, player.meta))
 
-      const game = manager.games.get('game-1')
+      const game = manager._games.get('game-1')
 
       expect(game).toBeInstanceOf(TeamGame)
       expect(game.players.size).toBe(4)
@@ -110,15 +121,38 @@ describe('The Manager class,', () => {
     })
   })
 
-  describe('after returning a game handle', () => {
+  describe('after returning a game handle,', () => {
+    it('should be able to return basic map info', async () => {
+      const manager = await initManager()
+      const handle = manager.getGame('game-1')
+      const info = handle.getInfo()
+
+      expect(info.id).toBe('game-1')
+      expect(info.name).toBe('Mock Game')
+      expect(info.mode).toBe('teams')
+      expect(info.description).toBe('This is the first mock game config.')
+    })
+
+    it('should be able to get info about teams', async () => {
+      const manager = await initManager()
+      const handle = manager.getGame('game-1')
+      const teams = handle.getTeams()
+
+      expect(teams).toHaveSize(manager._games.get('game-1').teams.size)
+      expect(teams[0].name).toBe('one')
+      expect(teams[1].name).toBe('two')
+      expect(teams[0].full).toBeFalse()
+      expect(teams[1].full).toBeFalse()
+    })
+
     it('should be able to add players', async () => {
       const manager = await initManager()
       const handle = manager.getGame('game-1')
 
       TEST_PLAYERS.forEach(player => handle.addPlayer(player.socket, player.meta))
 
-      expect(manager.games.get('game-1').currentPlayers).toBe(TEST_PLAYERS.length)
-      expect(manager.games.get('game-1').currentPlayers).toBe(handle.currentPlayers)
+      expect(manager._games.get('game-1').currentPlayers).toBe(TEST_PLAYERS.length)
+      expect(manager._games.get('game-1').currentPlayers).toBe(handle.currentPlayers)
     })
 
     it('should be able to remove players', async () => {
@@ -127,15 +161,15 @@ describe('The Manager class,', () => {
 
       TEST_PLAYERS.forEach(player => handle.addPlayer(player.socket, player.meta))
 
-      expect(manager.games.get('game-1').currentPlayers).toBe(TEST_PLAYERS.length)
-      expect(manager.games.get('game-1').currentPlayers).toBe(handle.currentPlayers)
+      expect(manager._games.get('game-1').currentPlayers).toBe(TEST_PLAYERS.length)
+      expect(manager._games.get('game-1').currentPlayers).toBe(handle.currentPlayers)
 
       const playerToRemove = TEST_PLAYERS[2]
       handle.removePlayer(playerToRemove.socket)
 
-      expect(manager.games.get('game-1').players.has(playerToRemove.socket.id)).not.toBeTrue()
-      expect(manager.games.get('game-1').currentPlayers).toBe(TEST_PLAYERS.length - 1)
-      expect(manager.games.get('game-1').currentPlayers).toBe(handle.currentPlayers)
+      expect(manager._games.get('game-1').players.has(playerToRemove.socket.id)).not.toBeTrue()
+      expect(manager._games.get('game-1').currentPlayers).toBe(TEST_PLAYERS.length - 1)
+      expect(manager._games.get('game-1').currentPlayers).toBe(handle.currentPlayers)
     })
 
     it('should be able to clear all players', async () => {
@@ -144,14 +178,14 @@ describe('The Manager class,', () => {
 
       TEST_PLAYERS.forEach(player => handle.addPlayer(player.socket, player.meta))
 
-      expect(manager.games.get('game-1').currentPlayers).toBe(TEST_PLAYERS.length)
-      expect(manager.games.get('game-1').currentPlayers).toBe(handle.currentPlayers)
+      expect(manager._games.get('game-1').currentPlayers).toBe(TEST_PLAYERS.length)
+      expect(manager._games.get('game-1').currentPlayers).toBe(handle.currentPlayers)
 
       handle.clearPlayers()
 
-      expect(manager.games.get('game-1').players.size).toBe(0)
-      expect(manager.games.get('game-1').currentPlayers).toBe(0)
-      expect(manager.games.get('game-1').currentPlayers).toBe(0)
+      expect(manager._games.get('game-1').players.size).toBe(0)
+      expect(manager._games.get('game-1').currentPlayers).toBe(0)
+      expect(manager._games.get('game-1').currentPlayers).toBe(0)
     })
 
     it('should correctly return number of players and max players', async () => {
@@ -200,7 +234,7 @@ describe('The Manager class,', () => {
 
       expect(mapData).toEqual({
         obstacles: [],
-        decoration: [],
+        decorations: [],
         tileType: 'grass',
         worldLimits: new Vector2D(200, 200)
       })
@@ -214,7 +248,7 @@ describe('The Manager class,', () => {
       handle.addPlayer(player.socket, player.meta)
 
       const spy = spyOn(
-        manager.games.get('game-1').getPlayerByID(player.socket.id),
+        manager._games.get('game-1').getPlayerByID(player.socket.id),
         'addInputToQueue'
       ).and.callFake((..._args) => {})
 
@@ -231,7 +265,7 @@ describe('The Manager class,', () => {
      */
     const spies = []
     const doneEmitter = new events.EventEmitter()
-    manager.games.forEach(game => {
+    manager._games.forEach(game => {
       const spy = jasmine.createSpy('Game .update() method spy', game.update).and.callFake(() => {
         doneEmitter.emit('updated')
       })
@@ -269,11 +303,11 @@ describe('The Manager class,', () => {
 
     manager.addClientTo('game-1', player.socket, player.meta)
 
-    expect(manager.games.get('game-1').currentPlayers).toBe(1)
+    expect(manager._games.get('game-1').currentPlayers).toBe(1)
 
     manager.removeClientFrom('game-1', player.socket)
 
-    expect(manager.games.get('game-1').currentPlayers).toBe(0)
+    expect(manager._games.get('game-1').currentPlayers).toBe(0)
   })
 
   it('should be able to remove all clients from a game', async () => {
@@ -281,10 +315,10 @@ describe('The Manager class,', () => {
 
     TEST_PLAYERS.forEach(player => manager.addClientTo('game-1', player.socket, player.meta))
 
-    expect(manager.games.get('game-1').currentPlayers).toBe(TEST_PLAYERS.length)
+    expect(manager._games.get('game-1').currentPlayers).toBe(TEST_PLAYERS.length)
 
     manager.clearClientsFrom('game-1')
 
-    expect(manager.games.get('game-1').currentPlayers).toBe(0)
+    expect(manager._games.get('game-1').currentPlayers).toBe(0)
   })
 })
