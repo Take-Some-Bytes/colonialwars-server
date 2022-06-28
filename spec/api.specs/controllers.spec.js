@@ -119,16 +119,19 @@ describe('The Controllers class,', () => {
       const ctlrs = createCtlrs(mockDB)
       const mockRes = new MockHttpResponse()
       const definitelyAManager = {
-        availableGames: [
-          {
+        games: [
+          new MockGame({
             id: 'fjfj',
             name: 'Hey there',
             mode: 'Teams',
-            availableTeams: ['Rouge', 'Bleu'],
+            teams: [
+              { name: 'Rouge', currentPlayers: 0, maxPlayers: 1 },
+              { name: 'Bleu', currentPlayers: 0, maxPlayers: 1 }
+            ],
             description: 'Oi there. How ya doin',
             maxPlayers: 12,
             currentPlayers: 1
-          }
+          })
         ]
       }
 
@@ -143,7 +146,10 @@ describe('The Controllers class,', () => {
           id: 'fjfj',
           mode: 'Teams',
           name: 'Hey there',
-          teams: ['Rouge', 'Bleu'],
+          teams: [
+            { name: 'Rouge', full: false },
+            { name: 'Bleu', full: false }
+          ],
           description: 'Oi there. How ya doin',
           capacity: {
             max: 12,
@@ -157,16 +163,19 @@ describe('The Controllers class,', () => {
       const ctlrs = createCtlrs(mockDB)
       const mockRes = new MockHttpResponse()
       const definitelyAManager = {
-        availableGames: [
-          {
+        games: [
+          new MockGame({
             id: 'fjfj',
             name: 'Hey there',
             mode: 'Teams',
-            availableTeams: ['Rouge', 'Bleu'],
+            teams: [
+              { name: 'Rouge', currentPlayers: 0, maxPlayers: 1 },
+              { name: 'Bleu', currentPlayers: 0, maxPlayers: 1 }
+            ],
             description: 'Oi there. How ya doin',
             maxPlayers: 12,
             currentPlayers: 12
-          }
+          })
         ]
       }
 
@@ -181,7 +190,10 @@ describe('The Controllers class,', () => {
           id: 'fjfj',
           mode: 'Teams',
           name: 'Hey there',
-          teams: ['Rouge', 'Bleu'],
+          teams: [
+            { name: 'Rouge', full: false },
+            { name: 'Bleu', full: false }
+          ],
           description: 'Oi there. How ya doin',
           capacity: {
             max: 12,
