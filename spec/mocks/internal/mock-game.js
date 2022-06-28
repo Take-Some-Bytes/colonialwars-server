@@ -10,6 +10,10 @@
  * @prop {number} currentPlayers
  *
  * @typedef {Object} MockGameOpts
+ * @prop {string} id
+ * @prop {string} name
+ * @prop {string} mode
+ * @prop {string} description
  * @prop {number} maxPlayers
  * @prop {number} currentPlayers
  * @prop {Array<Team>} teams
@@ -28,6 +32,31 @@ class MockGame {
 
     this.maxPlayers = opts.maxPlayers
     this.currentPlayers = opts.currentPlayers
+
+    this.info = {
+      id: opts.id,
+      name: opts.name,
+      mode: opts.mode,
+      description: opts.description
+    }
+  }
+
+  /**
+   * Gets some basic info.
+   */
+  getInfo () {
+    return Object.freeze(this.info)
+  }
+
+  /**
+   * Gets info about teams.
+   * @returns {Array<{ name: string, full: boolean }>}
+   */
+  getTeams () {
+    return this.teams.map(t => ({
+      name: t.name,
+      full: t.currentPlayers === t.maxPlayers
+    }))
   }
 
   /**
