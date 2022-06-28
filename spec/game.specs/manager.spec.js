@@ -127,7 +127,7 @@ describe('The Manager class,', () => {
       const handle = manager.getGame('game-1')
       const info = handle.getInfo()
 
-      expect(info.id).toBe('game-1')
+      expect(info.id).toBe(1)
       expect(info.name).toBe('Mock Game')
       expect(info.mode).toBe('teams')
       expect(info.description).toBe('This is the first mock game config.')
@@ -224,6 +224,27 @@ describe('The Manager class,', () => {
 
       expect(handle.teamFull('one')).toBeFalse()
       expect(handle.teamFull('two')).toBeFalse()
+    })
+
+    it('should be able to get all teams and whether they are full', async () => {
+      const manager = await initManager()
+      const handle = manager.getGame('game-1')
+
+      let teams = handle.getTeams()
+      expect(teams).toHaveSize(2)
+      expect(teams[0].name).toBe('one')
+      expect(teams[1].name).toBe('two')
+      expect(teams.every(t => t.full)).toBeFalse()
+
+      TEST_PLAYERS.forEach(player => handle.addPlayer(player.socket, player.meta))
+
+      teams = handle.getTeams()
+      expect(teams.every(t => t.full)).toBeTrue()
+
+      handle.removePlayer(TEST_PLAYERS[3].socket)
+
+      teams = handle.getTeams()
+      expect(teams.every(t => t.full)).toBeFalse()
     })
 
     it('should be able to get map data', async () => {
