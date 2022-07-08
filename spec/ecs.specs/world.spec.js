@@ -75,6 +75,24 @@ describe('The World class', () => {
       }
     })
 
+    it('should be able to clear all entities', () => {
+      const world = new World()
+      const entities = []
+
+      for (let i = 0; i < 16; i++) {
+        entities.push(world.create())
+      }
+
+      expect(world.numEntities).toBe(16)
+      expect(entities.every(val => !!val)).toBeTrue()
+      expect(entities.every(val => world.isValid(val))).toBeTrue()
+
+      world.clear()
+
+      expect(world.numEntities).toBe(0)
+      expect(entities.every(val => world.isValid(val))).toBeFalse()
+    })
+
     it('should be able to iterate over all valid entities', () => {
       const world = new World()
       const entities = []
