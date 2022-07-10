@@ -289,6 +289,39 @@ describe('The World class', () => {
 
       expect(idx).toBe(8)
     })
+
+    it('should be able to iterate over all instances of a component', () => {
+      class Component1 {}
+      class Component2 {}
+
+      const world = new World()
+
+      world.registerComponent('component1', Component1)
+      world.registerComponent('component2', Component2)
+
+      const e1 = world.create()
+      const e2 = world.create()
+      const e3 = world.create()
+      const e4 = world.create()
+
+      world.addComponent('component1', { to: e1 })
+      world.addComponent('component1', { to: e2 })
+      world.addComponent('component1', { to: e3 })
+      world.addComponent('component1', { to: e4 })
+
+      world.addComponent('component2', { to: e1 })
+      world.addComponent('component2', { to: e3 })
+
+      const arr = Array.from(world.allInstancesOf('component2'))
+      const ids = arr.map(entry => entry.entity)
+      const comps = arr.map(entry => entry.component)
+
+      expect(arr).toHaveSize(2)
+      expect(ids).toHaveSize(2)
+      expect(ids).toContain(e1)
+      expect(ids).toContain(e3)
+      expect(comps.every(comp => comp instanceof Component2)).toBeTrue()
+    })
   })
 
   describe('when querying entities', () => {
