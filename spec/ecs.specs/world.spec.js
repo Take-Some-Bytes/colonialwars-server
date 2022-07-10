@@ -290,4 +290,308 @@ describe('The World class', () => {
       expect(idx).toBe(8)
     })
   })
+
+  describe('when querying entities', () => {
+    it('should be able to get one entity', () => {
+      // Not sure why you would do this, but we'll need it anyways.
+      const world = new World()
+      const entities = [world.create()]
+
+      const res = world.query().one()
+
+      expect(res).toBe(entities[0])
+    })
+
+    it('should be able to get all entities', () => {
+      const world = new World()
+      const entities = [
+        world.create(),
+        world.create(),
+        world.create()
+      ]
+
+      const query = world.query().all()
+      const arr = Array.from(query)
+
+      expect(arr).toHaveSize(entities.length)
+    })
+
+    it('should be able to get all entities with a component', () => {
+      class Component {}
+
+      const world = new World()
+      const entities = []
+
+      world.registerComponent('component', Component)
+
+      for (let i = 0; i < 3; i++) {
+        if (i % 2 !== 0) {
+          entities.push(world.create())
+        } else {
+          const entity = world.create()
+          world.addComponent('component', { to: entity })
+
+          entities.push(entity)
+        }
+      }
+
+      const query = world.query().with('component').all()
+      const res = Array.from(query)
+
+      expect(res).toHaveSize(entities.length - 1)
+      expect(res).not.toContain(entities[1])
+    })
+
+    it('should be able to get one entity with a component', () => {
+      // Again, not sure why you would do this, but whatever.
+      class Component {}
+
+      const world = new World()
+      const entities = []
+
+      world.registerComponent('component', Component)
+
+      for (let i = 0; i < 3; i++) {
+        if (i % 2 !== 0) {
+          entities.push(world.create())
+        } else {
+          const entity = world.create()
+          world.addComponent('component', { to: entity })
+
+          entities.push(entity)
+        }
+      }
+
+      const res = world.query().with('component').one()
+
+      expect(entities).toContain(res)
+      expect(res).not.toBe(entities[1])
+    })
+
+    it('should be able to get all entities with many components', () => {
+      class Component1 {}
+      class Component2 {}
+
+      const world = new World()
+
+      world.registerComponent('component1', Component1)
+      world.registerComponent('component2', Component2)
+
+      const e1 = world.create()
+      const e2 = world.create()
+      const e3 = world.create()
+      const e4 = world.create()
+
+      world.addComponent('component1', { to: e1 })
+      world.addComponent('component1', { to: e2 })
+      world.addComponent('component1', { to: e3 })
+
+      world.addComponent('component2', { to: e1 })
+      world.addComponent('component2', { to: e3 })
+
+      const query = world.query().with('component1').with('component2').all()
+      const arr = Array.from(query)
+
+      expect(arr).toHaveSize(2)
+      expect(arr).toContain(e1)
+      expect(arr).toContain(e3)
+      expect(arr).not.toContain(e2)
+      expect(arr).not.toContain(e4)
+    })
+
+    it('should be able to get one entity with many components', () => {
+      class Component1 {}
+      class Component2 {}
+
+      const world = new World()
+
+      world.registerComponent('component1', Component1)
+      world.registerComponent('component2', Component2)
+
+      const e1 = world.create()
+      const e2 = world.create()
+      const e3 = world.create()
+      const e4 = world.create()
+
+      world.addComponent('component1', { to: e1 })
+      world.addComponent('component1', { to: e2 })
+      world.addComponent('component1', { to: e3 })
+
+      world.addComponent('component2', { to: e1 })
+      world.addComponent('component2', { to: e3 })
+      world.addComponent('component2', { to: e4 })
+
+      const res = world.query().with('component1').with('component2').one()
+
+      expect([e1, e3]).toContain(res)
+      expect([e2, e4]).not.toContain(res)
+    })
+
+    it('should be able to get all entities without a component', () => {
+      class Component {}
+
+      const world = new World()
+      const entities = [world.create()]
+
+      world.registerComponent('component', Component)
+
+      for (let i = 0; i < 3; i++) {
+        const entity = world.create()
+        world.addComponent('component', { to: entity })
+
+        entities.push(entity)
+      }
+
+      entities.push(world.create())
+
+      const query = world.query().without('component').all()
+      const arr = Array.from(query)
+
+      expect(arr).toHaveSize(2)
+      expect(arr).toContain(entities[0])
+      expect(arr).toContain(entities[4])
+    })
+
+    it('should be able to get one entity without a component', () => {
+      class Component {}
+
+      const world = new World()
+      const entities = []
+
+      world.registerComponent('component', Component)
+
+      for (let i = 0; i < 3; i++) {
+        if (i % 2 !== 0) {
+          entities.push(world.create())
+        } else {
+          const entity = world.create()
+          world.addComponent('component', { to: entity })
+
+          entities.push(entity)
+        }
+      }
+
+      const res = world.query().without('component').one()
+
+      expect(entities).toContain(res)
+      expect(res).toBe(entities[1])
+    })
+
+    it('should exclude components even if they only have one forbidden component', () => {
+      class Component1 {}
+      class Component2 {}
+
+      const world = new World()
+
+      world.registerComponent('component1', Component1)
+      world.registerComponent('component2', Component2)
+
+      const e1 = world.create()
+      const e2 = world.create()
+      const e3 = world.create()
+      const e4 = world.create()
+
+      world.addComponent('component1', { to: e1 })
+      world.addComponent('component1', { to: e2 })
+      world.addComponent('component1', { to: e3 })
+
+      world.addComponent('component2', { to: e1 })
+      world.addComponent('component2', { to: e3 })
+
+      const query = world.query().without('component1').without('component2').all()
+      const arr = Array.from(query)
+
+      expect(arr).toHaveSize(1)
+      expect(arr).toContain(e4)
+      expect(arr).not.toContain(e1)
+      expect(arr).not.toContain(e2)
+      expect(arr).not.toContain(e3)
+    })
+
+    it('should be able to run a custom find function', () => {
+      class Component1 {}
+      class Component2 {}
+
+      const world = new World()
+
+      world.registerComponent('component1', Component1)
+      world.registerComponent('component2', Component2)
+
+      const e1 = world.create()
+      const e2 = world.create()
+      const e3 = world.create()
+      const e4 = world.create()
+
+      world.addComponent('component1', { to: e1 })
+      world.addComponent('component1', { to: e2 })
+      world.addComponent('component1', { to: e3 })
+
+      world.addComponent('component2', { to: e1 })
+      world.addComponent('component2', { to: e3 })
+      world.addComponent('component2', { to: e4 })
+
+      const query = world.query().find(e => e === e2).all()
+      const arr = Array.from(query)
+
+      expect(arr).toHaveSize(1)
+      expect(arr[0]).toBe(e2)
+
+      const res = world.query().find(e => e === e2).one()
+
+      expect(res).toBe(e2)
+    })
+
+    it('should be able to execute complex queries', () => {
+      class Component1 {}
+      class Component2 {}
+
+      const world = new World()
+
+      world.registerComponent('component1', Component1)
+      world.registerComponent('component2', Component2)
+
+      const e1 = world.create()
+      const e2 = world.create()
+      const e3 = world.create()
+      const e4 = world.create()
+
+      world.addComponent('component1', { to: e1 })
+      world.addComponent('component1', { to: e2 })
+      world.addComponent('component1', { to: e3 })
+
+      world.addComponent('component2', { to: e1 })
+      world.addComponent('component2', { to: e2 })
+      world.addComponent('component2', { to: e4 })
+
+      const res = world.query().with('component1').without('component2').find(e => e === e3).one()
+      expect(res).toBe(e3)
+    })
+
+    it('should throw an error if constraints are repeated', () => {
+      class Component {}
+
+      const world = new World()
+
+      world.registerComponent('component', Component)
+
+      expect(() => {
+        return world.query().with('component').without('component')
+      }).toThrowError('Component is already included!')
+      expect(() => {
+        return world.query().without('component').with('component')
+      }).toThrowError('Component is already excluded!')
+    })
+
+    it('should throw an error if custom find function is set more than once', () => {
+      class Component {}
+
+      const world = new World()
+
+      world.registerComponent('component', Component)
+
+      expect(() => {
+        return world.query().find(e => !!e).find(e => !!e)
+      }).toThrowError('Finder is already set!')
+    })
+  })
 })
