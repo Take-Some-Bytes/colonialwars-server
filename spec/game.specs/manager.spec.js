@@ -12,7 +12,7 @@ const events = require('events')
 const Player = require('../../lib/game/player')
 const Manager = require('../../lib/game/manager')
 const Vector2D = require('../../lib/game/physics/vector-2d')
-const TeamGame = require('../../lib/game/game-modes/team-game')
+const TeamGame = require('../../lib/game/modes/team-game')
 
 const MockLoggers = require('../mocks/internal/mock-loggers')
 const MockSocket = require('../mocks/external/mock-io-socket')
@@ -282,7 +282,7 @@ describe('The Manager class,', () => {
   it('should be able to start and stop the update loop', async () => {
     const manager = await initManager()
     /**
-     * @type {Array<jasmine.Spy<import('../../lib/game/game-modes/base-game')['prototype']['update']>>}
+     * @type {Array<jasmine.Spy<import('../../lib/game/modes/base-game')['prototype']['update']>>}
      */
     const spies = []
     const doneEmitter = new events.EventEmitter()

@@ -9,7 +9,7 @@
 const nanoid = require('nanoid')
 
 const Vector2D = require('../../lib/game/physics/vector-2d')
-const { BaseGame } = require('../../lib/game/game-modes')
+const { BaseGame } = require('../../lib/game/modes')
 
 const TESTING_PLAYERS = [
   { meta: { name: 'GENERAL LOUDSPEAKER', team: 'one' }, id: nanoid.nanoid() },
