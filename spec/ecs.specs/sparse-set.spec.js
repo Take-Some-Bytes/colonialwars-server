@@ -8,7 +8,7 @@
 
 const SparseSet = require('../../lib/ecs/sparse-set')
 
-describe('The SparseSet class', () => {
+describe('The SparseSet class.', () => {
   it('should be able to construct with the specified capacity', () => {
     const set = new SparseSet(4)
 
@@ -16,7 +16,7 @@ describe('The SparseSet class', () => {
     expect(set.capacity).toBe(4)
   })
 
-  describe('when inserting values', () => {
+  describe('when inserting values,', () => {
     it('should be able to insert values', () => {
       const set = new SparseSet(4)
 
@@ -135,7 +135,7 @@ describe('The SparseSet class', () => {
     expect(set.capacity).toBe(4)
   })
 
-  describe('when iterating', () => {
+  describe('when iterating,', () => {
     it('should be able to iterate over keys', () => {
       const set = new SparseSet(16)
 

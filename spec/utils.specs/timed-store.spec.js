@@ -28,7 +28,7 @@ describe('The TimedStore class,', () => {
     expect(store).toBeInstanceOf(TimedStore)
   })
 
-  describe('when used in strict mode', () => {
+  describe('when used in strict mode,', () => {
     const store = new TimedStore({
       maxAge: 100,
       maxItems: 10,
@@ -56,7 +56,7 @@ describe('The TimedStore class,', () => {
     })
   })
 
-  describe('when used in non-strict mode', () => {
+  describe('when used in non-strict mode,', () => {
     const store = new TimedStore({
       maxAge: 100,
       maxItems: 10,

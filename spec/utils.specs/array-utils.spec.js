@@ -8,8 +8,8 @@
 
 const { Uint32ArrUtils, ArrayUtils } = require('../../lib/utils/array-utils')
 
-describe('The ArrayUtils object', () => {
-  describe('when swap-removing elements', () => {
+describe('The ArrayUtils object,', () => {
+  describe('when swap-removing elements,', () => {
     it('should be able to remove elements', () => {
       const arr = [10, 3289, 1442, 11]
 
@@ -54,7 +54,7 @@ describe('The ArrayUtils object', () => {
   })
 })
 
-describe('The Uint32ArrUtils object', () => {
+describe('The Uint32ArrUtils object,', () => {
   const max = 2 ** 32 - 1
 
   it('should contain the maximum of a uint32', () => {

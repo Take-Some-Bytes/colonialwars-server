@@ -65,7 +65,7 @@ describe('The Manager class,', () => {
     expect(manager.games).toHaveSize(manager._games.size)
   })
 
-  describe('The .newRandomGame() method', () => {
+  describe('The .newRandomGame() method,', () => {
     it('should create a new, random game selected from the list of available configs', async () => {
       const manager = await initManager()
       const game = await manager.newRandomGame()

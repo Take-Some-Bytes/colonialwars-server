@@ -134,7 +134,7 @@ describe('The Player class,', () => {
     })
   })
 
-  describe('the .addInputToQueue() method', () => {
+  describe('the .addInputToQueue() method,', () => {
     it('should reject any input object without a timestamp.', () => {
       const inputs = [
         { timestamp: null, inputNum: 1, invalidInput: true },
@@ -195,7 +195,7 @@ describe('The Player class,', () => {
     player.inputQueue.splice(0)
   })
 
-  describe('the .processInputs() method', () => {
+  describe('the .processInputs() method,', () => {
     let oldPlayerPos = null
     let oldLastUpdateTime = null
 

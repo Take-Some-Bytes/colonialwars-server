@@ -9,8 +9,8 @@
 
 const World = require('../../lib/ecs/world')
 
-describe('The World class', () => {
-  describe('when managing entities', () => {
+describe('The World class,', () => {
+  describe('when managing entities,', () => {
     it('should be able to create entities', () => {
       const world = new World()
       const entities = []
@@ -116,7 +116,7 @@ describe('The World class', () => {
     })
   })
 
-  describe('when managing components', () => {
+  describe('when managing components,', () => {
     it('should be able to register new components', () => {
       class Component {}
 
@@ -324,7 +324,7 @@ describe('The World class', () => {
     })
   })
 
-  describe('when querying entities', () => {
+  describe('when querying entities,', () => {
     it('should be able to get one entity', () => {
       // Not sure why you would do this, but we'll need it anyways.
       const world = new World()

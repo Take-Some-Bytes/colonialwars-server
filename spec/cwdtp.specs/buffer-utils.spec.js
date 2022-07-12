@@ -29,7 +29,7 @@ describe('The CWDTP buffer utility functions,', () => {
     ]))
   })
 
-  describe('the .toBinary method', () => {
+  describe('the .toBinary method,', () => {
     it('should be able to convert a string into UTF-16', () => {
       const str = 'Good morning!'
       const result = bufferUtils.toBinary(str, false)
@@ -46,7 +46,7 @@ describe('The CWDTP buffer utility functions,', () => {
     })
   })
 
-  describe('the .toString method', () => {
+  describe('the .toString method,', () => {
     it('should be able to convert a UTF-16 array to a string', () => {
       const str = 'Good morning!'
       const buf = new Uint16Array(str.split('').map((_, i) => str.charCodeAt(i)))
@@ -65,7 +65,7 @@ describe('The CWDTP buffer utility functions,', () => {
     })
   })
 
-  describe('the .toBase64 method', () => {
+  describe('the .toBase64 method,', () => {
     it('should be able to convert a buffer into base64', () => {
       const buf = Buffer.from('Good morning!')
       const result = bufferUtils.toBase64(buf)

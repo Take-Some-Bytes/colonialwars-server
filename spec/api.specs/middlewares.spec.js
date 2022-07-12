@@ -300,7 +300,7 @@ describe("The Middlewares class's getClientIP method,", () => {
     })
   })
 
-  describe('when behindProxy is true and trustedIPs match', () => {
+  describe('when behindProxy is true and trustedIPs match,', () => {
     it('should use Fowarded records if they exist', () => {
       const mockReq = new MockHttpRequest({
         headers: {
