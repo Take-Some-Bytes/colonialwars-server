@@ -172,6 +172,80 @@ describe('The player systems,', () => {
       }
     })
 
+    it('should reject inputs with invalid sequence numbers', () => {
+      const world = setUpForInput()
+      const player = TEST_PLAYERS[0]
+
+      PlayerSystems.addPlayerTo(world, {
+        ...player,
+        id: 1
+      })
+
+      expect(world.numEntities).toBe(1)
+
+      const playerEntity = world.query().with('player').find(e => {
+        return world.getComponent('player', { from: e }).id === 1
+      }).one()
+
+      // Add the invalid input.
+      const info = world.getComponent('player', {
+        from: playerEntity
+      })
+
+      info.inputQueue.push({
+        inputNum: -1,
+        timestamp: 100,
+        direction: { up: true, down: true, left: true, right: true }
+      })
+
+      expect(info.inputQueue).toHaveSize(1)
+
+      PlayerSystems.processInputs(world, {
+        currentTime: 100
+      })
+
+      const transform = world.getComponent('transform2d', { from: playerEntity })
+      expect(transform.position.x).toBe(0)
+      expect(transform.position.y).toBe(0)
+    })
+
+    it('should reject inputs with invalid timestamps', () => {
+      const world = setUpForInput()
+      const player = TEST_PLAYERS[0]
+
+      PlayerSystems.addPlayerTo(world, {
+        ...player,
+        id: 1
+      })
+
+      expect(world.numEntities).toBe(1)
+
+      const playerEntity = world.query().with('player').find(e => {
+        return world.getComponent('player', { from: e }).id === 1
+      }).one()
+
+      // Add the invalid input.
+      const info = world.getComponent('player', {
+        from: playerEntity
+      })
+
+      info.inputQueue.push({
+        inputNum: 1,
+        timestamp: -100,
+        direction: { up: true, down: true, left: true, right: true }
+      })
+
+      expect(info.inputQueue).toHaveSize(1)
+
+      PlayerSystems.processInputs(world, {
+        currentTime: 100
+      })
+
+      const transform = world.getComponent('transform2d', { from: playerEntity })
+      expect(transform.position.x).toBe(0)
+      expect(transform.position.y).toBe(0)
+    })
+
     it('should be able to process one input for each player', () => {
       const world = setUpForInput()
       const players = TEST_PLAYERS.slice(2)
