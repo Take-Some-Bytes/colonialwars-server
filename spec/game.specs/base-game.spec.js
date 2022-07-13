@@ -66,7 +66,6 @@ describe('The BaseGame class,', () => {
       })
 
       expect(baseGame.full).toBe(false)
-      expect(baseGame.players.size).toBe(3)
       expect(baseGame.currentPlayers).toBe(3)
     })
 
@@ -92,7 +91,6 @@ describe('The BaseGame class,', () => {
 
       expect(baseGame.full).toBeFalse()
       expect(baseGame.closed).toBeTrue()
-      expect(baseGame.players.size).toBe(3)
       expect(baseGame.currentPlayers).toBe(3)
       expect(func).toThrowError(RangeError)
       expect(func).toThrowError('Could not add player. Game is either full or closed.')
@@ -119,7 +117,6 @@ describe('The BaseGame class,', () => {
 
       expect(baseGame.full).toBeTrue()
       expect(baseGame.closed).toBeFalse()
-      expect(baseGame.players.size).toBe(4)
       expect(baseGame.currentPlayers).toBe(4)
       expect(func).toThrowError(RangeError)
       expect(func).toThrowError('Could not add player. Game is either full or closed.')
@@ -144,7 +141,6 @@ describe('The BaseGame class,', () => {
       }
 
       expect(baseGame.full).toBeFalse()
-      expect(baseGame.players.size).toBe(3)
       expect(baseGame.currentPlayers).toBe(3)
       expect(func).toThrowError(RangeError)
       expect(func).toThrowError('Team is full!')
@@ -182,7 +178,6 @@ describe('The BaseGame class,', () => {
     baseGame.removePlayer(playerToRemove.id)
 
     expect(baseGame.full).toBeFalse()
-    expect(baseGame.players.size).toBe(3)
     expect(baseGame.currentPlayers).toBe(3)
     expect(baseGame.getPlayerByID(playerToRemove.id)).toBeFalsy()
   })
@@ -220,13 +215,11 @@ describe('The BaseGame class,', () => {
     })
 
     expect(baseGame.full).toBeTrue()
-    expect(baseGame.players.size).toBe(4)
     expect(baseGame.currentPlayers).toBe(4)
 
     baseGame.clearPlayers()
 
     expect(baseGame.full).toBe(false)
-    expect(baseGame.players.size).toBe(0)
     expect(baseGame.currentPlayers).toBe(0)
   })
 })
