@@ -98,7 +98,7 @@ describe('The createSerializer() utility function,', () => {
   })
 })
 
-describe('The serializeEntities() system,', () => {
+fdescribe('The serializeEntities() system,', () => {
   it('should take an iterator of entities to serialize', () => {
     expect(() => {
       SerializeSystems.serializeEntities(null, null).next()
@@ -128,19 +128,15 @@ describe('The serializeEntities() system,', () => {
     expect(ret).toHaveSize(1)
 
     const [serialized] = ret
+    const actual = serialized.contents
 
-    expect(serialized.entity).toBe(entity)
-    expect(serialized.contents).toBeInstanceOf(String)
-
-    const parsed = JSON.parse(serialized.contents)
-
-    expect(parsed.test).toBe(Number.MAX_SAFE_INTEGER)
-    expect(parsed.otherTest).toMatch(/^please serialize$/i)
-    expect(parsed.notPosition).toEqual({
+    expect(actual.test).toBe(Number.MAX_SAFE_INTEGER)
+    expect(actual.otherTest).toMatch(/^please serialize$/i)
+    expect(actual.notPosition).toEqual({
       // The props are swapped (see the constructor of MoreProperties)
       x: 120,
       y: 80
     })
-    expect(parsed.opts).toBeUndefined()
+    expect(actual.opts).toBeUndefined()
   })
 })
