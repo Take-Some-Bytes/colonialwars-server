@@ -9,7 +9,7 @@
 const nanoid = require('nanoid')
 
 const Vector2D = require('../../lib/game/physics/vector-2d')
-const { BaseGame } = require('../../lib/game/game-modes')
+const { BaseGame } = require('../../lib/game/modes')
 
 const TESTING_PLAYERS = [
   { meta: { name: 'GENERAL LOUDSPEAKER', team: 'one' }, id: nanoid.nanoid() },
@@ -56,7 +56,84 @@ function createBaseGame () {
   return game
 }
 
+/**
+ * Utility function to get the input queue of the specified player.
+ * @param {World} world The ECS world.
+ * @param {string} playerId The player ID.
+ * @returns {Array<import('../../lib/game/components/player').PlayerInput>}
+ */
+function getInputQueue (world, playerId) {
+  const playerEntity = world.query().with('player').find(e => {
+    const info = world.getComponent('player', { from: e })
+
+    return info.id === playerId
+  }).one()
+
+  return world.getComponent('player', { from: playerEntity }).inputQueue
+}
+
 describe('The BaseGame class,', () => {
+  describe('when processing a game step,', () => {
+    it('should call abstract pre-step, post-step, and step methods', () => {
+      const baseGame = createBaseGame()
+
+      const pre = spyOn(baseGame, 'preStep')
+      const step = spyOn(baseGame, 'step')
+      const post = spyOn(baseGame, 'postStep')
+
+      baseGame.update()
+
+      expect(pre).toHaveBeenCalled()
+      expect(step).toHaveBeenCalled()
+      expect(post).toHaveBeenCalled()
+    })
+
+    it('should call internal pre-step, post-step, and step methods', () => {
+      const baseGame = createBaseGame()
+
+      const pre = spyOn(baseGame, '_preStep')
+      const step = spyOn(baseGame, '_step')
+      const post = spyOn(baseGame, '_postStep')
+
+      baseGame.update()
+
+      expect(pre).toHaveBeenCalled()
+      expect(step).toHaveBeenCalled()
+      expect(post).toHaveBeenCalled()
+    })
+
+    it('should emit events signaling when an update phase happens', () => {
+      const events = []
+      const baseGame = createBaseGame()
+
+      baseGame.on('preStep', () => events.push('preStep'))
+      baseGame.on('step', () => events.push('step'))
+      baseGame.on('postStep', () => events.push('postStep'))
+
+      baseGame.update()
+
+      expect(events).toHaveSize(3)
+      expect(events[0]).toBe('preStep')
+      expect(events[1]).toBe('step')
+      expect(events[2]).toBe('postStep')
+    })
+
+    it('should keep track of the step count', () => {
+      const baseGame = createBaseGame()
+
+      expect(baseGame.stepCount).toBe(0)
+
+      baseGame.update()
+      baseGame.update()
+
+      expect(baseGame.stepCount).toBe(2)
+
+      baseGame.update()
+
+      expect(baseGame.stepCount).toBe(3)
+    })
+  })
+
   describe('The .addPlayer() method,', () => {
     it('should be able to add new players when space is available', () => {
       const baseGame = createBaseGame()
@@ -66,7 +143,6 @@ describe('The BaseGame class,', () => {
       })
 
       expect(baseGame.full).toBe(false)
-      expect(baseGame.players.size).toBe(3)
       expect(baseGame.currentPlayers).toBe(3)
     })
 
@@ -92,7 +168,6 @@ describe('The BaseGame class,', () => {
 
       expect(baseGame.full).toBeFalse()
       expect(baseGame.closed).toBeTrue()
-      expect(baseGame.players.size).toBe(3)
       expect(baseGame.currentPlayers).toBe(3)
       expect(func).toThrowError(RangeError)
       expect(func).toThrowError('Could not add player. Game is either full or closed.')
@@ -119,7 +194,6 @@ describe('The BaseGame class,', () => {
 
       expect(baseGame.full).toBeTrue()
       expect(baseGame.closed).toBeFalse()
-      expect(baseGame.players.size).toBe(4)
       expect(baseGame.currentPlayers).toBe(4)
       expect(func).toThrowError(RangeError)
       expect(func).toThrowError('Could not add player. Game is either full or closed.')
@@ -144,26 +218,59 @@ describe('The BaseGame class,', () => {
       }
 
       expect(baseGame.full).toBeFalse()
-      expect(baseGame.players.size).toBe(3)
       expect(baseGame.currentPlayers).toBe(3)
       expect(func).toThrowError(RangeError)
       expect(func).toThrowError('Team is full!')
     })
   })
 
-  it('should be able to serialize the current state for the specified client', () => {
+  describe('when adding inputs,', () => {
+    it('should throw an error if player does not exist', () => {
+      const baseGame = createBaseGame()
+
+      expect(() => {
+        baseGame.addInputTo('no_exist', { direction: { up: true } })
+      }).toThrowError(/^.*player does not exist.*$/i)
+    })
+
+    it('should be able to successfully add them to the specified player', () => {
+      const baseGame = createBaseGame()
+      const player = TESTING_PLAYERS[1]
+      const other = TESTING_PLAYERS[3]
+
+      baseGame.addPlayer(player.id, player.meta)
+      baseGame.addPlayer(other.id, other.meta)
+
+      // Let's make everyone believe that it's only been 100 milliseconds since
+      // the Unix epoch!
+      spyOn(Date, 'now').and.callFake(() => 100)
+
+      baseGame.addInputTo(player.id, { inputNum: 1, direction: { up: true } })
+
+      const queue1 = getInputQueue(baseGame._world, player.id)
+      const queue2 = getInputQueue(baseGame._world, other.id)
+
+      expect(queue1).toHaveSize(1)
+      expect(queue2).toHaveSize(0)
+
+      expect(queue1.pop()).toEqual({
+        inputNum: 1,
+        timestamp: 100,
+        direction: { up: true }
+      })
+    })
+  })
+
+  it("should be able to get a player's name by their ID", () => {
     const baseGame = createBaseGame()
-    const player = TESTING_PLAYERS[1]
+    const player = TESTING_PLAYERS[2]
 
     baseGame.addPlayer(player.id, player.meta)
 
-    const expectedPosition = player.meta.team === 'one'
-      ? { x: 0, y: 0 }
-      : { x: 200, y: 200 }
-    const state = baseGame.serializeStateFor(player.id)
+    const ret = baseGame.getPlayerNameByID(player.id)
 
-    expect(JSON.parse(state).self.position).toEqual(expectedPosition)
-    expect(JSON.parse(state).self.velocity).toEqual({ x: 0, y: 0 })
+    expect(ret).toBeInstanceOf(String)
+    expect(ret).toBe(player.meta.name)
   })
 
   it('should be able to remove the specified player', () => {
@@ -174,7 +281,6 @@ describe('The BaseGame class,', () => {
     })
 
     expect(baseGame.full).toBeTrue()
-    expect(baseGame.players.size).toBe(4)
     expect(baseGame.currentPlayers).toBe(4)
 
     const playerToRemove = TESTING_PLAYERS[2]
@@ -182,34 +288,8 @@ describe('The BaseGame class,', () => {
     baseGame.removePlayer(playerToRemove.id)
 
     expect(baseGame.full).toBeFalse()
-    expect(baseGame.players.size).toBe(3)
     expect(baseGame.currentPlayers).toBe(3)
-    expect(baseGame.getPlayerByID(playerToRemove.id)).toBeFalsy()
-  })
-
-  it('should be able to call every player\'s .update() method', () => {
-    const spies = []
-    const baseGame = createBaseGame()
-
-    TESTING_PLAYERS.forEach(player => {
-      baseGame.addPlayer(player.id, player.meta)
-    })
-
-    baseGame.players.forEach(player => {
-      const spy = jasmine.createSpy('Player update() method spy', player.update)
-      player.update = spy
-
-      spies.push(spy)
-    })
-
-    baseGame.update()
-
-    expect(spies).toHaveSize(TESTING_PLAYERS.length)
-    spies.forEach(spy => {
-      expect(spy).toHaveBeenCalledTimes(1)
-      expect(spy.calls.all().length).toBe(1)
-      expect(spy.calls.argsFor(0).every(val => typeof val === 'number')).toBe(true)
-    })
+    expect(baseGame.getPlayerNameByID(playerToRemove.id)).toBeFalsy()
   })
 
   it('should be able to clear all players', () => {
@@ -220,13 +300,58 @@ describe('The BaseGame class,', () => {
     })
 
     expect(baseGame.full).toBeTrue()
-    expect(baseGame.players.size).toBe(4)
     expect(baseGame.currentPlayers).toBe(4)
 
     baseGame.clearPlayers()
 
     expect(baseGame.full).toBe(false)
-    expect(baseGame.players.size).toBe(0)
     expect(baseGame.currentPlayers).toBe(0)
+  })
+
+  it('should be able to iterate over the names of all players', () => {
+    const baseGame = createBaseGame()
+
+    TESTING_PLAYERS.forEach(player => {
+      baseGame.addPlayer(player.id, player.meta)
+    })
+
+    expect(baseGame.full).toBeTrue()
+    expect(baseGame.currentPlayers).toBe(4)
+
+    const iter = baseGame.allPlayerNames()
+
+    expect(iter.next).toBeInstanceOf(Function)
+    expect(iter[Symbol.iterator]).toBeInstanceOf(Function)
+
+    const arr = Array.from(iter)
+
+    expect(arr).toHaveSize(4)
+    TESTING_PLAYERS.map(p => p.meta.name).forEach(name => {
+      expect(arr).toContain(name)
+    })
+  })
+
+  it('should be able to serialize state for all players', () => {
+    const baseGame = createBaseGame()
+
+    TESTING_PLAYERS.forEach(player => {
+      baseGame.addPlayer(player.id, player.meta)
+    })
+
+    const states = Array.from(baseGame.serializeState())
+
+    expect(states).toHaveSize(4)
+
+    for (let i = 0; i < states.length; i++) {
+      const state = states[i]
+      const expectedPosition = i % 2 === 0
+        ? { x: 0, y: 0 }
+        : { x: 200, y: 200 }
+
+      expect(baseGame.getPlayerNameByID(state.id)).toBeInstanceOf(String)
+      expect(state.contents).toBeInstanceOf(String)
+      expect(JSON.parse(state.contents).self.position).toEqual(expectedPosition)
+      expect(JSON.parse(state.contents).self.velocity).toEqual({ x: 0, y: 0 })
+    }
   })
 })

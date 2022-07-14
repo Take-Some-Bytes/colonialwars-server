@@ -9,10 +9,9 @@
 const path = require('path')
 const events = require('events')
 
-const Player = require('../../lib/game/player')
 const Manager = require('../../lib/game/manager')
 const Vector2D = require('../../lib/game/physics/vector-2d')
-const TeamGame = require('../../lib/game/game-modes/team-game')
+const TeamGame = require('../../lib/game/modes/team-game')
 
 const MockLoggers = require('../mocks/internal/mock-loggers')
 const MockSocket = require('../mocks/external/mock-io-socket')
@@ -65,7 +64,7 @@ describe('The Manager class,', () => {
     expect(manager.games).toHaveSize(manager._games.size)
   })
 
-  describe('The .newRandomGame() method', () => {
+  describe('The .newRandomGame() method,', () => {
     it('should create a new, random game selected from the list of available configs', async () => {
       const manager = await initManager()
       const game = await manager.newRandomGame()
@@ -96,8 +95,7 @@ describe('The Manager class,', () => {
       const game = manager._games.get('game-1')
 
       expect(game).toBeInstanceOf(TeamGame)
-      expect(game.players.size).toBe(4)
-      expect(Array.from(game.players.values()).every(val => val instanceof Player))
+      expect(game.currentPlayers).toBe(4)
     })
 
     it('should not be able to add clients to a specific game if it has no space', async () => {
@@ -167,7 +165,7 @@ describe('The Manager class,', () => {
       const playerToRemove = TEST_PLAYERS[2]
       handle.removePlayer(playerToRemove.socket)
 
-      expect(manager._games.get('game-1').players.has(playerToRemove.socket.id)).not.toBeTrue()
+      expect(manager._games.get('game-1').getPlayerNameByID(playerToRemove.socket.id)).toBeFalsy()
       expect(manager._games.get('game-1').currentPlayers).toBe(TEST_PLAYERS.length - 1)
       expect(manager._games.get('game-1').currentPlayers).toBe(handle.currentPlayers)
     })
@@ -183,9 +181,8 @@ describe('The Manager class,', () => {
 
       handle.clearPlayers()
 
-      expect(manager._games.get('game-1').players.size).toBe(0)
       expect(manager._games.get('game-1').currentPlayers).toBe(0)
-      expect(manager._games.get('game-1').currentPlayers).toBe(0)
+      expect(manager._games.get('game-1').currentPlayers).toBe(handle.currentPlayers)
     })
 
     it('should correctly return number of players and max players', async () => {
@@ -269,20 +266,20 @@ describe('The Manager class,', () => {
       handle.addPlayer(player.socket, player.meta)
 
       const spy = spyOn(
-        manager._games.get('game-1').getPlayerByID(player.socket.id),
-        'addInputToQueue'
+        manager._games.get('game-1'),
+        'addInputTo'
       ).and.callFake((..._args) => {})
 
       handle.addInputTo(player.socket.id, { up: true })
 
-      expect(spy).toHaveBeenCalledWith({ up: true })
+      expect(spy).toHaveBeenCalledWith(player.socket.id, { up: true })
     })
   })
 
   it('should be able to start and stop the update loop', async () => {
     const manager = await initManager()
     /**
-     * @type {Array<jasmine.Spy<import('../../lib/game/game-modes/base-game')['prototype']['update']>>}
+     * @type {Array<jasmine.Spy<import('../../lib/game/modes/base-game')['prototype']['update']>>}
      */
     const spies = []
     const doneEmitter = new events.EventEmitter()
