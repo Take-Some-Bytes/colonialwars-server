@@ -98,7 +98,7 @@ describe('The createSerializer() utility function,', () => {
   })
 })
 
-fdescribe('The serializeEntities() system,', () => {
+describe('The serializeEntities() system,', () => {
   it('should take an iterator of entities to serialize', () => {
     expect(() => {
       SerializeSystems.serializeEntities(null, null).next()
