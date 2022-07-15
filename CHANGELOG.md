@@ -3,6 +3,9 @@ Changelog for ``colonialwars-server``.
 
 The format is based on [Keep a Changelog][1], and this project adheres to [Semantic Versioning][2].
 
+A change is only considered breaking if it modifies the way clients communicate with the server,
+or if it modifies the server application structure/behaviour massively.
+
 <!--
   When releasing a new version: 
     - Ensure all updateable dependencies are updated.
@@ -12,6 +15,40 @@ The format is based on [Keep a Changelog][1], and this project adheres to [Seman
 -->
 
 ## [Unreleased]
+
+### Added:
+- Added reference to alternative configuration method for the
+  [``PLAYER_SPEED``](https://github.com/Take-Some-Bytes/colonialwars-server/blob/main/docs/config.md#player_speed)
+  variable.
+- Added a basic [Entity-Component-System](https://github.com/SanderMertens/ecs-faq) implementation.
+
+### Changed:
+- **BREAKING**: Changed the structure of map metadata that is sent to clients on connection.
+- **BREAKING**: Used a spec [compliant](https://github.com/Take-Some-Bytes/specifications/blob/main/colonialwars/cw-file-structures.md)
+  map config file loader.
+- **BREAKING**: Changed ``/games-info`` route to send *all* games that are currently running,
+  regardless of whether they can accept more players or not.
+- **BREAKING**: Changed ``BaseGame`` class to use Entity-Component-System architecture to handle
+  entities, and added a bunch of components & systems to help with that transition.
+- Enforced the "maximum players" configuration for teams.
+- Massively improved validation checks on the ``/game-auth`` route.
+  The improved route checks for:
+  * conflicting player names
+  * non-existent games
+  * game capacity (whether the game is full)
+  * non-existent teams
+  * team capacity (whether the requested team is full)
+- Moved all WebSocket connection management out of the ``BaseGame`` class, leaving it to handle
+  purely game-related logic.
+- Introduced more abstraction between ``BaseGame`` instances and other instances.
+  This includes, but is not limited to:
+  * Returning "game handles" instead of instances from the ``Manager.prototype.getGame()`` method.
+  * Using the ``BaseGame.prototype.addInputTo()`` method for adding input to a player's queue,
+    instead of modifying a player's input queue directly.
+
+### Removed:
+- **BREAKING**: Removed the old ``GameLoader`` class, which didn't do enough validation on map
+  config files and was outdated.
 
 ## [v0.5.4] - 2022-05-20
 
