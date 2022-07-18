@@ -7,7 +7,7 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const Vector2D = require('../../lib/game/physics/vector-2d')
+const Vector2D = require('../../lib/game/physics/vector2d')
 
 describe('The Vector2D class,', () => {
   it('should be able to floor fractional axes', () => {
@@ -33,6 +33,14 @@ describe('The Vector2D class,', () => {
 
     expect(vector.x).toEqual(0)
     expect(vector.y).toEqual(0)
+  })
+  it('should be able to bind itself to the specified bounds', () => {
+    const vector = new Vector2D(40, 102)
+    const bounds = new Vector2D(40, 40)
+
+    vector.boundTo(bounds)
+
+    expect(vector).toEqual(bounds)
   })
 
   describe('when performing vector arithmetic,', () => {
