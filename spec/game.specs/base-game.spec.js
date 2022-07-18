@@ -345,13 +345,13 @@ describe('The BaseGame class,', () => {
     for (let i = 0; i < states.length; i++) {
       const state = states[i]
       const expectedPosition = i % 2 === 0
-        ? { x: 0, y: 0 }
-        : { x: 200, y: 200 }
+        ? Vector2D.zero()
+        : new Vector2D(200, 200)
 
       expect(baseGame.getPlayerNameByID(state.id)).toBeInstanceOf(String)
-      expect(state.contents).toBeInstanceOf(String)
-      expect(JSON.parse(state.contents).self.position).toEqual(expectedPosition)
-      expect(JSON.parse(state.contents).self.velocity).toEqual({ x: 0, y: 0 })
+      expect(state.contents).toBeInstanceOf(Object)
+      expect(state.contents.self.position).toEqual(expectedPosition)
+      expect(state.contents.self.velocity).toEqual(Vector2D.zero())
     }
   })
 })
