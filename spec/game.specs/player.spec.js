@@ -7,7 +7,7 @@
  */
 
 const Player = require('../../lib/game/player')
-const Vector2D = require('../../lib/game/physics/vector-2d')
+const Vector2D = require('../../lib/game/physics/vector2d')
 const BoundEntity = require('../../lib/game/physics/bound-entity')
 
 const playerStats = {

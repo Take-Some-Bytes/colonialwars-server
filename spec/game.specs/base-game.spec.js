@@ -8,7 +8,7 @@
 
 const nanoid = require('nanoid')
 
-const Vector2D = require('../../lib/game/physics/vector-2d')
+const Vector2D = require('../../lib/game/physics/vector2d')
 const { BaseGame } = require('../../lib/game/modes')
 
 const TESTING_PLAYERS = [

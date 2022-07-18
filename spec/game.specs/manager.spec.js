@@ -10,7 +10,7 @@ const path = require('path')
 const events = require('events')
 
 const Manager = require('../../lib/game/manager')
-const Vector2D = require('../../lib/game/physics/vector-2d')
+const Vector2D = require('../../lib/game/physics/vector2d')
 const TeamGame = require('../../lib/game/modes/team-game')
 
 const MockLoggers = require('../mocks/internal/mock-loggers')

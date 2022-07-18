@@ -10,7 +10,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const Vector2D = require('../../lib/game/physics/vector-2d')
+const Vector2D = require('../../lib/game/physics/vector2d')
 const MapConfig = require('../../lib/game/map-config.js')
 
 describe('The MapConfig class,', () => {
