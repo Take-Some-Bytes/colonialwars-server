@@ -160,7 +160,8 @@ describe('The player systems,', () => {
       }
 
       PlayerSystems.processInputs(world, {
-        currentTime: 50
+        currentTime: 50,
+        worldLimits: new Vector2D(Infinity, Infinity)
       })
 
       // Check that the positions of the players are what we expect.
@@ -201,7 +202,8 @@ describe('The player systems,', () => {
       expect(info.inputQueue).toHaveSize(1)
 
       PlayerSystems.processInputs(world, {
-        currentTime: 100
+        currentTime: 100,
+        worldLimits: new Vector2D(Infinity, Infinity)
       })
 
       const transform = world.getComponent('transform2d', { from: playerEntity })
@@ -226,7 +228,8 @@ describe('The player systems,', () => {
 
       // Add the invalid input.
       const info = world.getComponent('player', {
-        from: playerEntity
+        from: playerEntity,
+        worldLimits: new Vector2D(Infinity, Infinity)
       })
 
       info.inputQueue.push({
@@ -273,7 +276,8 @@ describe('The player systems,', () => {
       }
 
       PlayerSystems.processInputs(world, {
-        currentTime: 100
+        currentTime: 100,
+        worldLimits: new Vector2D(Infinity, Infinity)
       })
 
       // Check that the positions of the players are what we expect.
@@ -327,7 +331,8 @@ describe('The player systems,', () => {
       }
 
       PlayerSystems.processInputs(world, {
-        currentTime: 300
+        currentTime: 300,
+        worldLimits: new Vector2D(Infinity, Infinity)
       })
 
       // Check that the positions of the players are what we expect.
