@@ -7,7 +7,7 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const World = require('../../lib/ecs/world')
+import World from '../../lib/ecs/world.js'
 
 describe('The World class,', () => {
   describe('when managing entities,', () => {

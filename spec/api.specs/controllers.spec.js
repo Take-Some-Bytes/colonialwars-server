@@ -6,15 +6,15 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const crypto = require('crypto')
+import crypto from 'crypto'
 
-const MockGame = require('../mocks/internal/mock-game')
-const MockLoggers = require('../mocks/internal/mock-loggers')
-const MockManager = require('../mocks/internal/mock-manager')
-const MockHttpRequest = require('../mocks/external/mock-http-request')
-const MockHttpResponse = require('../mocks/external/mock-http-response')
+import MockGame from '../mocks/internal/mock-game.js'
+import MockLoggers from '../mocks/internal/mock-loggers.js'
+import MockManager from '../mocks/internal/mock-manager.js'
+import MockHttpRequest from '../mocks/external/mock-http-request.js'
+import MockHttpResponse from '../mocks/external/mock-http-response.js'
 
-const Controllers = require('../../lib/controllers/controllers')
+import Controllers from '../../lib/controllers/controllers.js'
 
 const SPEC_SECRET = 'very secrety'
 

@@ -6,12 +6,12 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const errors = require('../../lib/errors')
-const ErrorHandlers = require('../../lib/controllers/errorhandlers')
+import * as errors from '../../lib/errors.js'
+import ErrorHandlers from '../../lib/controllers/errorhandlers.js'
 
-const MockLoggers = require('../mocks/internal/mock-loggers')
-const MockRequest = require('../mocks/external/mock-http-request')
-const MockResponse = require('../mocks/external/mock-http-response')
+import MockLoggers from '../mocks/internal/mock-loggers.js'
+import MockRequest from '../mocks/external/mock-http-request.js'
+import MockResponse from '../mocks/external/mock-http-response.js'
 
 describe('The ErrorHandlers class,', () => {
   describe('the CORS error handler,', () => {

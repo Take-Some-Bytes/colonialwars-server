@@ -6,7 +6,7 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const mathUtils = require('../../lib/utils/math-utils')
+import * as mathUtils from '../../lib/utils/math-utils.js'
 
 describe('The Colonial Wars math utilities object,', () => {
   it('should have four properties', () => {

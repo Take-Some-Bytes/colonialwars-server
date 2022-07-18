@@ -3,7 +3,7 @@
  * @fileoverview Mock Manager class.
  */
 
-const events = require('events')
+import events from 'events'
 
 /**
  * @typedef {import('./mock-game')} MockGame
@@ -16,7 +16,7 @@ const events = require('events')
 /**
  * MockManager class.
  */
-class MockManager extends events.EventEmitter {
+export default class MockManager extends events.EventEmitter {
   /**
    * Creates a new MockManager.
    * @param {MockManagerOpts} opts Options.
@@ -46,5 +46,3 @@ class MockManager extends events.EventEmitter {
     return this.games.get(gameID)
   }
 }
-
-module.exports = MockManager

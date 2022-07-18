@@ -7,8 +7,8 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const nodeCrypto = require('crypto')
-const cwdtpCrypto = require('../../lib/cwdtp/crypto')
+import nodeCrypto from 'crypto'
+import * as cwdtpCrypto from '../../lib/cwdtp/crypto.js'
 
 /**
  * @param {number} len

@@ -7,7 +7,7 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const bufferUtils = require('../../lib/cwdtp/buffer-utils')
+import * as bufferUtils from '../../lib/cwdtp/buffer-utils.js'
 
 describe('The CWDTP buffer utility functions,', () => {
   it('should export 4 functions', () => {

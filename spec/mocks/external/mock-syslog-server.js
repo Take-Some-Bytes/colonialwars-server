@@ -2,9 +2,9 @@
  * @fileoverview Mock syslog server.
  */
 
-const net = require('net')
+import net from 'net'
 
-class MockSyslogServer {
+export default class MockSyslogServer {
   constructor () {
     this.conns = []
     this.dataReceived = false
@@ -63,5 +63,3 @@ class MockSyslogServer {
     })
   }
 }
-
-module.exports = exports = MockSyslogServer

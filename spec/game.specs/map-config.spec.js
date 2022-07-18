@@ -7,11 +7,14 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import url from 'url'
+import path from 'path'
 
-const Vector2D = require('../../lib/game/physics/vector2d')
-const MapConfig = require('../../lib/game/map-config.js')
+import Vector2D from '../../lib/game/physics/vector2d.js'
+import MapConfig from '../../lib/game/map-config.js'
+
+const DIRNAME = path.dirname(url.fileURLToPath(import.meta.url))
 
 describe('The MapConfig class,', () => {
   it('should not accept empty map configurations', () => {
@@ -33,7 +36,7 @@ describe('The MapConfig class,', () => {
   })
 
   it('should not accept an invalid configuration file', () => {
-    const config = fs.readFileSync(path.join(__dirname, '../mocks/external/mock-game-confs/invalid-config2.json'))
+    const config = fs.readFileSync(path.join(DIRNAME, '../mocks/external/mock-game-confs/invalid-config2.json'))
 
     expect(() => {
       /* eslint-disable-next-line no-new */
@@ -42,7 +45,7 @@ describe('The MapConfig class,', () => {
   })
 
   it('should be read-only', () => {
-    const filePath = path.join(__dirname, '../mocks/external/mock-game-confs/valid-config.json')
+    const filePath = path.join(DIRNAME, '../mocks/external/mock-game-confs/valid-config.json')
     const file = fs.readFileSync(filePath)
     const config = new MapConfig(file)
 
@@ -65,7 +68,7 @@ describe('The MapConfig class,', () => {
   })
 
   it('should have all the necessary props', () => {
-    const filePath = path.join(__dirname, '../mocks/external/mock-game-confs/valid-config.json')
+    const filePath = path.join(DIRNAME, '../mocks/external/mock-game-confs/valid-config.json')
     const file = fs.readFileSync(filePath)
     const config = new MapConfig(file)
 
@@ -82,7 +85,7 @@ describe('The MapConfig class,', () => {
   })
 
   it('should be able to load map configs from a file', async () => {
-    const filePath = path.join(__dirname, '../mocks/external/mock-game-confs/valid-config.json')
+    const filePath = path.join(DIRNAME, '../mocks/external/mock-game-confs/valid-config.json')
     const config = await MapConfig.fromFile(filePath)
 
     expect(config.mode).toBe('teams')

@@ -6,10 +6,10 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const fs = require('fs')
-const winston = require('winston')
-const Loggers = require('../lib/logging/loggers')
-const MockSyslogServer = require('./mocks/external/mock-syslog-server')
+import fs from 'fs'
+import winston from 'winston'
+import Loggers from '../lib/logging/loggers.js'
+import MockSyslogServer from './mocks/external/mock-syslog-server.js'
 
 /**
  * Promise delay.

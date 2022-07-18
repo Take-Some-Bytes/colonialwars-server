@@ -13,7 +13,7 @@ let exitTimeout = null
  * @param {InstanceType<import('../')>} server The CWServer instance.
  * @param {NodeJS.Signals} signal The signal that was received.
  */
-async function handleShutdown (server, signal) {
+export async function handleShutdown (server, signal) {
   // You have ten seconds.
   !exitTimeout && (exitTimeout = setTimeout(process.exit, 10 * 1000, 1).unref())
 
@@ -45,7 +45,7 @@ async function handleShutdown (server, signal) {
  * @param {InstanceType<import('../')>} server The CWServer instance.
  * @param {Error} ex The error that happened.
  */
-async function handleUncaughtEx (server, ex) {
+export async function handleUncaughtEx (server, ex) {
   // You have ten seconds.
   !exitTimeout && (exitTimeout = setTimeout(process.exit, 10 * 1000, 1).unref())
 
@@ -70,9 +70,4 @@ async function handleUncaughtEx (server, ex) {
       process.exit(1)
     }, 1000)
   }
-}
-
-module.exports = exports = {
-  handleShutdown,
-  handleUncaughtEx
 }

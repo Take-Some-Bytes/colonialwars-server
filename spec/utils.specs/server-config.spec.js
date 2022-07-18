@@ -7,9 +7,9 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const assert = require('assert').strict
+import { strict as assert } from 'assert'
 
-const ServerConfig = require('../../lib/utils/server-config')
+import ServerConfig from '../../lib/utils/server-config.js'
 
 const defaults = {
   ALLOWED_ORIGINS: [],

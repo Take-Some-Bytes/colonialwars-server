@@ -2,13 +2,13 @@
  * @fileoverview Mock Socket.IO Socket class.
  */
 
-const events = require('events')
-const crypto = require('crypto')
+import events from 'events'
+import crypto from 'crypto'
 
 /**
  * MockSocket class.
  */
-class MockSocket extends events.EventEmitter {
+export default class MockSocket extends events.EventEmitter {
   /**
    * Constructor for a MockSocket class.
    * @param {string} id A unique ID for this MockSocket.
@@ -27,5 +27,3 @@ class MockSocket extends events.EventEmitter {
     return new MockSocket(id)
   }
 }
-
-module.exports = exports = MockSocket

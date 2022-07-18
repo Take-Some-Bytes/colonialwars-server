@@ -6,7 +6,7 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const SparseSet = require('../../lib/ecs/sparse-set')
+import SparseSet from '../../lib/ecs/sparse-set.js'
 
 describe('The SparseSet class.', () => {
   it('should be able to construct with the specified capacity', () => {

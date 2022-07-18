@@ -6,16 +6,16 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const nanoid = require('nanoid')
+import { nanoid } from 'nanoid'
 
-const Vector2D = require('../../lib/game/physics/vector2d')
-const { BaseGame } = require('../../lib/game/modes')
+import Vector2D from '../../lib/game/physics/vector2d.js'
+import { BaseGame } from '../../lib/game/modes/index.js'
 
 const TESTING_PLAYERS = [
-  { meta: { name: 'GENERAL LOUDSPEAKER', team: 'one' }, id: nanoid.nanoid() },
-  { meta: { name: 'THISISTHEPOLICE', team: 'two' }, id: nanoid.nanoid() },
-  { meta: { name: 'socialsecurity', team: 'one' }, id: nanoid.nanoid() },
-  { meta: { name: 'FBIOPENUP', team: 'two' }, id: nanoid.nanoid() }
+  { meta: { name: 'GENERAL LOUDSPEAKER', team: 'one' }, id: nanoid() },
+  { meta: { name: 'THISISTHEPOLICE', team: 'two' }, id: nanoid() },
+  { meta: { name: 'socialsecurity', team: 'one' }, id: nanoid() },
+  { meta: { name: 'FBIOPENUP', team: 'two' }, id: nanoid() }
 ]
 
 /**
@@ -153,7 +153,7 @@ describe('The BaseGame class,', () => {
           name: 'Let me in please!',
           team: 'two'
         },
-        id: nanoid.nanoid()
+        id: nanoid()
       }
 
       TESTING_PLAYERS.slice(0, 3).forEach(player => {
@@ -180,7 +180,7 @@ describe('The BaseGame class,', () => {
           name: 'Let me in please!',
           team: 'two'
         },
-        id: nanoid.nanoid()
+        id: nanoid()
       }
 
       // We want to add all four testing players this time.
@@ -206,7 +206,7 @@ describe('The BaseGame class,', () => {
           name: 'Let me in please!',
           team: 'one'
         },
-        id: nanoid.nanoid()
+        id: nanoid()
       }
 
       TESTING_PLAYERS.slice(0, 3).forEach(player => {

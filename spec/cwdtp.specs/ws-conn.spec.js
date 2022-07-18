@@ -7,13 +7,13 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const http = require('http')
-const EventEmitter = require('events')
-const bufferUtils = require('../../lib/cwdtp/buffer-utils')
-const crypto = require('../../lib/cwdtp/crypto')
+import http from 'http'
+import EventEmitter from 'events'
+import * as bufferUtils from '../../lib/cwdtp/buffer-utils.js'
+import * as crypto from '../../lib/cwdtp/crypto.js'
 
-const WebSocket = require('ws')
-const WSConn = require('../../lib/cwdtp/conn')
+import WebSocket, { WebSocketServer } from 'ws'
+import WSConn from '../../lib/cwdtp/conn.js'
 
 const server = http.createServer((_, res) => {
   res.statusCode = 404
@@ -22,7 +22,7 @@ const server = http.createServer((_, res) => {
 })
 const noop = () => { /* no-op */ }
 /**
- * @type {WebSocket.Server}
+ * @type {WebSocketServer}
  */
 let wsServer = null
 
@@ -62,7 +62,7 @@ function setUp () {
  * @param {DoneFn} done Done callback.
  */
 function tearDown (done) {
-  if (wsServer instanceof WebSocket.Server) {
+  if (wsServer instanceof WebSocketServer) {
     wsServer.clients.forEach(ws => {
       ws.terminate()
     })
@@ -94,7 +94,7 @@ describe('The WSConn class,', () => {
 
   describe('when connecting to a server,', () => {
     beforeAll(done => {
-      wsServer = new WebSocket.Server({
+      wsServer = new WebSocketServer({
         server,
         handleProtocols: () => {
           return 'pow.cwdtp'
@@ -265,7 +265,7 @@ describe('The WSConn class,', () => {
 
   describe('when sending messages,', () => {
     beforeAll(done => {
-      wsServer = new WebSocket.Server({
+      wsServer = new WebSocketServer({
         server,
         handleProtocols: () => {
           return 'pow.cwdtp'
@@ -342,7 +342,7 @@ describe('The WSConn class,', () => {
 
   describe('when receiving messages,', () => {
     beforeAll(done => {
-      wsServer = new WebSocket.Server({
+      wsServer = new WebSocketServer({
         server,
         handleProtocols: () => {
           return 'pow.cwdtp'

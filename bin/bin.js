@@ -1,12 +1,16 @@
 /* eslint-env node */
+/* eslint-disable import/first */
+
 /**
  * @fileoverview Executable file for the Colonial Wars backend.
  */
 
-const CWServer = require('../')
-const shutdown = require('./shutdown')
+import * as dotenv from 'dotenv'
 
-require('dotenv').config()
+dotenv.config()
+
+import CWServer from '../index.js'
+import * as shutdown from './shutdown.js'
 
 process.title = `cw-server-${process.env.INSTANCE_NUM}`
 

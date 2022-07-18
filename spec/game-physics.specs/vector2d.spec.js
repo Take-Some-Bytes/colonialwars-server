@@ -7,7 +7,7 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const Vector2D = require('../../lib/game/physics/vector2d')
+import Vector2D from '../../lib/game/physics/vector2d.js'
 
 describe('The Vector2D class,', () => {
   it('should be able to floor fractional axes', () => {

@@ -2,7 +2,10 @@
   "name": "colonialwars-server",
   "description": "Colonial Wars backend server.",
   "version": "0.5.4",
-  "main": "index.js",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "bin": "./bin/bin.js",
   "scripts": {
     "test": "jasmine",
@@ -48,6 +51,7 @@
     "bufferutil": "^4.0.3",
     "utf-8-validate": "^5.0.4"
   },
+  "type": "module",
   "private": true,
   "license": "AGPL-3.0-or-later"
 }

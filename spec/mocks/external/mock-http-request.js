@@ -13,7 +13,7 @@
  * @prop {ReturnType<import('forwarded-parse')>} forwardedRecords
  */
 
-class MockHTTPRequest {
+export default class MockHTTPRequest {
   /**
    * Constructor for a MockHTTPRequest class.
    * @param {HTTPRequestOpts} opts Options.
@@ -32,5 +32,3 @@ class MockHTTPRequest {
     }
   }
 }
-
-module.exports = exports = MockHTTPRequest

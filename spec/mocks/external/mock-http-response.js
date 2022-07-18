@@ -2,7 +2,7 @@
  * @fileoverview Mock HTTP response class.
  */
 
-const stream = require('stream')
+import stream from 'stream'
 
 /**
  * @callback WritableCallback
@@ -10,7 +10,7 @@ const stream = require('stream')
  * @returns {void}
  */
 
-class MockHTTPResponse extends stream.Writable {
+export default class MockHTTPResponse extends stream.Writable {
   /**
    * Constructor for a MockHTTPResponse class.
    * @param {stream.WritableOptions} opts Options.
@@ -96,5 +96,3 @@ class MockHTTPResponse extends stream.Writable {
     this._headers[name] = val
   }
 }
-
-module.exports = exports = MockHTTPResponse

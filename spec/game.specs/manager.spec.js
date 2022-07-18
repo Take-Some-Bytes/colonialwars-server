@@ -6,16 +6,18 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const path = require('path')
-const events = require('events')
+import url from 'url'
+import path from 'path'
+import events from 'events'
 
-const Manager = require('../../lib/game/manager')
-const Vector2D = require('../../lib/game/physics/vector2d')
-const TeamGame = require('../../lib/game/modes/team-game')
+import Manager from '../../lib/game/manager.js'
+import Vector2D from '../../lib/game/physics/vector2d.js'
+import TeamGame from '../../lib/game/modes/team-game.js'
 
-const MockLoggers = require('../mocks/internal/mock-loggers')
-const MockSocket = require('../mocks/external/mock-io-socket')
+import MockLoggers from '../mocks/internal/mock-loggers.js'
+import MockSocket from '../mocks/external/mock-io-socket.js'
 
+const DIRNAME = path.dirname(url.fileURLToPath(import.meta.url))
 const TEST_PLAYERS = [
   { meta: { name: 'GENERAL LOUDSPEAKER', team: 'one' }, socket: MockSocket.create() },
   { meta: { name: 'THISISTHEPOLICE', team: 'two' }, socket: MockSocket.create() },
@@ -34,7 +36,7 @@ async function initManager () {
     loggers: new MockLoggers(),
     updateLoopFrequency: 40,
     dataFiles: {
-      location: path.join(__dirname, '../mocks/external/mock-game-confs'),
+      location: path.join(DIRNAME, '../mocks/external/mock-game-confs'),
       availableMaps: ['valid-config.json']
     }
   })

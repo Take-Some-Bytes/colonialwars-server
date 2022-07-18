@@ -6,7 +6,7 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const { Uint32ArrUtils, ArrayUtils } = require('../../lib/utils/array-utils')
+import { Uint32ArrUtils, ArrayUtils } from '../../lib/utils/array-utils.js'
 
 describe('The ArrayUtils object,', () => {
   describe('when swap-removing elements,', () => {

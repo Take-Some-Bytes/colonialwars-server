@@ -6,13 +6,13 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const fs = require('fs')
+import fs from 'fs'
 
-const Middlewares = require('../../lib/controllers/middlewares')
+import Middlewares from '../../lib/controllers/middlewares.js'
 
-const MockLoggers = require('../mocks/internal/mock-loggers')
-const MockHttpRequest = require('../mocks/external/mock-http-request')
-const MockHttpResponse = require('../mocks/external/mock-http-response')
+import MockLoggers from '../mocks/internal/mock-loggers.js'
+import MockHttpRequest from '../mocks/external/mock-http-request.js'
+import MockHttpResponse from '../mocks/external/mock-http-response.js'
 
 describe('The Middlewares class,', () => {
   const nullWriteStream = fs.createWriteStream('/dev/null', { encoding: 'utf8' })

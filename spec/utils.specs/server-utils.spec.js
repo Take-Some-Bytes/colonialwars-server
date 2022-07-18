@@ -6,9 +6,9 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const { ErrorSender } = require('../../lib/utils/server-utils')
+import { ErrorSender } from '../../lib/utils/server-utils.js'
 
-const MockResponse = require('../mocks/external/mock-http-response')
+import MockResponse from '../mocks/external/mock-http-response.js'
 
 /**
  * @callback LogError

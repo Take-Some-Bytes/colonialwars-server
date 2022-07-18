@@ -6,14 +6,14 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const http = require('http')
-const events = require('events')
+import http from 'http'
+import events from 'events'
 
-const WebSocket = require('ws')
-const WSConn = require('../../lib/cwdtp/conn')
-const WSServer = require('../../lib/cwdtp/server')
+import WebSocket, { WebSocketServer } from 'ws'
+import WSConn from '../../lib/cwdtp/conn.js'
+import WSServer from '../../lib/cwdtp/server.js'
 
-const getPrivateIp = require('../helpers/get-private-ip')
+import getPrivateIp from '../helpers/get-private-ip.js'
 
 /**
  * @type {InstanceType<WSServer>}
@@ -139,7 +139,7 @@ describe('The WSServer class,', () => {
 
     expect(err).toBe(null)
     expect(wsServer).toBeInstanceOf(WSServer)
-    expect(wsServer.wsServer).toBeInstanceOf(WebSocket.Server)
+    expect(wsServer.wsServer).toBeInstanceOf(WebSocketServer)
   })
 
   it('should be able to attach to the specified "HTTP server"', () => {

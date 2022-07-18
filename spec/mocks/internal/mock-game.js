@@ -22,7 +22,7 @@
 /**
  * MockGame class.
  */
-class MockGame {
+export default class MockGame {
   /**
    * Creates a new MockGame.
    * @param {MockGameOpts} opts Options.
@@ -79,5 +79,3 @@ class MockGame {
     return team.currentPlayers === team.maxPlayers
   }
 }
-
-module.exports = MockGame

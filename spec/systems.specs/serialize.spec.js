@@ -6,9 +6,9 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const World = require('../../lib/ecs/world')
+import World from '../../lib/ecs/world.js'
 
-const SerializeSystems = require('../../lib/game/systems/serialize')
+import * as SerializeSystems from '../../lib/game/systems/serialize.js'
 
 /**
  * Creates a mock component for a spec.

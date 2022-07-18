@@ -2,9 +2,9 @@
  * @fileoverview Mock Loggers class.
  */
 
-const events = require('events')
+import events from 'events'
 
-const winstonConfig = require('winston/lib/winston/config')
+import winston from 'winston'
 
 /**
  * @typedef {Object<string, (...data: any[]) => void>} Logger
@@ -15,7 +15,7 @@ const winstonConfig = require('winston/lib/winston/config')
  *
  * Emits a 'log' event whenever something is logged.
  */
-class MockLoggers extends events.EventEmitter {
+export default class MockLoggers extends events.EventEmitter {
   constructor () {
     super()
 
@@ -30,11 +30,9 @@ class MockLoggers extends events.EventEmitter {
    */
   get () {
     const logger = {}
-    Object.keys(winstonConfig.syslog.levels).forEach(level => {
+    Object.keys(winston.config.syslog.levels).forEach(level => {
       logger[level] = this.log.bind(this)
     })
     return logger
   }
 }
-
-module.exports = exports = MockLoggers

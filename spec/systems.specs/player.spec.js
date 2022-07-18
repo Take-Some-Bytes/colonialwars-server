@@ -6,12 +6,12 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const Vector2D = require('../../lib/game/physics/vector2d')
-const World = require('../../lib/ecs/world')
-const Player = require('../../lib/game/components/player')
-const PhysicsComponents = require('../../lib/game/components/physics')
+import Vector2D from '../../lib/game/physics/vector2d.js'
+import World from '../../lib/ecs/world.js'
+import Player from '../../lib/game/components/player.js'
+import * as PhysicsComponents from '../../lib/game/components/physics.js'
 
-const PlayerSystems = require('../../lib/game/systems/player')
+import * as PlayerSystems from '../../lib/game/systems/player.js'
 
 const TEST_PLAYERS = [
   {

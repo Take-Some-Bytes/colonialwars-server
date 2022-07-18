@@ -3,12 +3,12 @@
  * @fileoverview Tests for the CWServer class.
  */
 
-const http = require('http')
+import http from 'http'
 
-const CWServer = require('../')
+import CWServer from '../index.js'
 
-const fetch = require('./helpers/fetch')
-const getPrivateIp = require('./helpers/get-private-ip')
+import fetch from './helpers/fetch.js'
+import getPrivateIp from './helpers/get-private-ip.js'
 
 describe('The CWServer class,', () => {
   describe('when initialized,', () => {

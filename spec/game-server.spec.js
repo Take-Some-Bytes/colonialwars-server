@@ -7,12 +7,12 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const events = require('events')
+import events from 'events'
 
-const GameServer = require('../lib/game-server')
+import GameServer from '../lib/game-server.js'
 
-const MockLoggers = require('./mocks/internal/mock-loggers')
-const MockRequest = require('./mocks/external/mock-http-request')
+import MockLoggers from './mocks/internal/mock-loggers.js'
+import MockRequest from './mocks/external/mock-http-request.js'
 
 const mockDB = new Map()
 mockDB.del = mockDB.delete

@@ -2,7 +2,7 @@
  * @fileoverview Promisified `http.request`.
  */
 
-const http = require('http')
+import http from 'http'
 
 /**
  * @typedef {Object} HTTPResponse
@@ -16,7 +16,7 @@ const http = require('http')
  * @param {string|Buffer} body Request body.
  * @returns {Promise<HTTPResponse>}
  */
-function fetch (opts, body) {
+export default function fetch (opts, body) {
   return new Promise((resolve, reject) => {
     const req = http.request(opts, res => {
       const chunks = []
@@ -45,5 +45,3 @@ function fetch (opts, body) {
     req.end()
   })
 }
-
-module.exports = fetch

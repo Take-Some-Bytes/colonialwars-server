@@ -6,9 +6,9 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-const Player = require('../../lib/game/player')
-const Vector2D = require('../../lib/game/physics/vector2d')
-const BoundEntity = require('../../lib/game/physics/bound-entity')
+import Player from '../../lib/game/player.js'
+import Vector2D from '../../lib/game/physics/vector2d.js'
+import BoundEntity from '../../lib/game/physics/bound-entity.js'
 
 const playerStats = {
   name: 'THISISTHEFBI',
