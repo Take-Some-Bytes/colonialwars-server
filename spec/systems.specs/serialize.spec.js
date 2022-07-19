@@ -6,7 +6,7 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-import World from '../../lib/ecs/world.js'
+import World from 'colonialwars-lib/ecs'
 
 import * as SerializeSystems from '../../lib/game/systems/serialize.js'
 

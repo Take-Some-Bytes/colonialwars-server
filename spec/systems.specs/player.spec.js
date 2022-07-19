@@ -7,7 +7,7 @@
  */
 
 import Vector2D from '../../lib/game/physics/vector2d.js'
-import World from '../../lib/ecs/world.js'
+import World from 'colonialwars-lib/ecs'
 import Player from '../../lib/game/components/player.js'
 import * as PhysicsComponents from '../../lib/game/components/physics.js'
 
