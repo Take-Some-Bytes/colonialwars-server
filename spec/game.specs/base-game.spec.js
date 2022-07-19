@@ -8,7 +8,7 @@
 
 import { nanoid } from 'nanoid'
 
-import Vector2D from '../../lib/game/physics/vector2d.js'
+import { Vector2D } from 'colonialwars-lib/math'
 import { BaseGame } from '../../lib/game/modes/index.js'
 
 const TESTING_PLAYERS = [

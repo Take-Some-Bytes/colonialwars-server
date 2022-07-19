@@ -11,7 +11,7 @@ import path from 'path'
 import events from 'events'
 
 import Manager from '../../lib/game/manager.js'
-import Vector2D from '../../lib/game/physics/vector2d.js'
+import { Vector2D } from 'colonialwars-lib/math'
 import TeamGame from '../../lib/game/modes/team-game.js'
 
 import MockLoggers from '../mocks/internal/mock-loggers.js'

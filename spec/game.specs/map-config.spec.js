@@ -11,7 +11,7 @@ import fs from 'fs'
 import url from 'url'
 import path from 'path'
 
-import Vector2D from '../../lib/game/physics/vector2d.js'
+import { Vector2D } from 'colonialwars-lib/math'
 import MapConfig from '../../lib/game/map-config.js'
 
 const DIRNAME = path.dirname(url.fileURLToPath(import.meta.url))
