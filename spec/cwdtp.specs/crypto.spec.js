@@ -40,10 +40,6 @@ const nodeHash = (buf, alg) => {
 }
 
 describe('The CWDTP crypto utility functions,', () => {
-  it('should have 2 functions', () => {
-    expect(Object.values(cwdtpCrypto)).toHaveSize(2)
-  })
-
   it('should be able to generate some random bytes', async () => {
     const result = await cwdtpCrypto.randomBytes(16)
     const other = await nodeRandomBytes(16)
@@ -64,7 +60,7 @@ describe('The CWDTP crypto utility functions,', () => {
     )
     const result = await cwdtpCrypto.hash(
       buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.length),
-      'SHA-1'
+      cwdtpCrypto.algorithms.sha1
     )
     const other = nodeHash(
       new Uint8Array(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.length)),
