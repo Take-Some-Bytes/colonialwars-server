@@ -189,7 +189,7 @@ describe('The WSConn class,', () => {
       wsServer.removeAllListeners()
     })
 
-    it('should terminate the connection if a binary message is received', done => {
+    it('should emit an error if a binary message is received', done => {
       helpers.setUpForSuccess(wsServer)
 
       wsServer.on('connection', ws => {
@@ -212,13 +212,15 @@ describe('The WSConn class,', () => {
         expect(err.code).toBe(errors.InvalidMsgErrorCode.UNEXPECTED_BINARY)
 
         expect(conn.state).toBe(WSConnState.ERROR)
-        expect(conn._ws.readyState).toBe(WebSocket.CLOSED)
+        expect(conn._ws.readyState).toBe(WebSocket.OPEN)
+
+        conn.terminate(1001, 'Exiting test item')
 
         done()
       }, 100)
     })
 
-    it('should terminate the connection if a non-CWDTP message is received', done => {
+    it('should emit an error if a non-CWDTP message is received', done => {
       helpers.setUpForSuccess(wsServer)
 
       wsServer.on('connection', ws => {
@@ -241,7 +243,9 @@ describe('The WSConn class,', () => {
         expect(err.code).toBe(errors.InvalidMsgErrorCode.INVALID_CWDTP)
 
         expect(conn.state).toBe(WSConnState.ERROR)
-        expect(conn._ws.readyState).toBe(WebSocket.CLOSED)
+        expect(conn._ws.readyState).toBe(WebSocket.OPEN)
+
+        conn.terminate(1001, 'Exiting test item')
 
         done()
       }, 100)
