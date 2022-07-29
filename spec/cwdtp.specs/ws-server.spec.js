@@ -12,7 +12,10 @@ import timers from 'timers'
 
 import WebSocket from 'ws'
 
-import WSConn, { WSConnState } from '../../lib/cwdtp/conn.js'
+import {
+  WSConn,
+  WSConnState
+} from 'colonialwars-lib/cwdtp'
 import WSServer from '../../lib/cwdtp/server.js'
 import * as errors from '../../lib/cwdtp/errors.js'
 
