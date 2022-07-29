@@ -7,7 +7,7 @@ import events from 'events'
 
 import { WebSocketServer } from 'ws'
 
-import { MagicString } from 'colonialwars-lib/cwdtp-engine'
+import { MagicString } from 'colonialwars-lib/cwdtp'
 
 import * as crypto from '../../lib/cwdtp/crypto.js'
 
