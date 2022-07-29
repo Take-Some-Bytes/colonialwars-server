@@ -21,6 +21,8 @@ const mockConfig = { get: () => null }
 
 /**
  * @typedef {Object} MockWSConn
+ * @prop {events.EventEmitter} messages
+ * @prop {(event: string, ...data: any[])} send
  * @prop {jasmine.Spy<(code: number, reason: string) => void>} terminate
  * @prop {jasmine.Spy<(code: number, reason: string, wasError: boolean) => void>} disconnect
  */
@@ -32,7 +34,9 @@ const mockConfig = { get: () => null }
 function createMockConn () {
   const mockConn = {
     terminate: jasmine.createSpy('terminateMock', (code, reason) => {}),
-    disconnect: jasmine.createSpy('disconnectMock', (code, reason, wasError) => {})
+    disconnect: jasmine.createSpy('disconnectMock', (code, reason, wasError) => {}),
+    messages: new events.EventEmitter(),
+    send: (...args) => mockConn.emit(...args)
   }
 
   Object.setPrototypeOf(mockConn, events.EventEmitter.prototype)
@@ -239,7 +243,7 @@ describe('The GameServer class,', () => {
 
       gmServer._onConnection(mockConn, mockReq)
 
-      mockConn.emit('ready')
+      mockConn.messages.emit('ready')
 
       expect(mockGame.addPlayer).toHaveBeenCalled()
       expect(mockGame.getMapData).toHaveBeenCalled()
@@ -259,8 +263,8 @@ describe('The GameServer class,', () => {
 
         gmServer._onConnection(mockConn, mockReq)
 
-        mockConn.emit('ready')
-        mockConn.emit('client-action')
+        mockConn.messages.emit('ready')
+        mockConn.messages.emit('client-action')
 
         expect(mockGame.removePlayer).toHaveBeenCalled()
         expect(mockConn.terminate).toHaveBeenCalled()
@@ -280,8 +284,8 @@ describe('The GameServer class,', () => {
 
         gmServer._onConnection(mockConn, mockReq)
 
-        mockConn.emit('ready')
-        mockConn.emit('client-action', {
+        mockConn.messages.emit('ready')
+        mockConn.messages.emit('client-action', {
           up: true
         })
 
@@ -308,8 +312,8 @@ describe('The GameServer class,', () => {
 
       gmServer._onConnection(mockConn, mockReq)
 
-      mockConn.emit('ready')
-      mockConn.emit('disconnect')
+      mockConn.messages.emit('ready')
+      mockConn.emit('close')
 
       expect(mockGame.removePlayer).toHaveBeenCalledWith(mockConn)
     })

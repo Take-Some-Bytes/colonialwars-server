@@ -18,6 +18,7 @@ import {
 } from 'colonialwars-lib/cwdtp'
 import WSServer from '../../lib/cwdtp/server.js'
 import * as errors from '../../lib/cwdtp/errors.js'
+import * as crypto from '../../lib/cwdtp/crypto.js'
 
 import getPrivateIp from '../helpers/get-private-ip.js'
 
@@ -309,9 +310,12 @@ describe('The WSServer class,', () => {
 
     it('should accept connection if everything passes', done => {
       const conn = new WSConn('ws://localhost:2583/?hi=hello', {
-        wsOpts: {
-          origin: 'http://localhost:4000',
-          localAddress: '127.0.0.1'
+        crypto,
+        createWs: (url, protocols) => {
+          return new WebSocket(url, protocols, {
+            origin: 'http://localhost:4000',
+            localAddress: '127.0.0.1'
+          })
         }
       })
       const serverSpies = getServerSpies()
@@ -342,15 +346,21 @@ describe('The WSServer class,', () => {
     it('should terminate connections which do not send a pong event in the alloted time', done => {
       const conns = [
         new WSConn('ws://localhost:2583/?hi=hello', {
-          wsOpts: {
-            origin: 'http://localhost:4000',
-            localAddress: '127.0.0.1'
+          crypto,
+          createWs: (url, protocols) => {
+            return new WebSocket(url, protocols, {
+              origin: 'http://localhost:4000',
+              localAddress: '127.0.0.1'
+            })
           }
         }),
         new WSConn('ws://localhost:2583/?hi=hello', {
-          wsOpts: {
-            origin: 'http://localhost:4000',
-            localAddress: localIP
+          crypto,
+          createWs: (url, protocols) => {
+            return new WebSocket(url, protocols, {
+              origin: 'http://localhost:4000',
+              localAddress: localIP
+            })
           }
         })
       ]
@@ -394,15 +404,21 @@ describe('The WSServer class,', () => {
     it('should not terminate connections which do send a pong event in the alloted time', done => {
       const conns = [
         new WSConn('ws://localhost:2583/?hi=hello', {
-          wsOpts: {
-            origin: 'http://localhost:4000',
-            localAddress: '127.0.0.1'
+          crypto,
+          createWs: (url, protocols) => {
+            return new WebSocket(url, protocols, {
+              origin: 'http://localhost:4000',
+              localAddress: '127.0.0.1'
+            })
           }
         }),
         new WSConn('ws://localhost:2583/?hi=hello', {
-          wsOpts: {
-            origin: 'http://localhost:4000',
-            localAddress: localIP
+          crypto,
+          createWs: (url, protocols) => {
+            return new WebSocket(url, protocols, {
+              origin: 'http://localhost:4000',
+              localAddress: localIP
+            })
           }
         })
       ]
