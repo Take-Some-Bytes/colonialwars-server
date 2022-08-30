@@ -228,8 +228,7 @@ describe('The player systems,', () => {
 
       // Add the invalid input.
       const info = world.getComponent('player', {
-        from: playerEntity,
-        worldLimits: new Vector2D(Infinity, Infinity)
+        from: playerEntity
       })
 
       info.inputQueue.push({
@@ -241,7 +240,8 @@ describe('The player systems,', () => {
       expect(info.inputQueue).toHaveSize(1)
 
       PlayerSystems.processInputs(world, {
-        currentTime: 100
+        currentTime: 100,
+        worldLimits: new Vector2D(Infinity, Infinity)
       })
 
       const transform = world.getComponent('transform2d', { from: playerEntity })
@@ -342,6 +342,59 @@ describe('The player systems,', () => {
         expect(transform.position.x).toBe(200)
         expect(transform.position.y).toBe(50)
       }
+    })
+
+    it('should only process inputs that occur before the current time', () => {
+      const world = setUpForInput()
+      const player = TEST_PLAYERS[1]
+
+      PlayerSystems.addPlayerTo(world, {
+        ...player,
+        id: 1
+      })
+
+      expect(world.numEntities).toBe(1)
+
+      const playerEntity = world.query().with('player').find(e => {
+        return world.getComponent('player', { from: e }).id === 1
+      }).one()
+
+      // Add the inputs
+      const info = world.getComponent('player', {
+        from: playerEntity
+      })
+
+      info.inputQueue.push({
+        inputNum: 1,
+        timestamp: 100,
+        direction: { down: true, right: true }
+      })
+      info.inputQueue.push({
+        inputNum: 2,
+        timestamp: 200,
+        direction: { down: false, right: true }
+      })
+      info.inputQueue.push({
+        inputNum: 3,
+        timestamp: 250,
+        direction: { up: true, right: false }
+      })
+      info.inputQueue.push({
+        inputNum: 4,
+        timestamp: 300,
+        direction: { up: false }
+      })
+
+      expect(info.inputQueue).toHaveSize(4)
+
+      PlayerSystems.processInputs(world, {
+        currentTime: 220,
+        worldLimits: new Vector2D(Infinity, Infinity)
+      })
+
+      const transform = world.getComponent('transform2d', { from: playerEntity })
+      expect(transform.position.x).toBe(220)
+      expect(transform.position.y).toBe(100)
     })
   })
 })
