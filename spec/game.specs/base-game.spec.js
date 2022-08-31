@@ -17,6 +17,31 @@ const TESTING_PLAYERS = [
   { meta: { name: 'socialsecurity', team: 'one' }, id: nanoid() },
   { meta: { name: 'FBIOPENUP', team: 'two' }, id: nanoid() }
 ]
+const MOCK_GAME_CONFIG = {
+  mapName: 'Base Game 1',
+  mode: 'Teams',
+  maxPlayers: 4,
+  description: 'Testing this game.',
+  worldLimits: { x: 200, y: 200 },
+  teams: [
+    {
+      name: 'one',
+      spawnPosition: new Vector2D(0, 0),
+      description: 'Team one.',
+      maxPlayers: 2
+    },
+    {
+      name: 'two',
+      spawnPosition: new Vector2D(200, 200),
+      description: 'Team two.',
+      maxPlayers: 2
+    }
+  ],
+  tileType: 'grass',
+  player: {
+    speed: 0.4
+  }
+}
 
 /**
  * Creates a BaseGame instance for testing.
@@ -25,31 +50,9 @@ const TESTING_PLAYERS = [
 function createBaseGame () {
   const game = new BaseGame({
     id: 'V3RY-UN1QU3-1D',
-    mapConfig: {
-      mapName: 'Base Game 1',
-      mode: 'Teams',
-      maxPlayers: 4,
-      description: 'Testing this game.',
-      worldLimits: { x: 200, y: 200 },
-      teams: [
-        {
-          name: 'one',
-          spawnPosition: new Vector2D(0, 0),
-          description: 'Team one.',
-          maxPlayers: 2
-        },
-        {
-          name: 'two',
-          spawnPosition: new Vector2D(200, 200),
-          description: 'Team two.',
-          maxPlayers: 2
-        }
-      ],
-      tileType: 'grass',
-      player: {
-        speed: 0.4
-      }
-    }
+    mapConfig: MOCK_GAME_CONFIG,
+    stepsPerUpdate: 1,
+    stepLength: 100
   })
   game.init()
 
@@ -75,6 +78,8 @@ function getInputQueue (world, playerId) {
 describe('The BaseGame class,', () => {
   describe('when processing a game step,', () => {
     it('should call abstract pre-step, post-step, and step methods', () => {
+      spyOn(Date, 'now').and.returnValues(100, 200)
+
       const baseGame = createBaseGame()
 
       const pre = spyOn(baseGame, 'preStep')
@@ -84,11 +89,14 @@ describe('The BaseGame class,', () => {
       baseGame.update()
 
       expect(pre).toHaveBeenCalled()
-      expect(step).toHaveBeenCalled()
+      // Should be called once with the last update time and delta time
+      expect(step).toHaveBeenCalledOnceWith(100, 100)
       expect(post).toHaveBeenCalled()
     })
 
     it('should call internal pre-step, post-step, and step methods', () => {
+      spyOn(Date, 'now').and.returnValues(100, 200)
+
       const baseGame = createBaseGame()
 
       const pre = spyOn(baseGame, '_preStep')
@@ -98,7 +106,8 @@ describe('The BaseGame class,', () => {
       baseGame.update()
 
       expect(pre).toHaveBeenCalled()
-      expect(step).toHaveBeenCalled()
+      // Should be called once with the last update time and delta time
+      expect(step).toHaveBeenCalledOnceWith(100, 100)
       expect(post).toHaveBeenCalled()
     })
 
@@ -131,6 +140,82 @@ describe('The BaseGame class,', () => {
       baseGame.update()
 
       expect(baseGame.stepCount).toBe(3)
+    })
+
+    it('should invoke step function with last update time and delta time', () => {
+      spyOn(Date, 'now').and.returnValues(100, 200)
+
+      const baseGame = new BaseGame({
+        id: 'V3RY-UN1QU3-1D',
+        mapConfig: MOCK_GAME_CONFIG,
+        stepsPerUpdate: 1
+      })
+      baseGame.init()
+
+      expect(baseGame.stepCount).toBe(0)
+      expect(baseGame.lastUpdateTime).toBe(100)
+
+      const step = spyOn(baseGame, 'step')
+
+      baseGame.update()
+
+      expect(baseGame.stepCount).toBe(1)
+      expect(baseGame.lastUpdateTime).toBe(200)
+      expect(step).toHaveBeenCalledOnceWith(100, 100)
+    })
+
+    it('should be able to run multiple steps per update', () => {
+      const baseGame = new BaseGame({
+        id: 'V3RY-UN1QU3-1D',
+        mapConfig: MOCK_GAME_CONFIG,
+        stepsPerUpdate: 10
+      })
+      baseGame.init()
+
+      const pre = spyOn(baseGame, 'preStep')
+      const _pre = spyOn(baseGame, '_preStep').and.callThrough()
+      const step = spyOn(baseGame, 'step')
+      const _step = spyOn(baseGame, '_step')
+      const post = spyOn(baseGame, 'postStep')
+      const _post = spyOn(baseGame, '_postStep')
+
+      baseGame.update()
+
+      expect(baseGame.stepCount).toBe(10)
+      expect(pre).toHaveBeenCalledTimes(10)
+      expect(_pre).toHaveBeenCalledTimes(10)
+      expect(step).toHaveBeenCalledTimes(10)
+      expect(_step).toHaveBeenCalledTimes(10)
+      expect(post).toHaveBeenCalledTimes(10)
+      expect(_post).toHaveBeenCalledTimes(10)
+    })
+
+    it('should split deltaTime into increments when processing multiple steps', () => {
+      spyOn(Date, 'now').and.returnValues(100, 200)
+
+      const baseGame = new BaseGame({
+        id: 'V3RY-UN1QU3-1D',
+        mapConfig: MOCK_GAME_CONFIG,
+        stepsPerUpdate: 5
+      })
+      baseGame.init()
+
+      expect(baseGame.stepCount).toBe(0)
+      expect(baseGame.lastUpdateTime).toBe(100)
+
+      const step = spyOn(baseGame, 'step')
+
+      baseGame.update()
+
+      expect(baseGame.stepCount).toBe(5)
+      expect(baseGame.lastUpdateTime).toBe(200)
+      expect(step).toHaveBeenCalledTimes(5)
+
+      expect(step.calls.argsFor(0)).toEqual([100, 20])
+      expect(step.calls.argsFor(1)).toEqual([120, 20])
+      expect(step.calls.argsFor(2)).toEqual([140, 20])
+      expect(step.calls.argsFor(3)).toEqual([160, 20])
+      expect(step.calls.argsFor(4)).toEqual([180, 20])
     })
   })
 
