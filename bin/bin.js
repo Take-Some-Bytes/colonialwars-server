@@ -1,5 +1,4 @@
 /* eslint-env node */
-/* eslint-disable import/first */
 
 /**
  * @fileoverview Executable file for the Colonial Wars backend.
