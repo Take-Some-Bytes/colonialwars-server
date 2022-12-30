@@ -5,9 +5,7 @@
  * @fileoverview Executable file for the Colonial Wars backend.
  */
 
-import * as dotenv from 'dotenv'
-
-dotenv.config()
+import 'dotenv/config'
 
 import CWServer from '../index.js'
 import * as shutdown from './shutdown.js'
