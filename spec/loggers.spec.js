@@ -6,9 +6,10 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-import fs from 'fs'
 import winston from 'winston'
 import Loggers from '../lib/logging/loggers.js'
+
+import createNullStream from './helpers/nullstream.js'
 import MockSyslogServer from './mocks/external/mock-syslog-server.js'
 
 /**
@@ -16,7 +17,7 @@ import MockSyslogServer from './mocks/external/mock-syslog-server.js'
  * @param {number} time The time to delay for.
  */
 const delay = (time) => new Promise(resolve => setTimeout(resolve, time))
-const nullWriteStream = fs.createWriteStream('/dev/null', { encoding: 'utf8' })
+const nullWriteStream = createNullStream()
 
 describe('The Loggers class, when used without a Syslog server,', () => {
   const oldProcessTitle = process.title

@@ -6,16 +6,15 @@
  * @typedef {import('jasmine')} jasmine
  */
 
-import fs from 'fs'
-
 import Middlewares from '../../lib/controllers/middlewares.js'
 
+import createNullStream from '../helpers/nullstream.js'
 import MockLoggers from '../mocks/internal/mock-loggers.js'
 import MockHttpRequest from '../mocks/external/mock-http-request.js'
 import MockHttpResponse from '../mocks/external/mock-http-response.js'
 
 describe('The Middlewares class,', () => {
-  const nullWriteStream = fs.createWriteStream('/dev/null', { encoding: 'utf8' })
+  const nullWriteStream = createNullStream()
   let middlewares = null
 
   it('should construct without error', () => {
