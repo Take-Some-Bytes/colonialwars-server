@@ -20,8 +20,6 @@ import WSServer from '../../lib/cwdtp/server.js'
 import * as errors from '../../lib/cwdtp/errors.js'
 import * as crypto from '../../lib/cwdtp/crypto.js'
 
-import getPrivateIp from '../helpers/get-private-ip.js'
-
 /**
  * @type {WSServer}
  */
@@ -31,8 +29,6 @@ const server = http.createServer((_, res) => {
   res.setHeader('Content-Type', 'text/plain')
   res.end('404 Not Found.')
 })
-
-const localIP = getPrivateIp()
 
 /**
  * Starts the WSServer and HTTP server.
@@ -349,8 +345,7 @@ describe('The WSServer class,', () => {
           crypto,
           createWs: (url, protocols) => {
             return new WebSocket(url, protocols, {
-              origin: 'http://localhost:4000',
-              localAddress: '127.0.0.1'
+              origin: 'http://localhost:4000'
             })
           }
         }),
@@ -358,8 +353,7 @@ describe('The WSServer class,', () => {
           crypto,
           createWs: (url, protocols) => {
             return new WebSocket(url, protocols, {
-              origin: 'http://localhost:4000',
-              localAddress: localIP
+              origin: 'http://localhost:4000'
             })
           }
         })
@@ -407,8 +401,7 @@ describe('The WSServer class,', () => {
           crypto,
           createWs: (url, protocols) => {
             return new WebSocket(url, protocols, {
-              origin: 'http://localhost:4000',
-              localAddress: '127.0.0.1'
+              origin: 'http://localhost:4000'
             })
           }
         }),
@@ -416,8 +409,7 @@ describe('The WSServer class,', () => {
           crypto,
           createWs: (url, protocols) => {
             return new WebSocket(url, protocols, {
-              origin: 'http://localhost:4000',
-              localAddress: localIP
+              origin: 'http://localhost:4000'
             })
           }
         })
